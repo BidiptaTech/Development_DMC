@@ -24,7 +24,18 @@
               <div class="menu-title">Dashboard</div>
             </a>
           </li>
-          
+          @if(auth()->user()->user_type = 1)
+          <li class="menu-label">Hotels</li>
+          <li>
+          <a href="{{ route('hotels.index') }}">
+            <div class="parent-icon">
+                <i class="material-icons-outlined">hotel</i>
+            </div>
+              <div class="menu-title">All Hotels</div>
+          </a>
+          </li>
+          @endif
+
           @if(auth()->user()->can('create users') || auth()->user()->can('edit users') || auth()->user()->can('view users') || auth()->user()->can('delete users') || auth()->user()->can('create roles') || auth()->user()->can('view roles') || auth()->user()->can('edit roles') || auth()->user()->can('delete roles') 
           || auth()->user()->can('view features') || auth()->user()->can('feature status'))
           <li class="menu-label">ALL USERS</li>

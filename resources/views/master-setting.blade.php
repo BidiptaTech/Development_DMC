@@ -33,7 +33,23 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="col-sm-6">
+                            <label for="currency" class="form-label">Currency</label>
+                            <select name="currency" class="form-control" required>
+                                <option value="" disabled {{ empty($currentCurrency) ? 'selected' : '' }}>Select Currency</option>
+                                @foreach(\App\Models\Setting::getCurrencyCodes() as $currency)
+                                    <option value="{{ $currency }}" {{ isset($currentCurrency) && $currentCurrency === $currency ? 'selected' : '' }}>
+                                        {{ $currency }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('currency') 
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
 
+                    <div class="row mb-3">
                         <div class="col-sm-6">
                             <label for="inputLogo" class="form-label">Logo</label>
                             <input type="file" class="form-control" name="logo" @if(!isset($existingLogo)) required @endif > <!-- Only require if no existing logo -->
@@ -42,18 +58,18 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-                    </div>
-
-                    <div class="row mb-3">
                         <div class="col-sm-6">
                             <label for="inputFavicon" class="form-label">Favicon</label>
                             <input type="file" class="form-control" name="favicon" @if(!isset($existingFavicon)) required @endif> <!-- Only require if no existing favicon -->
                             <img src="{{ $existingFavicon }}" alt="Current Favicon" style="width: 55px; height: 55px;">
-                            <!-- <img src="{{ URL::asset('build/images/' . $existingFavicon) }}" alt="Current Favicon" style="width: 55px; height: 55px;"> -->
                             @error('favicon')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        
                         <div class="col-sm-6">
                             <label for="inputFileStorage" class="form-label">File Storage</label>
                             <select id="inputFileStorage" name="file_storage" class="form-select">

@@ -20,8 +20,8 @@
           <thead>
             <tr>
               <th>Transaction Type</th>
-              <th>Paid To</th>
-              <th>Received From</th>
+              <th>Credited To</th>
+              <th>Debited From</th>
               <th>Amount</th>
               <th>Status</th>
             </tr>

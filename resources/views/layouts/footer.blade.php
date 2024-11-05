@@ -1,6 +1,6 @@
 <!--start footer-->
 <footer class="page-footer">
-  <p class="mb-0">Copyright © <script>document.write(new Date().getFullYear())</script> . All right reserved.</p>
+  <p class="mb-0">© Dmc - <script>document.write(new Date().getFullYear())</script> Proudly Crafted By Coactive IT Solutions Private Limited.</p>
 </footer>
 @section('scripts') 
   	<script src="{{ URL::asset('build/plugins/validation/jquery.validate.min.js') }}"></script>

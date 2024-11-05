@@ -8,17 +8,7 @@
         $faviconSetting = \App\Helpers\CommonHelper::masterSettingsName('favicon');
         $fileStorage = \App\Helpers\CommonHelper::masterSettingsName('file_storage')['master_value'] ?? 'local'; // Default to local if not set
     @endphp
-    <link rel="icon" href="
-    @if ($fileStorage === 'local')
-        {{ URL::asset('build/images/' . ($faviconSetting['master_value'] ?? 'default-favicon.png')) }}
-    @elseif ($fileStorage === 's3')
-        {{ $faviconSetting['master_value'] ? Storage::disk('s3')->url($faviconSetting['master_value']) : URL::asset('build/images/default-favicon.png') }}
-    @elseif ($fileStorage === 'azure')
-        {{ $faviconSetting['master_value'] ? Storage::disk('azure')->url($faviconSetting['master_value']) : URL::asset('build/images/default-favicon.png') }}
-    @else
-        {{ URL::asset('build/images/default-favicon.png') }}
-    @endif
-    " type="image/png">
+    <link rel="icon" href="{{ $faviconSetting['master_value'] }}" type="image/png">
     <title>@yield('title') | Coactive admin panel</title>
     @yield('css')
     @include('layouts.head-css')

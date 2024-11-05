@@ -48,7 +48,7 @@
                 </div>
 
                 <!-- Permissions Checkbox Group -->
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label class="form-label"><strong>Permissions:</strong></label>
                     <div class="row">
                         @foreach($permission as $value)
@@ -62,7 +62,7 @@
                             </div>
                         @endforeach
                     </div>
-                </div>
+                </div> -->
                 <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>

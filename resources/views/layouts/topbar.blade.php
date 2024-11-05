@@ -521,26 +521,31 @@
                     <i class="material-icons-outlined" style="font-size: 20px; color: white;">person</i>
                 </span>
               </a>
-              <div class="dropdown-menu dropdown-user dropdown-menu-end shadow">
-                  <a class="dropdown-item gap-2 py-2 text-center" href="javascript:;">
-                      <h5 class="user-name mb-0 fw-bold">{{ Auth::user()->name }} ({{ Auth::user()->getUserTypeName() }})</h5>
-                  </a>
+              <div class="dropdown-menu dropdown-user dropdown-menu-end shadow p-3">
+                  <div class="text-center mb-2">
+                      <h5 class="user-name fw-bold mb-0">{{ Auth::user()->name }} ({{ Auth::user()->getUserTypeName() }})</h5>
+                  </div>
                   @php
                       $credits = \App\Models\Transaction::where('user_id', Auth::id())->sum('amount');
                       $debits = \App\Models\Transaction::where('credited_from', Auth::id())->sum('amount');
                       $walletBalance = $credits - $debits;
                   @endphp
                   @if(Auth::id() != 1)
-                  <a class="dropdown-item gap-2 py-2 text-center" href="javascript:;">
-                      <h5 class="user-name mb-0 fw-bold">Balance : ₹{{ $walletBalance }}</h5>
+                      <div class="text-center mb-2">
+                          <h6 class="text-muted mb-0">Balance: <span class="fw-bold text-primary">₹{{ number_format($walletBalance, 2) }}</span></h6>
+                      </div>
+                  @endif
+                  <hr class="dropdown-divider my-2">
+                  @if(session('from_admin'))
+                  <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary d-flex align-items-center justify-content-center gap-1 mb-2">
+                      <i class="material-icons-outlined" style="font-size: 18px;">arrow_back</i>
+                      Back to Admin
                   </a>
                   @endif
-                  <hr class="dropdown-divider">
-                  <form method="POST" action="{{ route('logout') }}" x-data>
+                  <form method="POST" action="{{ route('logout') }}" class="d-block">
                       @csrf
-                      <button type="submit" class="dropdown-item d-flex align-items-center gap-2 py-2">
-                          <i class="material-icons-outlined">power_settings_new</i>
-                          {{ __('Sign Out') }}
+                      <button type="submit" class="btn btn-sm btn-danger d-flex align-items-center justify-content-center gap-1 w-100">
+                          <i class="material-icons-outlined">power_settings_new</i> Sign Out
                       </button>
                   </form>
               </div>
