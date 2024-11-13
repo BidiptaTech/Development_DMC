@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hotels', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('location');
-            $table->string('star');
-            $table->integer('cat_id');
-            $table->string('image');
-            $table->double('base_price');
-            $table->integer('status')->default(1); 
+            $table->enum('category_type', ['1', '2'])->comment('1=>hotel, 2=>facility');
+            $table->integer('status')->default(1);
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
         });
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hotels');
+        Schema::dropIfExists('categories');
     }
 };

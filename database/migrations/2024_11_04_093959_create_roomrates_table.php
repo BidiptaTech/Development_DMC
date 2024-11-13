@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('hotel_id'); // Add the hotel_id column
             $table->integer('category');
             $table->enum('rate_type', ['1', '2'])->comment('1=>weekday, 2=>weekend');
+            $table->enum('room_type', ['1', '2','3'])->comment('1=>single, 2=>double, 3=>triple');
             $table->decimal('single_rate', 8, 2)->nullable(); 
             $table->decimal('double_rate', 8, 2)->nullable(); 
             $table->decimal('triple_rate', 8, 2)->nullable(); 

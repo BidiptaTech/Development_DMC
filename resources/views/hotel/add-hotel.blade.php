@@ -22,7 +22,7 @@
 					<h5 class="mb-0">Add new Hotel</h5>
 				</div>
 				<div class="card-body p-4">
-					<form id="hotelForm" method="POST" action="{{ route('hotels.store') }}">
+					<form id="hotelForm" method="POST" action="{{ route('hotels.store') }}" enctype="multipart/form-data">
 						@csrf
 						<div class="row mb-3">
 							<label for="input35" class="col-sm-3 col-form-label">Enter Hotel Name</label>

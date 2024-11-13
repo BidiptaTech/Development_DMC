@@ -82,7 +82,16 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="col-sm-6">
+                            <label for="input35" class="form-label">Tax Percentage</label>
+                            <input type="number" class="form-control" name="tax_percentage" placeholder="Enter Tax Percentage" value="{{ $tax_percentage }}" required>
+                            @error('tax') 
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
+
+                    
 
                     <div class="row mb-3">
                         <div class="col-sm-6">

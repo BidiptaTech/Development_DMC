@@ -8,6 +8,8 @@ use App\Http\Controllers\FeaturesController;
 use App\Http\Controllers\MasterSettingController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\HotelController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FacilityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +49,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('master-setting', [MasterSettingController::class, 'index'])->name('master-setting');
         Route::post('store-setting', [MasterSettingController::class, 'store'])->name('store-setting');
         Route::resource('hotels', HotelController::class);
+        Route::resource('category', CategoryController::class);
+        Route::resource('facility', FacilityController::class);
     });
 
     // authentication check for manager (route can access admin & manager)

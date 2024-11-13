@@ -16,13 +16,14 @@ class MasterSettingController extends Controller
     */
     public function index()
     {
-        $settings = Setting::whereIn('name', ['name', 'logo', 'favicon', 'file_storage','currency'])->pluck('value', 'name');
+        $settings = Setting::whereIn('name', ['name', 'logo', 'favicon', 'file_storage','currency','tax_percentage'])->pluck('value', 'name');
         $existingLogo = $settings['logo'] ?? '';
         $existingFavicon = $settings['favicon'] ?? '';
         $name = $settings['name'] ?? '';
+        $tax_percentage = $settings['tax_percentage'] ?? '';
         $currentCurrency  = $settings['currency'] ?? '';
         $file = $settings['file_storage'] ?? 'local';
-        return view('master-setting', compact('existingLogo', 'existingFavicon', 'name','file','currentCurrency'));
+        return view('master-setting', compact('existingLogo', 'existingFavicon', 'name','file','currentCurrency','tax_percentage'));
     }
 
 

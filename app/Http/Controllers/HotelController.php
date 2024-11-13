@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Hotel;
 use App\Models\RoomRate;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Storage;
 
 class HotelController extends Controller
 {
@@ -39,15 +41,32 @@ class HotelController extends Controller
             'location' => 'required|string',
             'rating' => 'required|integer', 
             'price' => 'required|numeric',
-            'image' => 'required|string',
-            'status' => 'required',
+            // 'image' => 'nullable', 
+            'status' => 'required', 
         ]);
-
+        $get_filestorage = Setting::where('name', 'file_storage')->first()->value ?? 'local';
+        $imagePath = null; 
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $imageFile = $request->file('image'); // Get the file from the request
+            $imageName = 'image_' . time() . '.' . $imageFile->getClientOriginalExtension(); // Generate a unique name for the image
+            if ($get_filestorage == 'local') {
+                $destinationPath = public_path('build/images');
+                $imageFile->move($destinationPath, $imageName);
+                $imagePath = asset('build/images/' . $imageName); // Full URL for local storage
+            } elseif ($get_filestorage == 's3') {
+                $imagePath = Storage::disk('s3')->url(Storage::disk('s3')->putFileAs('uploads', $imageFile, $imageName));
+            } elseif ($get_filestorage == 'azure') {
+                $imagePath = Storage::disk('azure')->url(Storage::disk('azure')->putFileAs('uploads', $imageFile, $imageName));
+            }
+        } else {
+            dd("No valid file uploaded");
+        }
+        
         $hotel = Hotel::create([
             'name' => $validatedData['name'],
             'location' => $validatedData['location'],
             'star' => $validatedData['rating'],
-            'image' => $validatedData['image'],
+            'image' => $imagePath,
             'base_price' => $validatedData['price'],
             'status' => $validatedData['status'],
         ]);

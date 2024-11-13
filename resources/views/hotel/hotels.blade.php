@@ -21,6 +21,7 @@
                         <th>Name</th>
                         <th>Location</th>
                         <th>Base Price</th>
+                        <th>Image</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -30,6 +31,9 @@
                             <td>{{ $hotel->name }}</td>
                             <td>{{ $hotel->location }}</td>
                             <td>{{ $hotel->base_price }}</td>
+                            <td>
+                                <img src="{{ asset($hotel->image) }}" alt="Hotel Image" style="width: 100px; height: auto;">
+                            </td>
                             <td>
                                 <a href="{{ route('hotels.edit', $hotel->id) }}" class="btn btn-warning btn-sm" style="width: 36px; height: 36px; padding: 0;">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff">

@@ -34,6 +34,22 @@
               <div class="menu-title">All Hotels</div>
           </a>
           </li>
+          <li>
+          <a href="{{ route('category.index') }}">
+            <div class="parent-icon">
+              <i class="bi bi-bag-plus"></i>
+            </div>
+              <div class="menu-title">Category</div>
+          </a>
+          </li>
+          <li>
+          <a href="{{ route('facility.index') }}">
+            <div class="parent-icon">
+              <i class="bi bi-clipboard"></i>
+            </div>
+              <div class="menu-title">Facility</div>
+          </a>
+          </li>
           @endif
 
           @if(auth()->user()->can('create users') || auth()->user()->can('edit users') || auth()->user()->can('view users') || auth()->user()->can('delete users') || auth()->user()->can('create roles') || auth()->user()->can('view roles') || auth()->user()->can('edit roles') || auth()->user()->can('delete roles') 
@@ -62,7 +78,7 @@
           </li>
           @endif
 
-          @if(auth()->user()->can('create customer') || auth()->user()->can('edit customer') || auth()->user()->can('delete customer'))
+          <!-- @if(auth()->user()->can('create customer') || auth()->user()->can('edit customer') || auth()->user()->can('delete customer'))
           <li>
           <a href="customer.customers">
               <div class="parent-icon">
@@ -71,7 +87,7 @@
               <div class="menu-title">Customers</div>
           </a>
           </li>
-          @endif
+          @endif -->
           @if(auth()->user()->user_type == 1)
           <li class="menu-label">SETTINGS</li>
           <li>
