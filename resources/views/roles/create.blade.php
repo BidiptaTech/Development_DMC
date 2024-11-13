@@ -6,9 +6,9 @@
 <div class="page-content">
     <div class="page-container">
         <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10 col-sm-12">
-                <div class="card" style="background-color: #eed5fb;">
-                    <div class="card-header bg-primary text-white px-4 py-3">
+            <div class="col-lg-12 col-md-10 col-sm-12">
+                <div class="card">
+                    <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white;">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Add New Role</h5>
                             <!-- Back Button -->
@@ -18,7 +18,7 @@
                         </div>
                     </div>
 
-                    <div class="card-body p-4" style="color: black;">
+                    <div class="card-body p-4">
                         <form action="{{ route('roles.store') }}" method="POST">
                             @csrf <!-- CSRF token for protection -->
 
