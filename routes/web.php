@@ -6,6 +6,10 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FeaturesController;
 use App\Http\Controllers\MasterSettingController;
+use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\HotelController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FacilityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +35,11 @@ Route::group(['middleware' => ['auth']], function () {
         Artisan::call('route:clear');
         return '<center><h1>All Cleared</h1></center>';
     });
+    Route::get('/admin/dashboard', [UserController::class, 'adminlogin'])->name('admin.dashboard');
     Route::get('transaction', [UserController::class, 'transaction'])->name('transaction');
+    Route::get('/admin/login-as/{userId}', [UserController::class, 'loginAsUser'])->name('admin.loginAsUser');
+    //currency exchange rate
+    Route::get('/exchange-rate', [CurrencyController::class, 'showExchangeRate']);
 
     // authentication check for admin
     Route::group(['middleware' => ['admin']], function () {
@@ -40,6 +48,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/update-status', [FeaturesController::class, 'statusupdate']);
         Route::get('master-setting', [MasterSettingController::class, 'index'])->name('master-setting');
         Route::post('store-setting', [MasterSettingController::class, 'store'])->name('store-setting');
+        Route::resource('hotels', HotelController::class);
+        Route::resource('category', CategoryController::class);
+        Route::resource('facility', FacilityController::class);
     });
 
     // authentication check for manager (route can access admin & manager)

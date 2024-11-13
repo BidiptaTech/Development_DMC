@@ -1,13 +1,19 @@
-@extends('layouts.master')
+@extends('layouts.layout')
 
 @section('title', 'Settings')
 @section('css')
 
 @endsection 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-3"
-        style="background-color: #C0C0C0; color: #333; padding: 20px; border-radius: 5px;">
-        <x-page-title title="Setting" pagetitle="Master Setting" />
+<div class="page-content">
+
+<div class="page-container">
+<div class="card page-title-box rounded-0">
+        <div class="d-flex align-items-sm-center flex-sm-row flex-column gap-2">
+            <div class="flex-grow-1">
+                <h4 class="font-18 fw-semibold mb-0">Master Settings</h4>
+            </div>
+        </div>
     </div>
 
 @if ($message = Session::get('success'))
@@ -19,9 +25,6 @@
 <div class="row">
     <div class="col-lg-12 mx-auto">
         <div class="card">
-            <div class="card-header px-4 py-3">
-                <h5 class="mb-0">Update Settings</h5>
-            </div>
             <div class="card-body p-4">
                 <form action="{{ route('store-setting') }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -33,7 +36,23 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="col-sm-6">
+                            <label for="currency" class="form-label">Currency</label>
+                            <select name="currency" class="form-control" required>
+                                <option value="" disabled {{ empty($currentCurrency) ? 'selected' : '' }}>Select Currency</option>
+                                @foreach(\App\Models\Setting::getCurrencyCodes() as $currency)
+                                    <option value="{{ $currency }}" {{ isset($currentCurrency) && $currentCurrency === $currency ? 'selected' : '' }}>
+                                        {{ $currency }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('currency') 
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
 
+                    <div class="row mb-3">
                         <div class="col-sm-6">
                             <label for="inputLogo" class="form-label">Logo</label>
                             <input type="file" class="form-control" name="logo" @if(!isset($existingLogo)) required @endif > <!-- Only require if no existing logo -->
@@ -42,18 +61,18 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-                    </div>
-
-                    <div class="row mb-3">
                         <div class="col-sm-6">
                             <label for="inputFavicon" class="form-label">Favicon</label>
                             <input type="file" class="form-control" name="favicon" @if(!isset($existingFavicon)) required @endif> <!-- Only require if no existing favicon -->
                             <img src="{{ $existingFavicon }}" alt="Current Favicon" style="width: 55px; height: 55px;">
-                            <!-- <img src="{{ URL::asset('build/images/' . $existingFavicon) }}" alt="Current Favicon" style="width: 55px; height: 55px;"> -->
                             @error('favicon')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        
                         <div class="col-sm-6">
                             <label for="inputFileStorage" class="form-label">File Storage</label>
                             <select id="inputFileStorage" name="file_storage" class="form-select">
@@ -66,18 +85,28 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="col-sm-6">
+                            <label for="input35" class="form-label">Tax Percentage</label>
+                            <input type="number" class="form-control" name="tax_percentage" placeholder="Enter Tax Percentage" value="{{ $tax_percentage }}" required>
+                            @error('tax') 
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
+
+                    
 
                     <div class="row mb-3">
                         <div class="col-sm-6">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <button type="reset" class="btn btn-secondary">Reset</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 @endsection
 

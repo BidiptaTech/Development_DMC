@@ -227,4 +227,28 @@ class UserController extends Controller
         return view('users.transaction',compact('transaction'));
     }
 
+    /*
+    * Admin access to Another User login.
+    * Date 30-10-2024
+    */
+    public function loginAsUser($userId)
+    {
+        if (!auth()->user()->user_type == 1) {
+            abort(403, 'Unauthorized action.');
+        }
+        $user = User::findOrFail($userId);
+        session(['from_admin' => true]);
+        auth()->login($user);
+        return redirect('/')->with('message', 'You are now logged in as ' . $user->name);
+    }
+
+    public function adminlogin()
+    {
+        session()->forget('from_admin');
+        $user = User::findOrFail(1);
+        auth()->login($user);
+        return redirect('/')->with('message', 'You are now logged in as ' . $user->name); 
+    }
+
+
 }
