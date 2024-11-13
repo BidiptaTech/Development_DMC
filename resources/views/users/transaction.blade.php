@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.layout')
 
 @section('title', 'Transaction')
 @section('css')
@@ -7,10 +7,15 @@
 
 @endsection 
 @section('content')
-  <div class="d-flex justify-content-between align-items-center mb-3"
-      style="background-color: #C0C0C0; color: #333; padding: 20px; border-radius: 5px;">
-      <x-page-title title="Transaction" pagetitle="Transaction History" />
-  </div>
+<div class="page-content">
+  <div class="page-container">
+    <div class="card page-title-box rounded-0">
+        <div class="d-flex align-items-sm-center flex-sm-row flex-column gap-2">
+            <div class="flex-grow-1">
+                <h4 class="font-18 fw-semibold mb-0">All Transaction</h4>
+            </div>
+        </div>
+    </div>
 
   <hr>
   <div class="card">
@@ -33,13 +38,16 @@
               <td>{{ $tran->user->name }} </td>
               <td>{{ $tran->user_transaction->name }} </td>
               <td>{{ $tran->amount }}</td>
-              <td> @if($tran->user_id == auth::user()->id ) <span class="badge badge-pill badge-success">Credited</span> @else <span class="badge badge-pill badge-danger">Debited</span> @endif </td>
+              <td> @if($tran->user_id == auth::user()->id ) <span class="badge bg-success">Credited</span>
+               @else <span class="badge bg-danger">Debited</span> @endif </td>
             </tr>
             @endforeach
           </tbody>
         </table>
       </div>
     </div>
+  </div>
+  </div>
   </div>
 
 @endsection 

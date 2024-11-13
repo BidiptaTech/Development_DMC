@@ -247,7 +247,7 @@ class UserController extends Controller
         session()->forget('from_admin');
         $user = User::findOrFail(1);
         auth()->login($user);
-        return view('index'); 
+        return redirect('/')->with('message', 'You are now logged in as ' . $user->name); 
     }
 
 

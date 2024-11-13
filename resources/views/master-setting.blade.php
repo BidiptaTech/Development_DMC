@@ -1,13 +1,19 @@
-@extends('layouts.master')
+@extends('layouts.layout')
 
 @section('title', 'Settings')
 @section('css')
 
 @endsection 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-3"
-        style="background-color: #C0C0C0; color: #333; padding: 20px; border-radius: 5px;">
-        <x-page-title title="Setting" pagetitle="Master Setting" />
+<div class="page-content">
+
+<div class="page-container">
+<div class="card page-title-box rounded-0">
+        <div class="d-flex align-items-sm-center flex-sm-row flex-column gap-2">
+            <div class="flex-grow-1">
+                <h4 class="font-18 fw-semibold mb-0">Master Settings</h4>
+            </div>
+        </div>
     </div>
 
 @if ($message = Session::get('success'))
@@ -19,9 +25,6 @@
 <div class="row">
     <div class="col-lg-12 mx-auto">
         <div class="card">
-            <div class="card-header px-4 py-3">
-                <h5 class="mb-0">Update Settings</h5>
-            </div>
             <div class="card-body p-4">
                 <form action="{{ route('store-setting') }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -96,13 +99,14 @@
                     <div class="row mb-3">
                         <div class="col-sm-6">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <button type="reset" class="btn btn-secondary">Reset</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 @endsection
 

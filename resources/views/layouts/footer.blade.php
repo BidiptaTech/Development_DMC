@@ -1,25 +1,22 @@
-<!--start footer-->
-<footer class="page-footer">
-  <p class="mb-0">© Dmc - <script>document.write(new Date().getFullYear())</script> Proudly Crafted By Coactive IT Solutions Private Limited.</p>
-</footer>
-@section('scripts') 
-  	<script src="{{ URL::asset('build/plugins/validation/jquery.validate.min.js') }}"></script>
-	<script src="{{ URL::asset('build/plugins/validation/validation-script.js') }}"></script>
-	
-	<script>
-			(function () {
-			  'use strict'
-			  var forms = document.querySelectorAll('.needs-validation')
-			  Array.prototype.slice.call(forms)
-				.forEach(function (form) {
-				  form.addEventListener('submit', function (event) {
-					if (!form.checkValidity()) {
-					  event.preventDefault()
-					  event.stopPropagation()
-					}
-					form.classList.add('was-validated')
-				  }, false)
-				})
-			})()
-	</script>
-@endsection
+            <footer class="footer">
+                <div class="page-container">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start">
+                            <script>document.write(new Date().getFullYear())</script> © Adminox - By <span class="fw-bold text-decoration-underline text-uppercase text-reset font-12">Coderthemes</span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-md-end footer-links d-none d-md-block">
+                                <a href="javascript: void(0);">About</a>
+                                <a href="javascript: void(0);">Support</a>
+                                <a href="javascript: void(0);">Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="{{ asset('assets/js/vendor.min.js') }}"></script>
+    <script src="{{ asset('assets/js/app.js') }}"></script>
+    <script src="{{ asset('assets/vendor/fullcalendar/index.global.min.js') }}"></script>
+    <script src="{{ asset('assets/js/pages/apps-calendar.js') }}"></script>
