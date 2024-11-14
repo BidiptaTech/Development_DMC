@@ -16,21 +16,45 @@
                     </div>
 
                     <div class="card-body p-4">
-                        <form action="{{ route('facility.update', $facility->id) }}" method="POST">
+                        <form action="{{ route('facility.update', $facility->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf 
                             @method('PUT')
 
                             <div class="mb-3">
-                                <label for="name" class="form-label"><strong>Name:</strong></label>
-                                <input value="{{ $facility->name }}" type="text" id="name" name="name" placeholder="Enter Facility Name" class="form-control" required>
+                                <label for="name" class="form-label"><strong>Name</strong></label>
+                                <input value="{{ old('name', $facility->name) }}" type="text" id="name" name="name" placeholder="Enter Facility Name" class="form-control" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="category_type" class="form-label"><strong>Category Type:</strong></label>
+                                <label for="icon" class="form-label"><strong>Icon</strong></label>
+                                <input type="file" name="icon" class="form-control">
+                                @if ($facility->icon)
+                                    <div class="mt-2">
+                                        <img src="{{ $facility->icon }}" alt="Facility Icon" style="width: 50px; height: 32px;">
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="chargeable" class="form-label"><strong>Chargeable</strong></label>
+                                <select name="chargeable" class="form-control" id="chargeable" required onchange="toggleCommentField()">
+                                    <option value="">Select One</option>
+                                    <option value="1" {{ old('is_chargeable', $facility->is_chargeable ?? '') == '1' ? 'selected' : '' }}>Yes</option>
+                                    <option value="0" {{ old('is_chargeable', $facility->is_chargeable ?? '') == '0' ? 'selected' : '' }}>No</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3" id="comment_section" style="display: {{ old('chargeable', $facility->chargeable) == '1' ? 'block' : 'none' }};">
+                                <label for="comment" class="form-label"><strong>Comment</strong></label>
+                                <input type="text" name="comment" id="comment" placeholder="Enter Comment Name" class="form-control" value="{{ old('comment', $facility->chargable_comment) }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category_type" class="form-label"><strong>Category Type</strong></label>
                                 <select id="category_type" name="category_type" class="form-control" required>
                                     <option value="">Select Category Type</option>
                                     @forelse ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ $category->id == $currentCategory->id ? 'selected' : '' }}>
+                                        <option value="{{ $category->id }}" {{ old('category_id', $facility->category_id) == $category->id ? 'selected' : '' }}>
                                             {{ $category->name }}
                                         </option>
                                     @empty
@@ -40,31 +64,12 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="status" class="form-label"><strong>Status:</strong></label>
-                                <select id="status" name="status" class="form-control" required>
+                                <label for="category_status" class="form-label"><strong>Status</strong></label>
+                                <select name="status" class="form-control" required>
                                     <option value="">Status</option>
-                                    <option value="1" {{ $facility->status == 1 ? 'selected' : '' }}>Active</option>
-                                    <option value="0" {{ $facility->status == 0 ? 'selected' : '' }}>Inactive</option>
+                                    <option value="1" {{ $category->status == 1 ? 'selected' : '' }}>Active</option>
+                                    <option value="0" {{ $category->status == 0 ? 'selected' : '' }}>Inactive</option>
                                 </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="icon" class="form-label"><strong>Select Icon:</strong></label>
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="iconDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Choose an Icon
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="iconDropdown">
-                                        @foreach ($facilityIcons as $iconClass => $label)
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center" href="#" onclick="setIcon('{{ $iconClass }}', '{{ $label }}')">
-                                                    <i class="bi {{ $iconClass }}"></i> {{ $label }}
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                    <input type="hidden" id="icon" name="icon">
-                                </div>
                             </div>
 
                             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
@@ -77,15 +82,22 @@
         </div>
     </div>
 </div>
+
 @endsection
 
-@section('script')
-<script>
-    function setIcon(iconClass, label) {
-        document.getElementById('icon').value = iconClass;
-        document.getElementById('iconDropdown').innerHTML = `<i class="${iconClass} me-2"></i> ${label}`;
-        const dropdown = bootstrap.Dropdown.getOrCreateInstance(document.getElementById('iconDropdown'));
-        dropdown.hide();
-    }
-</script>
+@section('scripts')
+    <script>
+        function toggleCommentField() {
+            var chargeable = document.getElementById('chargeable').value;
+            var commentSection = document.getElementById('comment_section');
+            if (chargeable == '1') {
+                commentSection.style.display = 'block';
+            } else {
+                commentSection.style.display = 'none';
+            }
+        }
+        window.onload = function() {
+            toggleCommentField();
+        }
+    </script>
 @endsection

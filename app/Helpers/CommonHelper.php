@@ -37,4 +37,31 @@ class CommonHelper
         ];
     }
 
+    /*
+    * Image path set.
+    * Date 14-11-2024
+    */
+    public static function image_path($name, $logoFile) {
+        $get_filestorage = Setting::where('name', $name)->where('status', 1)->first();
+        $logoName = 'logo_' . time() . '.' . $logoFile->getClientOriginalExtension();
+        
+        if ($get_filestorage) {
+            if ($get_filestorage->value == 'local') {
+                $destinationPath = public_path('build/images');
+                $logoFile->move($destinationPath, $logoName);
+                $logoPath = asset('build/images/' . $logoName);
+            } elseif ($get_filestorage->value == 's3') {
+                $logoPath = Storage::disk('s3')->url(Storage::disk('s3')->putFileAs('uploads', $logoFile, $logoName));
+            } elseif ($get_filestorage->value == 'azure') {
+                $logoPath = Storage::disk('azure')->url(Storage::disk('azure')->putFileAs('uploads', $logoFile, $logoName));
+            }
+            return [
+                'master_value' => $logoPath,
+            ];
+        }
+        return [
+            'master_value' => null,
+        ];
+    }
+    
 }

@@ -16,31 +16,24 @@
                         </div>
                     </div>
                     <div class="card-body p-4">
-                        <form action="{{ route('category.update', $category->id) }}" method="POST">
-                            @csrf 
+                        <form action="{{ route('category.update', $category->id) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
                             @method('PUT')
 
                             <div class="mb-3">
-                                <label for="name" class="form-label"><strong>Name:</strong></label>
-                                <input 
-                                    value="{{ $category->name }}" 
-                                    type="text" 
-                                    id="name" 
-                                    name="name" 
-                                    placeholder="Enter Name" 
-                                    class="form-control" 
-                                    required
-                                >
+                                <label for="name" class="form-label"><strong>Name</strong></label>
+                                <input value="{{ $category->name }}" type="text" name="name"placeholder="Enter Name" class="form-control" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="category_type" class="form-label"><strong>Category Type:</strong></label>
-                                <select 
-                                    id="category_type" 
-                                    name="category_type" 
-                                    class="form-control" 
-                                    required
-                                >
+                                <label for="name" class="form-label"><strong>Icon</strong></label>
+                                <input type="file" name="icon" class="form-control">
+                                <img src="{{ $category->icon }}" alt="Category Icon" style="width: 50px; height: 32px;">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category_type" class="form-label"><strong>Category Type</strong></label>
+                                <select name="category_type" class="form-control" required>
                                     <option value="">Select Category Type</option>
                                     <option value="1" {{ $category->category_type == 1 ? 'selected' : '' }}>Hotel</option>
                                     <option value="2" {{ $category->category_type == 2 ? 'selected' : '' }}>Facilities</option>
@@ -48,13 +41,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="category_status" class="form-label"><strong>Status:</strong></label>
-                                <select 
-                                    id="category_status" 
-                                    name="status" 
-                                    class="form-control" 
-                                    required
-                                >
+                                <label for="category_status" class="form-label"><strong>Status</strong></label>
+                                <select name="status" class="form-control" required>
                                     <option value="">Status</option>
                                     <option value="1" {{ $category->status == 1 ? 'selected' : '' }}>Active</option>
                                     <option value="0" {{ $category->status == 0 ? 'selected' : '' }}>Inactive</option>

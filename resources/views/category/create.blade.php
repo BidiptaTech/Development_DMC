@@ -17,16 +17,21 @@
                         </div>
                     </div>
                     <div class="card-body p-4">
-                        <form action="{{ route('category.store') }}" method="POST">
+                        <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf 
 
                             <div class="mb-3">
-                                <label for="name" class="form-label"><strong>Name:</strong></label>
+                                <label for="name" class="form-label"><strong>Name</strong></label>
                                 <input type="text" id="name" name="name" placeholder="Enter Name" class="form-control" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="category_type" class="form-label"><strong>Category Type:</strong></label>
+                                <label for="name" class="form-label"><strong>Icon</strong></label>
+                                <input type="file" name="icon" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category_type" class="form-label"><strong>Category Type</strong></label>
                                 <select id="category_type" name="category_type" class="form-control" required>
                                     <option value="">Select Category Type</option>
                                     <option value="1">Hotel</option>
@@ -35,7 +40,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="category_status" class="form-label"><strong>Status:</strong></label>
+                                <label for="category_status" class="form-label"><strong>Status</strong></label>
                                 <select id="category_status" name="category_status" class="form-control" required>
                                     <option value="">Select Status</option>
                                     <option value="1">Active</option>

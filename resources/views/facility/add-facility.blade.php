@@ -18,16 +18,35 @@
                         </div>
 
                         <div class="card-body p-4">
-                            <form action="{{ route('facility.store') }}" method="POST">
+                            <form action="{{ route('facility.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf 
                                 
                                 <div class="mb-3">
-                                    <label for="name" class="form-label"><strong>Name:</strong></label>
+                                    <label for="name" class="form-label"><strong>Name</strong></label>
                                     <input type="text" id="name" name="name" placeholder="Enter Facility Name" class="form-control" required>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="category_type" class="form-label"><strong>Category Type:</strong></label>
+                                    <label for="name" class="form-label"><strong>Icon</strong></label>
+                                    <input type="file" name="icon" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="chargeable" class="form-label"><strong>Chargeable</strong></label>
+                                    <select name="chargeable" class="form-control" id="chargeable" required onchange="toggleCommentField()">
+                                        <option value="">Select One</option>
+                                        <option value="1" {{ old('chargeable', $facility->chargeable ?? '') == '1' ? 'selected' : '' }}>Yes</option>
+                                        <option value="0" {{ old('chargeable', $facility->chargeable ?? '') == '0' ? 'selected' : '' }}>No</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3" id="comment_section" style="display: none;">
+                                    <label for="comment" class="form-label"><strong>Comment</strong></label>
+                                    <input type="text" name="comment" id="comment" placeholder="Enter Comment Name" class="form-control">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="category_type" class="form-label"><strong>Category Type</strong></label>
                                     <select id="category_type" name="category_type" class="form-control" required>
                                         <option value="">Select Category Type</option>
                                         @forelse ($categories as $category)
@@ -41,31 +60,12 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="status" class="form-label"><strong>Status:</strong></label>
-                                    <select id="status" name="status" class="form-control" required>
+                                    <label for="status" class="form-label"><strong>Status</strong></label>
+                                    <select name="facility_status" class="form-control" required>
                                         <option value="">Select Status</option>
                                         <option value="1">Active</option>
                                         <option value="0">Inactive</option>
                                     </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="icon" class="form-label"><strong>Select Icon:</strong></label>
-                                    <div class="dropdown">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="iconDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Choose an Icon
-                                        </button>
-                                        <ul class="dropdown-menu" aria-labelledby="iconDropdown">
-                                            @foreach ($facilityIcons as $iconClass => $label)
-                                                <li>
-                                                    <a class="dropdown-item d-flex align-items-center" href="#" onclick="setIcon('{{ $iconClass }}', '{{ $label }}')">
-                                                        <i class="bi {{$iconClass}}"></i> {{ $label }}
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                        <input type="hidden" id="icon" name="icon">
-                                    </div>
                                 </div>
 
                                 <div class="col-xs-12 col-sm-12 col-md-12 text-center">
@@ -81,18 +81,17 @@
     <!-- End of the form -->
 @endsection
 
-@section('script')
 <script>
-    function setIcon(iconClass, label) {
-        // Set the selected icon class in the hidden input
-        document.getElementById('icon').value = iconClass;
-
-        // Update the dropdown button to show the selected icon and label
-        document.getElementById('iconDropdown').innerHTML = `<i class="${iconClass} me-2"></i> ${label}`;
-
-        // Close the dropdown after selection
-        const dropdown = bootstrap.Dropdown.getOrCreateInstance(document.getElementById('iconDropdown'));
-        dropdown.hide();
+    function toggleCommentField() {
+        var chargeable = document.getElementById("chargeable").value;
+        var commentSection = document.getElementById("comment_section");
+        if (chargeable == "1") {
+            commentSection.style.display = "block";
+        } else {
+            commentSection.style.display = "none";
+        }
+    }
+    window.onload = function() {
+        toggleCommentField(); 
     }
 </script>
-@endsection

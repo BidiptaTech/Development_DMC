@@ -31,6 +31,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Type</th>
+                                <th>Logo</th>
                                 <th width="280px">Action</th>
                             </tr>
                         </thead>
@@ -44,6 +45,9 @@
                                         @else
                                             {{ "Facility" }}
                                         @endif
+                                    </td>
+                                    <td>
+                                        <img src="{{ $category->icon }}" alt="Category Icon" style="width: 50px; height: 50px;">
                                     </td>
                                     <td>
                                         <a href="{{ route('category.edit', $category->id) }}" 

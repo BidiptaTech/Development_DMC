@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('facilities', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->unsignedBigInteger('category_id'); 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->string('name');
+            $table->string('icon');
+            $table->integer('is_chargeable')->default(0);
+            $table->string('chargable_comment')->nullable();
             $table->integer('status')->default(1);
+            $table->integer('inserted_by_user')->nullable();
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
         });

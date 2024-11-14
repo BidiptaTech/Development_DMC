@@ -4,18 +4,17 @@
 
 @section('css')
     <link href="{{ URL::asset('build/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
-@endsection 
+@endsection
 
 @section('content')
     <div class="page-content">
         <div class="page-container">
-
             <div class="card page-title-box rounded-0">
                 <div class="d-flex justify-content-between align-items-center flex-column flex-sm-row gap-2">
                     <div class="flex-grow-1">
                         <h4 class="font-18 fw-semibold mb-0">Facilities</h4>
                     </div>
-                    <!-- Add User Button Row -->
+                    <!-- Add Facility Button -->
                     <div class="mt-3 mt-sm-0">
                         <a href="{{ route('facility.create') }}" class="btn btn-primary">Add New Facility</a>
                     </div>
@@ -28,8 +27,9 @@
                         <table id="example2" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Icon</th>
                                     <th>Name</th>
+                                    <th>Chargeable</th>
+                                    <th>Comment</th>
                                     <th>Status</th>
                                     <th width="280px">Action</th>
                                 </tr>
@@ -37,15 +37,25 @@
                             <tbody>
                                 @foreach($facilities as $facility)
                                     <tr>
-                                        <td><i class="bi {{$facility->icon}}"></i></td>
                                         <td>{{ $facility->name }}</td>
                                         <td>
-                                            @if($facility->status == 1)
-                                                {{ "Active" }}
+                                            @if($facility->is_chargeable == 1)
+                                                Yes
                                             @else
-                                                {{"Inactive"}}
+                                                No
                                             @endif
                                         </td>
+                                        <td>
+                                            {{ $facility->chargable_comment }}
+                                        </td>
+                                        <td>
+                                            @if($facility->status == 1)
+                                                Active
+                                            @else
+                                                Inactive
+                                            @endif
+                                        </td>
+                                        
                                         <td>
                                             <a href="{{ route('facility.edit', $facility->id) }}" class="btn btn-warning btn-sm" style="width: 36px; height: 36px; padding: 0;">
                                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff">
@@ -66,9 +76,9 @@
                 </div>
             </div>
 
-            <!-- Category Delete Modal -->
-            <div class="modal fade" id="deleteModal" tabindex="-1" Category="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                <div class="modal-dialog" Category="document">
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="deleteModalLabel">Confirmation</h5>
@@ -92,7 +102,7 @@
     </div>
 @endsection
 
-@section('scripts')  
+@section('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="{{ URL::asset('build/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
