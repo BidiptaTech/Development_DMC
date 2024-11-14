@@ -38,73 +38,47 @@ class HotelController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'location' => 'required|string',
-            'rating' => 'required|integer', 
-            'price' => 'required|numeric',
-            // 'image' => 'nullable', 
+            'city' => 'required|string',
+            'pincode' => 'required|integer', 
+            'state' => 'required',
+            'country' => 'required', 
             'status' => 'required', 
         ]);
-        $get_filestorage = Setting::where('name', 'file_storage')->first()->value ?? 'local';
-        $imagePath = null; 
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
-            $imageFile = $request->file('image'); // Get the file from the request
-            $imageName = 'image_' . time() . '.' . $imageFile->getClientOriginalExtension(); // Generate a unique name for the image
-            if ($get_filestorage == 'local') {
-                $destinationPath = public_path('build/images');
-                $imageFile->move($destinationPath, $imageName);
-                $imagePath = asset('build/images/' . $imageName); // Full URL for local storage
-            } elseif ($get_filestorage == 's3') {
-                $imagePath = Storage::disk('s3')->url(Storage::disk('s3')->putFileAs('uploads', $imageFile, $imageName));
-            } elseif ($get_filestorage == 'azure') {
-                $imagePath = Storage::disk('azure')->url(Storage::disk('azure')->putFileAs('uploads', $imageFile, $imageName));
-            }
-        } else {
-            dd("No valid file uploaded");
+
+        $imagePath = null;
+        if ($request->hasFile('main_image')) {
+            $imagePath = $request->file('main_image')->store('hotel_images', 'public');
         }
-        
+
+        // Handling multiple image uploads
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('hotel_images', 'public');
+            }
+        }
+
         $hotel = Hotel::create([
-            'name' => $validatedData['name'],
-            'location' => $validatedData['location'],
-            'star' => $validatedData['rating'],
-            'image' => $imagePath,
-            'base_price' => $validatedData['price'],
-            'status' => $validatedData['status'],
+            'name' => $request->input('name'),
+            'address' => $request->input('address'),
+            'city' => $request->input('city'),
+            'state' => $request->input('state'),
+            'country' => $request->input('country'),
+            'pincode' => $request->input('pincode'),
+            'latitude' => $request->input('latitude'),
+            'longitude' => $request->input('longitude'),
+            'main_image' => $imagePath,
+            'check_in_time' => $request->input('check_in_time'),
+            'check_out_time' => $request->input('check_out_time'),
+            'hotel_owner_company_name' => $request->input('hotel_owner_company_name'),
+            'phone' => $request->input('phone'),
+            'email' => $request->input('email'),
+            'description' => $request->input('description'),
+            'policies' => $request->input('policies'),
+            'management_comp_name' => $request->input('management_comp_name'),
+            'status' => $request->input('status'),
+            'additional_images' => json_encode($imagePaths),
         ]);
-
-        foreach ($request->input('category_type', []) as $index => $categoryType) {
-            $single_rate = null;
-            $double_rate = null;
-            $triple_rate = null;
-        
-            $roomType = $request->input('room_type')[$index];
-            $roomPrice = $request->input('room_price')[$index];
-        
-            if ($roomType == 'single') {
-                $single_rate = $roomPrice;
-            } elseif ($roomType == 'double') {
-                $double_rate = $roomPrice; 
-            } elseif ($roomType == 'triple') {
-                $triple_rate = $roomPrice; 
-            }
-        
-            $hotel->categories()->create([ 
-                'category' => $categoryType, 
-                'rate_type' => $request->input('rate_type')[$index], 
-                'single_rate' => $single_rate,
-                'double_rate' => $double_rate,
-                'triple_rate' => $triple_rate,
-                'kids_below_6' => $request->input('kids_below6')[$index],
-                'kids_above_6' => $request->input('kids_above6')[$index],
-                'breakfast' => $request->input('breakfast')[$index],
-                'lunch' => $request->input('lunch')[$index],
-                'dinner' => $request->input('dinner')[$index],
-                'breakfast_kids_below_6' => $request->input('breakfastkids')[$index],
-                'lunch_kids_below_6' => $request->input('lunchkids')[$index],
-                'dinner_kids_below_6' => $request->input('dinnerkids')[$index],
-                'extra_bed' => $request->input('extrabed')[$index],
-            ]);
-        }
-
         return redirect()->route('hotels.index')
             ->with('success', 'Hotels created successfully');
     }

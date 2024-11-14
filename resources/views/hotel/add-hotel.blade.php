@@ -36,29 +36,108 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Location</label>
+                                <label class="col-sm-3 col-form-label">Address</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="location" placeholder="Location" required>
+                                    <input type="text" class="form-control" name="address" placeholder="Enter Address" >
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label for="input37a" class="col-sm-3 col-form-label">Rating</label>
+                                <label for="input37a" class="col-sm-3 col-form-label">City</label>
                                 <div class="col-sm-9">
-                                    <input type="number" min="1" max="5" class="form-control" id="input37a" name="rating" placeholder="Rating" required>
+                                    <input type="text" class="form-control" name="city" placeholder="Enter City" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label for="input37" class="col-sm-3 col-form-label">Base Price</label>
+                                <label for="input37a" class="col-sm-3 col-form-label">State</label>
                                 <div class="col-sm-9">
-                                    <input type="number" class="form-control" id="input37" name="price" placeholder="Base Price" required>
+                                    <input type="text" class="form-control" name="state" placeholder="Enter State" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label for="input37" class="col-sm-3 col-form-label">Image</label>
+                                <label for="input37a" class="col-sm-3 col-form-label">Country</label>
                                 <div class="col-sm-9">
-                                    <input type="file" class="form-control" name="image" placeholder="Image" required>
+                                    <input type="text" class="form-control"  name="country" placeholder="Enter Country" required>
                                 </div>
                             </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Zip code</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="pincode" placeholder="Enter Zip Code" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Latitude</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="latitude" placeholder="Enter Latitude" >
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Longitude</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="longitude" placeholder="Enter Longitude" >
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Banner Image</label>
+                                <div class="col-sm-9">
+                                    <input type="file" class="form-control" name="main_image" placeholder="Enter Banner Image" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Check in time</label>
+                                <div class="col-sm-9">
+                                    <input type="time" class="form-control" name="check_in_time" placeholder="Enter Check in time" >
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Check out time</label>
+                                <div class="col-sm-9">
+                                    <input type="time" class="form-control" name="check_out_time" placeholder="Enter Check out time" >
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Hotel owner company name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="hotel_owner_company_name" placeholder="Enter Hotel owner company name" >
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Phone</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="phone" placeholder="Enter phone" >
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Email</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="email" placeholder="Enter Email" >
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Images</label>
+                                <div class="col-sm-9">
+                                    <input type="file" class="form-control" name="images" multiple>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Description</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="description" placeholder="Enter Description" >
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Policies</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="policies" placeholder="Enter Policies" >
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="input37" class="col-sm-3 col-form-label">Management comp name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="management_comp_name" placeholder="Enter Management comp name" >
+                                </div>
+                            </div>
+
                             <div class="row mb-3">
                                 <label for="input37" class="col-sm-3 col-form-label">Status</label>
                                 <div class="col-sm-9">
@@ -69,84 +148,7 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="form-group mb-3">
-                                <label><b>Categories</b></label><br>
-                                <div id="categoryFields">
-                                    <div class="category-group row mb-3 p-3 border rounded">
-                                        <!-- Category Group Fields -->
-                                        <div class="col-md-4">
-                                            <label for="rateType" class="form-label">Rate Type</label>
-                                            <select name="rate_type[]" id="rateType" class="form-control" required>
-                                                <option value="">Select Rate Type</option>
-                                                <option value="2">Weekend</option>
-                                                <option value="1">Weekdays</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="categoryType" class="form-label">Category Type</label>
-                                            <select name="category_type[]" id="categoryType" class="form-control" required>
-                                                <option value="">Select Category Type</option>
-                                                <option value="1">Cat1</option>
-                                                <option value="2">Cat2</option>
-                                                <option value="3">Cat3</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="roomType" class="form-label">Room Type</label>
-                                            <select name="room_type[]" id="roomType" class="form-control" required>
-                                                <option value="">Select Room Type</option>
-                                                <option value="single">Single Room</option>
-                                                <option value="double">Double Room</option>
-                                                <option value="triple">Triple Room</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="categoryPrice" class="form-label">Price</label>
-                                            <input name="room_price[]" type="number" class="form-control" placeholder="Enter price" required>
-                                        </div>
-                                        <!-- Additional Fields -->
-                                        <div class="col-md-4">
-                                            <label class="form-label">Kids below 6</label>
-                                            <input name="kids_below6[]" type="number" class="form-control" placeholder="Enter price" required>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Kids above 6</label>
-                                            <input name="kids_above6[]" type="number" class="form-control" placeholder="Enter price" required>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Breakfast</label>
-                                            <input name="breakfast[]" type="number" class="form-control" placeholder="Enter price" required>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Lunch</label>
-                                            <input name="lunch[]" type="number" class="form-control" placeholder="Enter price" required>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Dinner</label>
-                                            <input name="dinner[]" type="number" class="form-control" placeholder="Enter price" required>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Breakfast Kids</label>
-                                            <input name="breakfastkids[]" type="number" class="form-control" placeholder="Enter price" required>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Lunch Kids</label>
-                                            <input name="lunchkids[]" type="number" class="form-control" placeholder="Enter price" required>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Dinner Kids</label>
-                                            <input name="dinnerkids[]" type="number" class="form-control" placeholder="Enter price" required>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Extra Bed</label>
-                                            <input name="extrabed[]" type="number" class="form-control" placeholder="Enter price" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-primary mt-3" onclick="appendCategoryField()">Add More Category</button>
-                            </div>
-
+    
                             <div class="row">
                                 <label class="col-sm-3 col-form-label"></label>
                                 <div class="col-sm-9">
@@ -163,58 +165,4 @@
         </div>
     </div>
 </div>
-@endsection
-@section('script')
-<script>
-    function appendCategoryField() {
-        const categoryDiv = document.getElementById("categoryFields");
-        const categoryContainer = document.createElement("div");
-        categoryContainer.className = "category-group row mb-3 p-3 border rounded";
-
-        // HTML structure for each category group
-        categoryContainer.innerHTML = `
-            <div class="col-md-4">
-                <label class="form-label">Rate Type</label>
-                <select name="rate_type[]" class="form-control" required>
-                    <option value="">Select Rate Type</option>
-                    <option value="2">Weekend</option>
-                    <option value="1">Weekdays</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Category Type</label>
-                <select name="category_type[]" class="form-control" required>
-                    <option value="">Select Category Type</option>
-                    <option value="1">Cat1</option>
-                    <option value="2">Cat2</option>
-                    <option value="3">Cat3</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Room Type</label>
-                <select name="room_type[]" class="form-control" required>
-                    <option value="">Select Room Type</option>
-                    <option value="single">Single Room</option>
-                    <option value="double">Double Room</option>
-                    <option value="triple">Triple Room</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Price</label>
-                <input name="room_price[]" type="number" class="form-control" placeholder="Enter price" required>
-            </div>
-            <!-- Additional fields here -->
-            <div class="col-md-4">
-                <label class="form-label">Kids below 6</label>
-                <input name="kids_below6[]" type="number" class="form-control" placeholder="Enter price" required>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Kids above 6</label>
-                <input name="kids_above6[]" type="number" class="form-control" placeholder="Enter price" required>
-            </div>
-        `;
-
-        categoryDiv.appendChild(categoryContainer);
-    }
-</script>
 @endsection
