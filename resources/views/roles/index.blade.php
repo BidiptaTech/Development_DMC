@@ -21,16 +21,6 @@
           </div>
       </div>
     </div>
-
-        <!-- Success Message -->
-        @if ($message = Session::get('success'))
-            <div class="alert alert-success">
-                <p>{{ $message }}</p>
-            </div>
-        @endif
-
-        <hr>
-
         <!-- Roles Table -->
         <div class="card">
             <div class="card-body">

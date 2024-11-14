@@ -3,122 +3,306 @@
 @section('content')
 <div class="page-content">
 
-<div class="page-container">
+    <div class="page-container">
 
-    <div class="card page-title-box rounded-0">
-        <div class="d-flex align-items-sm-center flex-sm-row flex-column gap-2">
-            <div class="flex-grow-1">
-                <h4 class="font-18 fw-semibold mb-0">Calendar</h4>
-            </div>
+        <!-- Page Title -->
+        <div class="card page-title-box rounded-0">
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column gap-2">
+                <div class="flex-grow-1">
+                    <h4 class="font-18 fw-semibold mb-0">Dashboard</h4>
+                </div>
 
-            <div class="text-end">
-                <ol class="breadcrumb m-0 py-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Adminox</a></li>
-                    
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Apps</a></li>
-                    
-                    <li class="breadcrumb-item active">Calendar</li>
-                </ol>
+                <div class="text-end">
+                    <ol class="breadcrumb m-0 py-0">
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Adminox</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="card">
-        <div class="card-body">
-
-            <div class="row g-3">
-                <div class="col-xl-3">
-                    <button class="btn btn-primary w-100" id="btn-new-event">
-                        <i class="ti ti-plus me-2 font-22 align-middle"></i> Create New Event
-                    </button>
-
-                    <div id="external-events" class="mt-2">
-                        <p class="text-muted">Drag and drop your event or click in the calendar</p>
-                        <div class="external-event fc-event bg-success-subtle text-success" data-class="bg-success-subtle">
-                            <i class="ti ti-circle-filled me-2"></i>New Event Planning
-                        </div>
-                        <div class="external-event fc-event bg-info-subtle text-info" data-class="bg-info-subtle">
-                            <i class="ti ti-circle-filled me-2"></i>Meeting
-                        </div>
-                        <div class="external-event fc-event bg-warning-subtle text-warning" data-class="bg-warning-subtle">
-                            <i class="ti ti-circle-filled me-2"></i>Generating Reports
-                        </div>
-                        <div class="external-event fc-event bg-danger-subtle text-danger" data-class="bg-danger-subtle">
-                            <i class="ti ti-circle-filled me-2"></i>Create New theme
-                        </div>
-                    </div>
-
-                </div> <!-- end col-->
-
-                <div class="col-xl-9">
-                    <div id="calendar"></div>
-                </div><!-- end col -->
-            </div>
-            <!--end row-->
-        </div>
-    </div>
-
-    <!-- Add New Event MODAL -->
-    <div class="modal fade" id="event-modal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form class="needs-validation" name="event-form" id="forms-event" novalidate>
-                    <div class="modal-header p-3 border-bottom-0">
-                        <h5 class="modal-title" id="modal-title">
-                            Event
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body px-3 pb-3 pt-0">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label class="control-label form-label">Event
-                                        Name</label>
-                                    <input class="form-control" placeholder="Insert Event Name" type="text" name="title" id="event-title" required />
-                                    <div class="invalid-feedback">Please provide a valid event name</div>
-                                </div>
+        <!-- Stats Row -->
+        <div class="row">
+            <!-- Total Revenue -->
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div class="avatar-lg rounded-circle bg-primary widget-two-icon align-self-center">
+                                <i class="mdi mdi-currency-usd avatar-title font-30 text-white"></i>
                             </div>
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label class="control-label form-label">Category</label>
-                                    <select class="form-select" name="category" id="event-category" required>
-                                        <option value="bg-primary">Blue</option>
-                                        <option value="bg-secondary">Gray Dark</option>
-                                        <option value="bg-success">Green</option>
-                                        <option value="bg-info">Cyan</option>
-                                        <option value="bg-warning">Yellow</option>
-                                        <option value="bg-danger">Red</option>
-                                        <option value="bg-dark">Dark</option>
-                                    </select>
-                                    <div class="invalid-feedback">Please select a valid event category</div>
-                                </div>
+
+                            <div class="wigdet-two-content media-body text-end text-truncate">
+                                <p class="m-0 text-uppercase fw-medium text-truncate" title="Statistics">Total Revenue</p>
+                                <h3 class="fw-medium my-2">$ <span data-plugin="counterup">65,841</span></h3>
+                                <p class="m-0">Jan - Apr 2019</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="d-flex flex-wrap align-items-center gap-2">
-                            <button type="button" class="btn btn-danger" id="btn-delete-event">
-                                Delete
-                            </button>
+            <!-- Total Unique Visitors -->
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div class="avatar-lg rounded-circle bg-primary widget-two-icon align-self-center">
+                                <i class="mdi mdi-account-multiple avatar-title font-30 text-white"></i>
+                            </div>
 
-                            <button type="button" class="btn btn-light ms-auto" data-bs-dismiss="modal">
-                                Close
-                            </button>
-
-                            <button type="submit" class="btn btn-primary" id="btn-save-event">
-                                Save
-                            </button>
+                            <div class="wigdet-two-content media-body text-end text-truncate">
+                                <p class="m-0 text-uppercase fw-medium text-truncate" title="Statistics">Total Unique Visitors</p>
+                                <h3 class="fw-medium my-2"> <span data-plugin="counterup">26,521</span></h3>
+                                <p class="m-0">Jan - Apr 2019</p>
+                            </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
-            <!-- end modal-content-->
+
+            <!-- Number of Transactions -->
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div class="avatar-lg rounded-circle bg-primary widget-two-icon align-self-center">
+                                <i class="mdi mdi-crown avatar-title font-30 text-white"></i>
+                            </div>
+
+                            <div class="wigdet-two-content media-body text-end text-truncate">
+                                <p class="m-0 text-uppercase fw-medium text-truncate" title="Statistics">Number of Transactions</p>
+                                <h3 class="fw-medium my-2"><span data-plugin="counterup">7,842</span></h3>
+                                <p class="m-0">Jan - Apr 2019</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversation Rate -->
+            <div class="col-xl-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div class="avatar-lg rounded-circle bg-primary widget-two-icon align-self-center">
+                                <i class="mdi mdi-auto-fix  avatar-title font-30 text-white"></i>
+                            </div>
+
+                            <div class="wigdet-two-content media-body text-end text-truncate">
+                                <p class="m-0 text-uppercase fw-medium text-truncate" title="Statistics">Conversation Rate</p>
+                                <h3 class="fw-medium my-2"><span data-plugin="counterup">2.07</span>%</h3>
+                                <p class="m-0">Jan - Apr 2019</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- end modal dialog-->
+        <!-- end row -->
+
+        <!-- Revenue Comparison, Visitors Overview, Goal Completion -->
+        <div class="row">
+            <!-- Revenue Comparison -->
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="header-title">Revenue Comparison</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <h5 class="fw-normal text-muted">You have to pay</h5>
+                            <h3 class="mb-3 fw-semibold"><i class="mdi mdi-arrow-up-bold-hexagon-outline text-success"></i> 25643 <small>USD</small></h3>
+                        </div>
+
+                        <div class="chart-container" dir="ltr">
+                            <div class="" style="height:280px" id="platform_type_dates_donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visitors Overview -->
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="header-title">Visitors Overview</h4>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="text-center">
+                            <h5 class="fw-normal text-muted">You have to pay</h5>
+                            <h3 class="mb-3 fw-semibold"><i class="mdi mdi-arrow-down-bold-hexagon-outline text-danger"></i> 5623 <small>USD</small></h3>
+                        </div>
+
+                        <div class="chart-container" dir="ltr">
+                            <div class="" style="height:280px" id="user_type_bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goal Completion -->
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="header-title">Goal Completion</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <h5 class="fw-normal text-muted">You have to pay</h5>
+                            <h3 class="mb-3 fw-semibold"><i class="mdi mdi-arrow-up-bold-hexagon-outline text-success"></i> 12548 <small>USD</small></h3>
+                        </div>
+
+                        <div class="chart-container" dir="ltr">
+                            <div class="chart has-fixed-height" style="height:280px" id="page_views_today"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+
+        <!-- Recent Candidates, Unique Visitors, Transactions -->
+        <div class="row">
+            <!-- Recent Candidates -->
+            <div class="col-xl-6 col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="header-title">Recent Candidates</h4>
+                        <p class="card-subtitle">Your awesome text goes here.</p>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="table-responsive">
+                            <table class="table table-hover m-0 table-actions-bar">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <div class="btn-group dropdown">
+                                                <button type="button" class="btn btn-light btn-xs dropdown-toggle waves-effect waves-light drop-arrow-none" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="mdi mdi-chevron-down"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="#">Dropdown link</a>
+                                                    <a class="dropdown-item" href="#">Dropdown link</a>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th>Name</th>
+                                        <th>Location</th>
+                                        <th>Job Timing</th>
+                                        <th>Salary</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <img src="assets/images/users/avatar-2.jpg" alt="contact-img" title="contact-img" class="rounded-circle avatar-sm" />
+                                        </td>
+                                        <td>
+                                            <h5 class="m-0 fw-medium">Tomaslau</h5>
+                                        </td>
+                                        <td>
+                                            <i class="mdi mdi-map-marker text-primary"></i> New York
+                                        </td>
+                                        <td>
+                                            <i class="mdi mdi-clock-outline text-success"></i> Full Time
+                                        </td>
+                                        <td>
+                                            <i class="mdi mdi-currency-usd text-warning"></i> 3265
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-xs btn-light">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="assets/images/users/avatar-4.jpg" alt="contact-img" title="contact-img" class="rounded-circle avatar-sm" />
+                                        </td>
+                                        <td>
+                                            <h5 class="m-0 fw-medium">Chad Stein</h5>
+                                        </td>
+                                        <td>
+                                            <i class="mdi mdi-map-marker text-primary"></i> Paris
+                                        </td>
+                                        <td>
+                                            <i class="mdi mdi-clock-outline text-danger"></i> Part Time
+                                        </td>
+                                        <td>
+                                            <i class="mdi mdi-currency-usd text-warning"></i> 2560
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-xs btn-light">View</button>
+                                        </td>
+                                    </tr>
+                                    <!-- More rows can be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unique Visitors -->
+            <div class="col-xl-6 col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="header-title">Unique Visitors</h4>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="table-responsive">
+                            <table class="table table-hover m-0 table-actions-bar">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Location</th>
+                                        <th>Visits</th>
+                                        <th>Device</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <img src="assets/images/users/avatar-5.jpg" alt="contact-img" title="contact-img" class="rounded-circle avatar-sm" />
+                                        </td>
+                                        <td>
+                                            <h5 class="m-0 fw-medium">John Doe</h5>
+                                        </td>
+                                        <td>12</td>
+                                        <td>
+                                            <i class="mdi mdi-laptop text-success"></i>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-xs btn-light">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="assets/images/users/avatar-7.jpg" alt="contact-img" title="contact-img" class="rounded-circle avatar-sm" />
+                                        </td>
+                                        <td>
+                                            <h5 class="m-0 fw-medium">Jane Smith</h5>
+                                        </td>
+                                        <td>8</td>
+                                        <td>
+                                            <i class="mdi mdi-phone text-warning"></i>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-xs btn-light">View</button>
+                                        </td>
+                                    </tr>
+                                    <!-- More rows can be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <!-- end modal-->
-
-</div> <!-- container -->
-
 </div>
 @endsection

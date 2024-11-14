@@ -54,71 +54,6 @@
                 </button>
             </div>
 
-            <!-- Notification Dropdown -->
-            <div class="topbar-item">
-                <div class="dropdown">
-                    <button class="topbar-link dropdown-toggle drop-arrow-none position-relative" data-bs-toggle="dropdown" data-bs-offset="0,25" type="button" data-bs-auto-close="outside" aria-haspopup="false" aria-expanded="false">
-                        <i data-lucide="bell" class="font-22"></i>
-                        <span class="badge bg-pink rounded-circle noti-icon-badge">4</span>
-                    </button>
-
-                    <div class="dropdown-menu p-0 dropdown-menu-end dropdown-menu-lg" style="min-height: 300px;">
-                        <div class="p-2 border-bottom bg-primary">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h6 class="m-0 font-16 fw-medium text-white"> Notifications</h6>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="dropdown">
-                                        <a href="#" class="dropdown-toggle drop-arrow-none link-dark" data-bs-toggle="dropdown" data-bs-offset="0,15" aria-expanded="false">
-                                            <i class="mdi mdi-cog-outline font-22 align-middle text-white"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a href="javascript:void(0);" class="dropdown-item">Mark as Read</a>
-                                            <a href="javascript:void(0);" class="dropdown-item">Delete All</a>
-                                            <a href="javascript:void(0);" class="dropdown-item">Do not Disturb</a>
-                                            <a href="javascript:void(0);" class="dropdown-item">Other Settings</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="position-relative z-2" style="max-height: 300px;" data-simplebar>
-                            <!-- Notification Items -->
-                            <div class="dropdown-item notification-item py-2 text-wrap active" id="notification-1">
-                                <span class="d-flex align-items-center">
-                                    <span class="me-3 position-relative flex-shrink-0">
-                                        <div class="avatar avatar-md">
-                                            <span class="avatar-title bg-success rounded-circle">
-                                                <i class="mdi mdi-cog-outline font-20"></i>
-                                            </span>
-                                        </div>
-                                    </span>
-                                    <span class="flex-grow-1 text-muted">
-                                        <p class="fw-medium mb-0 text-dark">New settings</p>
-                                        <span class="font-12">There are new settings available</span>
-                                    </span>
-                                    <span class="notification-item-close">
-                                        <button type="button" class="btn btn-ghost-danger rounded-circle btn-sm btn-icon" data-dismissible="#notification-1">
-                                            <i class="mdi mdi-close font-16"></i>
-                                        </button>
-                                    </span>
-                                </span>
-                            </div>
-
-                            <!-- More Notifications... -->
-                            <!-- Similar notification items here... -->
-                        </div>
-
-                        <!-- View All Button -->
-                        <a href="javascript:void(0);" class="dropdown-item notification-item position-fixed z-2 bottom-0 text-center text-reset text-decoration-underline link-offset-2 fw-bold notify-item border-top border-light py-2">
-                            View All
-                        </a>
-                    </div>
-                </div>
-            </div>
-
             <!-- User Dropdown -->
             <div class="topbar-item nav-user">
                 <div class="dropdown">
@@ -180,12 +115,6 @@
                 </div>
             </div>
 
-            <!-- Button Trigger Customizer Offcanvas -->
-            <div class="topbar-item">
-                <button class="topbar-link" data-bs-toggle="offcanvas" data-bs-target="#theme-settings-offcanvas" type="button">
-                    <i data-lucide="settings" class="font-22"></i>
-                </button>
-            </div>
         </div>
     </div>
 </header>

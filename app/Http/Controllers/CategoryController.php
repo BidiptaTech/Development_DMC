@@ -10,6 +10,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\CommonHelper;
 
 class CategoryController extends Controller
 {
@@ -42,15 +43,18 @@ class CategoryController extends Controller
         $this->validate($request, [
             'name' => 'required|unique:roles,name',
             'category_type' => 'required',
-            
+            'icon' => 'required',
         ]);
+        $image = $request->file('icon');
+        $storage_file = CommonHelper::image_path('file_storage', $image);
         $role = Category::create([
             'name' => $request->input('name'),
             'category_type' => $request->input('category_type'),
             'status' => $request->input('category_status'),
+            'icon' => $storage_file['master_value'],
         ]);
         return redirect()->route('category.index')
-            ->with('failure', 'Category created successfully');
+            ->with('success', 'Category created successfully');
     }
 
     /*
@@ -69,9 +73,15 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = Category::where('id',$id)->first();
+        //image upload using helper
+        $image = $request->file('icon');
+        if($image){
+        $storage_file = CommonHelper::image_path('file_storage', $image);
+        }
         $category->name = $request->input('name');
         $category->category_type = $request->input('category_type');
         $category->status = $request->input('status');
+        $category->icon = $storage_file['master_value'] ?? $category->icon;
         $category->save();
 
         return redirect()->route('category.index')->with('success', 'Categories updated successfully.');
@@ -85,9 +95,9 @@ class CategoryController extends Controller
     {
         $facility = Facility::where('category_id',$id)->get();
 
-        if($facility == null){
+        if(count($facility) == 0){
             $delete =Category::where('id', $id)->delete();
-            return redirect()->route('Category.index')
+            return redirect()->route('category.index')
             ->with('success','Category deleted successfully');
         }
         else{
