@@ -1,99 +1,163 @@
 @extends('layouts.layout')
 
-@section('title', 'Validations')
+@section('title', 'Edit Hotel')
 @section('css')
-	
-@endsection 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.css" rel="stylesheet">
+@endsection
+
+@section('script')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.js"></script>
+@endsection
+
 @section('content')
-	<div class="d-flex justify-content-between align-items-center mb-3"
-		style="background-color: #C0C0C0; color: #333; padding: 20px; border-radius: 5px;">
-		<x-page-title title="Customer" pagetitle="Edit Customer" />
+<div class="page-content">
+    <div class="page-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12 col-md-10 col-sm-12">
+                <div class="card">
+                    <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Edit Hotel</h5>
+                            <a href="javascript:history.back()" class="btn btn-sm btn-outline-light">
+                                <i class="mdi mdi-arrow-left"></i> Back
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="hotelForm" method="POST" action="{{ route('hotels.update', $hotel->id) }}" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+
+                            <!-- Hotel Name -->
+                            <div class="mb-3">
+                                <label for="input35" class="form-label"><strong>Enter Hotel Name</strong></label>
+                                <input type="text" class="form-control" id="input35" name="name" value="{{ old('name', $hotel->name) }}" placeholder="Enter Hotel Name" required>
+                            </div>
+
+                            <!-- Category Type -->
+                            <div class="mb-3">
+                                <label for="category_type" class="form-label"><strong>Category Type</strong></label>
+                                <select id="category_type" name="category_type" class="form-control" required>
+                                    <option value="">Select Category Type</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}" {{ old('category_type', $hotel->category_type) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="mb-3">
+                                <label for="address" class="form-label"><strong>Address</strong></label>
+                                <input type="text" class="form-control" id="address" name="address" value="{{ old('address', $hotel->address) }}" placeholder="Enter Address">
+                            </div>
+
+                            <!-- City -->
+                            <div class="mb-3">
+                                <label for="city" class="form-label"><strong>City</strong></label>
+                                <input type="text" class="form-control" id="city" name="city" value="{{ old('city', $hotel->city) }}" placeholder="Enter City" required>
+                            </div>
+
+                            <!-- State -->
+                            <div class="mb-3">
+                                <label for="state" class="form-label"><strong>State</strong></label>
+                                <input type="text" class="form-control" id="state" name="state" value="{{ old('state', $hotel->state) }}" placeholder="Enter State" required>
+                            </div>
+
+                            <!-- Country -->
+                            <div class="mb-3">
+                                <label for="country" class="form-label"><strong>Country</strong></label>
+                                <input type="text" class="form-control" id="country" name="country" value="{{ old('country', $hotel->country) }}" placeholder="Enter Country" required>
+                            </div>
+
+                            <!-- Zip code -->
+                            <div class="mb-3">
+                                <label for="pincode" class="form-label"><strong>Zip Code</strong></label>
+                                <input type="number" class="form-control" id="pincode" name="pincode" value="{{ old('pincode', $hotel->pincode) }}" placeholder="Enter Zip Code" required>
+                            </div>
+
+                            <!-- Latitude and Longitude -->
+                            <div class="mb-3">
+                                <label for="latitude" class="form-label"><strong>Latitude</strong></label>
+                                <input type="text" class="form-control" id="latitude" name="latitude" value="{{ old('latitude', $hotel->latitude) }}" placeholder="Enter Latitude">
+                            </div>
+                            <div class="mb-3">
+                                <label for="longitude" class="form-label"><strong>Longitude</strong></label>
+                                <input type="text" class="form-control" id="longitude" name="longitude" value="{{ old('longitude', $hotel->longitude) }}" placeholder="Enter Longitude">
+                            </div>
+
+                            <!-- Main Image -->
+                            <div class="mb-3">
+                                <label for="main_image" class="form-label"><strong>Banner Image</strong></label>
+                                <input type="file" class="form-control" id="main_image" name="main_image">
+                                @if($hotel->main_image)
+                                    <img src="{{ asset('storage/'.$hotel->main_image) }}" alt="Hotel Image" style="width: 100px; height: auto; margin-top: 10px;">
+                                @endif
+                            </div>
+
+                            <!-- Check in and Check out time -->
+                            <div class="mb-3">
+                                <label for="check_in_time" class="form-label"><strong>Check in Time</strong></label>
+                                <input type="time" class="form-control" id="check_in_time" name="check_in_time" value="{{ old('check_in_time', $hotel->check_in_time) }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="check_out_time" class="form-label"><strong>Check out Time</strong></label>
+                                <input type="time" class="form-control" id="check_out_time" name="check_out_time" value="{{ old('check_out_time', $hotel->check_out_time) }}">
+                            </div>
+
+                            <!-- Additional Fields (Phone, Email, etc.) -->
+                            <div class="mb-3">
+                                <label for="hotel_owner_company_name" class="form-label"><strong>Hotel Owner Company Name</strong></label>
+                                <input type="text" class="form-control" id="hotel_owner_company_name" name="hotel_owner_company_name" value="{{ old('hotel_owner_company_name', $hotel->hotel_owner_company_name) }}" placeholder="Enter Hotel Owner Company Name">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phone" class="form-label"><strong>Phone</strong></label>
+                                <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone', $hotel->phone) }}" placeholder="Enter Phone">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label"><strong>Email</strong></label>
+                                <input type="text" class="form-control" id="email" name="email" value="{{ old('email', $hotel->email) }}" placeholder="Enter Email">
+                            </div>
+
+                            <!-- Additional Images -->
+                            <div class="mb-3">
+                                <label for="images" class="form-label"><strong>Additional Images</strong></label>
+                                <input type="file" class="form-control" id="images" name="images[]" multiple>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-3">
+                                <label for="description" class="form-label"><strong>Description</strong></label>
+                                <input type="text" class="form-control" id="description" name="description" value="{{ old('description', $hotel->description) }}" placeholder="Enter Description">
+                            </div>
+
+                            <!-- Policies -->
+                            <div class="mb-3">
+                                <label for="policies" class="form-label"><strong>Policies</strong></label>
+                                <input type="text" class="form-control" id="policies" name="policies" value="{{ old('policies', $hotel->policies) }}" placeholder="Enter Policies">
+                            </div>
+
+                            <!-- Status -->
+                            <div class="mb-3">
+                                <label for="status" class="form-label"><strong>Status</strong></label>
+                                <select name="hotel_status" class="form-control" required>
+                                    <option value="1" {{ old('hotel_status', $hotel->hotel_status) == 1 ? 'selected' : '' }}>Active</option>
+                                    <option value="0" {{ old('hotel_status', $hotel->hotel_status) == 0 ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Submit and Reset Buttons -->
+                            <div class="d-flex align-items-center gap-3">
+                                <button type="submit" class="btn btn-primary px-4">Update</button>
+                                <button type="reset" class="btn btn-secondary px-4">Reset</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 	</div>
-
-	<div class="row">
-		<div class="col-lg-12 mx-auto">
-			<div class="card">
-				<div class="card-header px-4 py-3">
-					<h5 class="mb-0">Edit Customer Details</h5>
-				</div>
-				<div class="card-body p-4">
-					<form id="jQueryValidationForm">
-						<div class="row mb-3">
-							<label for="input35" class="col-sm-3 col-form-label">Enter Your Name</label>
-							<div class="col-sm-9">
-								<input type="text" class="form-control" id="input35" name="yourname" placeholder="Enter Your Name">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label for="input36" class="col-sm-3 col-form-label">Phone No</label>
-							<div class="col-sm-9">
-								<input type="text" class="form-control" id="input36" name="phone" placeholder="Phone No">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label for="input37a" class="col-sm-3 col-form-label">Customername</label>
-							<div class="col-sm-9">
-								<input type="text" class="form-control" id="input37a" name="Customername" placeholder="Email Address">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label for="input37" class="col-sm-3 col-form-label">Email Address</label>
-							<div class="col-sm-9">
-								<input type="email" class="form-control" id="input37" name="email" placeholder="Email Address">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label for="input38a" class="col-sm-3 col-form-label">Choose Password</label>
-							<div class="col-sm-9">
-								<input type="password" class="form-control" id="input38a" name="password" placeholder="Choose Password">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label for="input38" class="col-sm-3 col-form-label">Confirm Password</label>
-							<div class="col-sm-9">
-								<input type="password" class="form-control" id="input38" name="confirm_password" placeholder="Confirm Password">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label for="input39" class="col-sm-3 col-form-label">Select Country</label>
-							<div class="col-sm-9">
-								<select class="form-select" id="input39" name="country">
-									<option selected disabled value>Choose...</option>
-									<option value="1">One</option>
-									<option value="2">Two</option>
-									<option value="3">Three</option>
-									</select>
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label for="input40" class="col-sm-3 col-form-label">Address</label>
-							<div class="col-sm-9">
-								<textarea class="form-control" id="input40" name="address" rows="3" placeholder="Address"></textarea>
-							</div>
-						</div>
-						<div class="row mb-3">
-							<label class="col-sm-3 col-form-label"></label>
-							<div class="col-sm-9">
-								<div class="form-check">
-									<input class="form-check-input" type="checkbox" id="input41" name="agree">
-									<label class="form-check-label" for="input41">Check me out</label>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<label class="col-sm-3 col-form-label"></label>
-							<div class="col-sm-9">
-								<div class="d-md-flex d-grid align-items-center gap-3">
-									<button type="submit" class="btn btn-primary px-4" name="submit2">Submit</button>
-									<button type="reset" class="btn btn-secondary px-4">Reset</button>
-
-								</div>
-							</div>
-						</div>
-					</form>
-
-				</div>
-			</div>
-		</div>
-	</div>
-@endsection  
+</div>
+@endsection
