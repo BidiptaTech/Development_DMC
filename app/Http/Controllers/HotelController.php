@@ -102,9 +102,78 @@ class HotelController extends Controller
     {
         $categories = Category::where('category_type', 1)->get();
         $hotel = Hotel::findOrFail($id);
-        dd($hotel);
         return view('hotel.edit-hotel', compact('categories', 'hotel'));
     }
+
+    /*
+    * Update Hotel details.
+    * Date 15-11-2024
+    */
+    public function update(Request $request, $id)
+    {
+        // Validate the input data
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'city' => 'required|string',
+            'pincode' => 'required|integer',
+            'category_type' => 'required',
+            'state' => 'required',
+            'country' => 'required',
+            'hotel_status' => 'required',
+        ]);
+
+        // Find the hotel by ID
+        $hotel = Hotel::findOrFail($id);
+
+        // Handle the main image upload (if exists)
+        $storage_file = $hotel->main_image; // Default to current image if no new one is uploaded
+        if ($request->hasFile('main_image')) {
+            $image = $request->file('main_image');
+            $storage_file = CommonHelper::image_path('file_storage', $image); // Assuming this returns the file path as a string
+        }
+
+        // Handle multiple image uploads for additional images (if exists)
+        $imagePaths = json_decode($hotel->images, true); // Existing images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = CommonHelper::image_path('hotel_images', $image); // Assuming this returns the file path as a string
+            }
+        }
+
+        // Update the hotel record in the database
+        $hotel->update([
+            'name' => $request->input('name'),
+            'address' => $request->input('address'),
+            'city' => $request->input('city'),
+            'cat_id' => $request->input('category_type'),
+            'state' => $request->input('state'),
+            'country' => $request->input('country'),
+            'zipcode' => $request->input('pincode'),
+            'latitude' => $request->input('latitude'),
+            'longitude' => $request->input('longitude'),
+            'main_image' => $storage_file, // Store the image path directly (as a string)
+            'check_in_time' => $request->input('check_in_time'),
+            'check_out_time' => $request->input('check_out_time'),
+            'hotel_owner_company_name' => $request->input('hotel_owner_company_name'),
+            'phone' => $request->input('phone'),
+            'email' => $request->input('email'),
+            'description' => $request->input('description'),
+            'policies' => $request->input('policies'),
+            'management_comp_name' => $request->input('management_comp_name'),
+            'status' => $request->input('hotel_status'),
+            'images' => json_encode($imagePaths), // Store the updated image paths as a JSON array
+            'is_complete' => 1,
+        ]);
+
+        // After updating the hotel, redirect based on the completion status
+        if ($hotel->is_complete == 1) {
+            return redirect()->route('hotels.contact', ['hotel' => $hotel->id])->with('success', 'Hotel updated successfully');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Something went wrong, please try again');
+        }
+    }
+
+
 
     /*
     * Soft Delete Hotels.

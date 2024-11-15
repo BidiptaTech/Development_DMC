@@ -155,7 +155,6 @@
                             <!-- Submit and Reset Buttons -->
                             <div class="d-flex align-items-center gap-3">
                                 <button type="submit" class="btn btn-primary px-4">Save and Next</button>
-                                <button type="reset" class="btn btn-secondary px-4">Reset</button>
                             </div>
                         </form>
                     </div>
