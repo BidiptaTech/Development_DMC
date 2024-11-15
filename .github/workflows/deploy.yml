@@ -32,10 +32,7 @@ jobs:
         env:
           SSH_PORT: 22  # Update to the correct SSH port if different
         run: |
-          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
-            cd /home/dmcdemo/public_html/backadm-dmc
-            git pull origin stagging
-            # php artisan config:cache
-            # php artisan route:cache
-            # php artisan migrate --force
-          EOF
+          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF' nawaj-tech
+            cd /path/to/public_html/backadm-dmc
+            git pull origin staging
+             
