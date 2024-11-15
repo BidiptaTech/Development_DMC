@@ -18,6 +18,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/hotel-details', 'App\Http\Controllers\Api\HotelController@details');
     Route::get('/facilities', 'App\Http\Controllers\Api\HotelController@facilities');
     Route::get('/category', 'App\Http\Controllers\Api\HotelController@category');
+    Route::get('/location', 'App\Http\Controllers\Api\HotelController@location');
+    Route::get('/details', 'App\Http\Controllers\Api\HotelController@hotelDetails');
 });
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

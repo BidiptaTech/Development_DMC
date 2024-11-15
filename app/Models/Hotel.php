@@ -15,6 +15,6 @@ class Hotel extends Model
 
     public function categories()
     {
-        return $this->hasMany(RoomRate::class, 'hotel_id');
+        return $this->hasMany(Category::class, 'hotel_id');
     }
 }
