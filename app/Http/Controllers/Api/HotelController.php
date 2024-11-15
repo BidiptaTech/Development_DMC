@@ -226,31 +226,7 @@ class HotelController extends Controller
         ]);
     }
 
-    public function hotelDetails(Request $request){
-        $hotel = Hotel::where('id', $request->query('id'))->get();
-        if ($hotel->isEmpty()) {
-            return response()->json(["message"=>"Hotel details not found"]);
-        }
-
-        $hotelDetails = Category::where('id', $hotel->cat_id)
-                ->with('facilities') // Load related facilities
-                ->get();
-        
-        $data = $hotelDetails->map(function ($detail) {
-            return [
-                'id'=> $detail->id,
-                'name'=> $detail->name,
-                'amenities'=> $detail->facilities->map(function($facility){
-                    return [
-                        $facility->name => $facility->name,
-                    ];
-                }),
-
-            ];
-        });
-    }
-
-
+    
 
 
 }

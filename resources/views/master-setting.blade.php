@@ -16,11 +16,7 @@
         </div>
     </div>
 
-@if ($message = Session::get('success'))
-<div class="alert alert-success">
-    <p>{{ $message }}</p>
-</div>
-@endif
+    <x-alert />
 
 <div class="row">
     <div class="col-lg-12 mx-auto">

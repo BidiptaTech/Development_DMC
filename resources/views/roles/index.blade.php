@@ -21,6 +21,7 @@
           </div>
       </div>
     </div>
+    <x-alert />
         <!-- Roles Table -->
         <div class="card">
             <div class="card-body">

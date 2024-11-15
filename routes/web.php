@@ -69,8 +69,5 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('add-money/{id}', [UserController::class, 'add_money'])->name('add-money');
     });
 
-    
-
-
 });
     
