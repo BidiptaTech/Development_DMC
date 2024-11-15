@@ -27,7 +27,7 @@ class FeaturesController extends Controller
 
     /*
     * Status update of Features.
-    * Date 08-10-2024
+    * Date 15-11-2024
     */
     public function statusUpdate(Request $request)
     {
