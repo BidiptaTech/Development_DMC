@@ -25,7 +25,5 @@ jobs:
           ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
             cd /path/to/public_html/backadm-dmc
             git pull origin staging
-            php artisan config:cache
-            php artisan route:cache
-            php artisan migrate --force
+            
           EOF
