@@ -1,6 +1,6 @@
 @extends('layouts.layout')
-
 @section('content')
+
 <!-- Start of the form -->
 <div class="page-content">
     <div class="page-container">
@@ -15,6 +15,7 @@
                                 <i class="mdi mdi-arrow-left"></i> Back
                             </a>
                         </div>
+                        
                     </div>
                     <div class="card-body p-4">
                         <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data">

@@ -29,8 +29,8 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Location</th>
-                                <th>Base Price</th>
+                                <th>Phone</th>
+                                <th>Email</th>
                                 <th>Image</th>
                                 <th>Action</th>
                             </tr>
@@ -39,10 +39,10 @@
                             @foreach ($hotels as $hotel)
                                 <tr>
                                     <td>{{ $hotel->name }}</td>
-                                    <td>{{ $hotel->location }}</td>
-                                    <td>{{ $hotel->base_price }}</td>
+                                    <td>{{ $hotel->phone }}</td>
+                                    <td>{{ $hotel->email }}</td>
                                     <td>
-                                        <img src="{{ asset($hotel->image) }}" alt="Hotel Image" style="width: 100px; height: auto;">
+                                        <img src="{{ $hotel->main_image }}" alt="Hotel Image" style="width: 50px; height: auto;">
                                     </td>
                                     <td>
                                         <a href="{{ route('hotels.edit', $hotel->id) }}" class="btn btn-warning btn-sm" style="width: 36px; height: 36px; padding: 0;">
