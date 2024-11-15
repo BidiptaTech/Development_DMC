@@ -21,6 +21,7 @@
                 </div>
             </div>
         </div>
+        <x-alert />
         <hr>
         
         <div class="card">

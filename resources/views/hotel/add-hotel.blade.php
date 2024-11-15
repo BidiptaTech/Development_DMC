@@ -9,14 +9,14 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.js"></script>
 @endsection
-
+<x-alert />
 @section('content')
 <div class="page-content">
     <div class="page-container">
         <div class="row justify-content-center">
-            <div class="col-lg-12 col-md-10 col-sm-12">
+            <div class="col-lg-11 col-md-10 col-sm-12">
                 <div class="card">
-                    <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white;">
+                    <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white; margin-top: 10px !important;">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Add New Hotel</h5>
                             <a href="javascript:history.back()" class="btn btn-sm btn-outline-light">
@@ -30,7 +30,7 @@
 
                             <!-- Hotel Name -->
                             <div class="mb-3">
-                                <label for="input35" class="form-label"><strong>Enter Hotel Name</strong></label>
+                                <label for="input35" class="form-label"><strong>Hotel Name</strong></label>
                                 <input type="text" class="form-control" id="input35" name="name" placeholder="Enter Hotel Name" required>
                             </div>
 
@@ -110,13 +110,18 @@
                             </div>
 
                             <div class="mb-3">
+                                <label for="management_comp_name" class="form-label"><strong>Management Company Name</strong></label>
+                                <input type="text" class="form-control" id="management_comp_name" name="management_comp_name" placeholder="Enter Management Company Name">
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="phone" class="form-label"><strong>Phone</strong></label>
-                                <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone">
+                                <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="email" class="form-label"><strong>Email</strong></label>
-                                <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email">
+                                <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email" required>
                             </div>
 
                             <!-- Additional Images -->
