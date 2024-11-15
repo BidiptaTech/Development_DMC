@@ -14,28 +14,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Set up SSH for deployment using GitHub Secrets
-      - name: Set up SSH for deployment
+      # Step 2: Set up SSH for deployment
+      - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
 
-      # Step 3: Test SSH connection to the server
+      # Step 3: Test SSH Connection
       - name: Test SSH Connection
-        run: |
-          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} "echo Connection Successful"
         env:
           SSH_PORT: 22  # Replace with the correct SSH port if different
+        run: |
+          ssh -v -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} "echo Connection Successful"
 
-      # Step 4: Deploy Laravel to backadm-dmc (Stagging)
+      # Step 4: Deploy Laravel to backadm-dmc
       - name: Deploy Laravel to backadm-dmc
         env:
-          SSH_PORT: 22  # Update to the correct SSH port if different
+          SSH_PORT: 22  # Replace with the correct SSH port if different
         run: |
           ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
-            cd /home/dmcdemo/public_html/backadm-dmc
-            git pull origin stagging
-            php artisan config:cache
-            php artisan route:cache
-            php artisan migrate --force
+            echo "Navigating to the deployment directory..."
+            cd /home/dmcdemo/public_html/backadm-dmc || exit 1
+            
+            echo "Pulling the latest code from the stagging branch..."
+            git pull origin stagging || exit 1
+            
+            echo "Running Laravel optimization commands..."
+            php artisan config:cache || exit 1
+            php artisan route:cache || exit 1
+            php artisan migrate --force || exit 1
+            
+            echo "Deployment successful!"
           EOF
