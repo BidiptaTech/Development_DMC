@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('v1')->group(function () {
+    Route::get('/hotels', 'App\Http\Controllers\Api\HotelController@index');
+    Route::get('/hotel-details', 'App\Http\Controllers\Api\HotelController@details');
+    Route::get('/facilities', 'App\Http\Controllers\Api\HotelController@facilities');
+    Route::get('/category', 'App\Http\Controllers\Api\HotelController@category');
 });
+
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });

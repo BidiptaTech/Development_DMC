@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id'); 
+            $table->integer('credited_from'); 
             $table->enum('type', ['commission', 'transaction'])->comment('Transaction types: commission, transaction'); 
             $table->decimal('amount', 10, 2); // Specify precision and scale for decimal
             $table->timestamps();

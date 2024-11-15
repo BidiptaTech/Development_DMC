@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wallet', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('balance'); 
+            $table->string('name');
+            $table->enum('category_type', ['1', '2'])->comment('1=>hotel, 2=>facility');
+            $table->integer('status')->default(1);
             $table->timestamps();
-            $table->unsignedBigInteger('user_id'); // Change to unsignedBigInteger for foreign key
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->timestamp('deleted_at')->nullable();
         });
-        
     }
 
     /**
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wallet');
+        Schema::dropIfExists('categories');
     }
 };
