@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
-use DB;
-use Auth;
+use \Illuminate\Support\Facades\Auth;
+use \Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
