@@ -27,7 +27,7 @@ jobs:
         env:
           SSH_PORT: 22  # Replace with the correct SSH port if different
 
-      # Step 4: Deploy Laravel to backadm-dmc (Staging)
+      # Step 4: Deploy Laravel to backadm-dmc (Stagging)
       - name: Deploy Laravel to backadm-dmc
         env:
           SSH_PORT: 22  # Update to the correct SSH port if different
