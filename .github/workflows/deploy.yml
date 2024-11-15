@@ -1,0 +1,43 @@
+name: Deploy Laravel to backadm-dmc (Stagging)
+
+on:
+  push:
+    branches:
+      - stagging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up SSH for deployment using GitHub Secrets
+      - name: Set up SSH for deployment
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+
+      # Step 3: Test SSH connection to the server
+      - name: Test SSH Connection
+        run: |
+          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} "echo Connection Successful"
+        env:
+          SSH_PORT: 22  # Update if using a non-standard SSH port
+
+      # Step 4: Deploy Laravel and Run Artisan Commands
+      - name: Deploy Laravel to backadm-dmc
+        env:
+          SSH_PORT: 22
+        run: |
+          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
+            cd /home/dmcdemo/public_html/backadm-dmc
+            # Pull the latest code from the repository
+            git pull origin stagging
+            # Run PHP Artisan commands
+            php artisan config:cache
+            php artisan route:cache
+            php artisan migrate --force
+          EOF

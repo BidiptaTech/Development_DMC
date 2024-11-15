@@ -6,6 +6,10 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FeaturesController;
 use App\Http\Controllers\MasterSettingController;
+use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\HotelController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FacilityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +35,11 @@ Route::group(['middleware' => ['auth']], function () {
         Artisan::call('route:clear');
         return '<center><h1>All Cleared</h1></center>';
     });
+    Route::get('/admin/dashboard', [UserController::class, 'adminlogin'])->name('admin.dashboard');
     Route::get('transaction', [UserController::class, 'transaction'])->name('transaction');
+    Route::get('/admin/login-as/{userId}', [UserController::class, 'loginAsUser'])->name('admin.loginAsUser');
+    //currency exchange rate
+    Route::get('/exchange-rate', [CurrencyController::class, 'showExchangeRate']);
 
     // authentication check for admin
     Route::group(['middleware' => ['admin']], function () {
@@ -40,6 +48,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/update-status', [FeaturesController::class, 'statusupdate']);
         Route::get('master-setting', [MasterSettingController::class, 'index'])->name('master-setting');
         Route::post('store-setting', [MasterSettingController::class, 'store'])->name('store-setting');
+        Route::resource('category', CategoryController::class);
+        Route::resource('facility', FacilityController::class);
+        // Route::resource('room_type', RoomtypeController::class);
+        
+        Route::resource('hotels', HotelController::class);
+        Route::get('/hotels/{hotel}/contact', [HotelController::class, 'hotelcontacts'])->name('hotels.contact');
+        Route::post('/updatecontacts', [HotelController::class, 'updatecontacts'])->name('hotels.createcontacts');
+        
+        Route::get('/hotels/{hotel}/room', [HotelController::class, 'hotelrooms'])->name('hotels.room');
+        Route::post('storeroom', [HotelController::class, 'storeroom'])->name('storeroom');
+        Route::get('/editcontacts/{hotel}', [HotelController::class, 'editcontacts'])->name('contactdetails.edit');
     });
 
     // authentication check for manager (route can access admin & manager)
@@ -50,9 +69,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('{routeName}/{name?}', [HomeController::class, 'pageView']);
         Route::post('add-money/{id}', [UserController::class, 'add_money'])->name('add-money');
     });
-
-    
-
 
 });
     

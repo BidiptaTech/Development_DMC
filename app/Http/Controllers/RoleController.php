@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
-use DB;
-use Auth;
+use \Illuminate\Support\Facades\Auth;
+use \Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
@@ -74,14 +74,14 @@ class RoleController extends Controller
         $this->validate($request, [
             'name' => 'required|unique:roles,name',
             'user_type' => 'required',
-            'permission' => 'required|array',
+            // 'permission' => 'required|array',
         ]);
         $role = Role::create([
             'name' => $request->input('name'),
             'user_type' => $request->input('user_type'),
         ]);
-        $permissions = Permission::whereIn('id', $request->input('permission'))->pluck('name')->toArray();
-        $role->syncPermissions($permissions);
+        // $permissions = Permission::whereIn('id', $request->input('permission'))->pluck('name')->toArray();
+        // $role->syncPermissions($permissions);
         return redirect()->route('roles.index')
             ->with('success', 'Role created successfully');
     }

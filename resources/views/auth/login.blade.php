@@ -6,37 +6,20 @@
 
 
 <div class="mx-3 mx-lg-0">
-
+  @php
+      $logoSetting = \App\Helpers\CommonHelper::masterSettingsName('logo');
+      $fileStorage = \App\Helpers\CommonHelper::masterSettingsName('file_storage')['master_value'] ?? 'local'; // Default to local if not set
+  @endphp
   <div class="card my-5 col-xl-9 col-xxl-8 mx-auto rounded-4 overflow-hidden p-4">
     <div class="row g-4">
       <div class="col-lg-6 d-flex">
         <div class="card-body">
-          <img src="{{ URL::asset('build/images/logo1.png') }}" class="mb-4" width="145" alt="">
+          <img src="{{ $logoSetting['master_value'] }}" class="mb-4" width="145" alt="">
           <h4 class="fw-bold">Get Started Now</h4>
           <p class="mb-0">Enter your credentials to login your account</p>
-          <div class="row gy-2 gx-0 my-4">
-            <div class="col-12 col-lg-12">
-              <button class="btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100">
-                <span class="auth-social-login"><img src="{{ URL::asset('build/images/apps/05.png') }}" width="20" class="me-2" alt="">Google</span>
-              </button>
-            </div>
-            <div class="col-12 col-lg-12">
-              <button class="btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100">
-                <span class="auth-social-login"><img src="{{ URL::asset('build/images/apps/17.png') }}" width="20" class="me-2" alt="">Facebook</span>
-              </button>
-            </div>
-            <div class="col-12 col-lg-12">
-              <button class="btn btn-filter py-2 px-4 font-text1 fw-bold d-flex align-items-center justify-content-center w-100">
-                <span class="auth-social-login"><img src="{{ URL::asset('build/images/apps/18.png') }}" width="20" class="me-2" alt="">LinkedIn</span>
-              </button>
-            </div>
-          </div>
+          
 
-          <div class="separator">
-            <div class="line"></div>
-            <p class="mb-0 fw-bold">OR</p>
-            <div class="line"></div>
-          </div>
+         
           <div class="form-body mt-4">
             <form class="row g-3" method="POST" action="{{ route('login') }}">
             @csrf
@@ -89,7 +72,10 @@
       </div>
       <div class="col-lg-6 d-lg-flex d-none">
         <div class="p-3 rounded-4 w-100 d-flex align-items-center justify-content-center bg-light">
-          <img src="{{ URL::asset('build/images/auth/login1.png') }}" class="img-fluid" alt="">
+        
+        <div class="logo-icon">
+            <img src="{{ $logoSetting['master_value'] }}" class="img-fluid" alt="">
+        </div>
         </div>
       </div>
 

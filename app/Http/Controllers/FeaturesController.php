@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Auth;
-use DB;
+use \Illuminate\Support\Facades\Auth;
+use \Illuminate\Support\Facades\DB;
 class FeaturesController extends Controller
 {
     /*
@@ -27,7 +27,7 @@ class FeaturesController extends Controller
 
     /*
     * Status update of Features.
-    * Date 08-10-2024
+    * Date 15-11-2024
     */
     public function statusUpdate(Request $request)
     {
