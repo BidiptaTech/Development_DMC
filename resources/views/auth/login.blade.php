@@ -6,12 +6,15 @@
 
 
 <div class="mx-3 mx-lg-0">
-
+  @php
+      $logoSetting = \App\Helpers\CommonHelper::masterSettingsName('logo');
+      $fileStorage = \App\Helpers\CommonHelper::masterSettingsName('file_storage')['master_value'] ?? 'local'; // Default to local if not set
+  @endphp
   <div class="card my-5 col-xl-9 col-xxl-8 mx-auto rounded-4 overflow-hidden p-4">
     <div class="row g-4">
       <div class="col-lg-6 d-flex">
         <div class="card-body">
-          <img src="{{ URL::asset('build/images/auth/Coactive-Logo.jpg') }}" class="mb-4" width="145" alt="">
+          <img src="{{ $logoSetting['master_value'] }}" class="mb-4" width="145" alt="">
           <h4 class="fw-bold">Get Started Now</h4>
           <p class="mb-0">Enter your credentials to login your account</p>
           
@@ -69,7 +72,10 @@
       </div>
       <div class="col-lg-6 d-lg-flex d-none">
         <div class="p-3 rounded-4 w-100 d-flex align-items-center justify-content-center bg-light">
-          <img src="{{ URL::asset('build/images/auth/Coactive-Logo.jpg') }}" class="img-fluid" alt="">
+        
+        <div class="logo-icon">
+            <img src="{{ $logoSetting['master_value'] }}" class="img-fluid" alt="">
+        </div>
         </div>
       </div>
 
