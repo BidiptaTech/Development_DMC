@@ -1,4 +1,4 @@
-name: Deploy Laravel to backadm-dmc (Staging)
+name: Deploy Laravel to backadm-dmc (Stagging)
 
 on:
   push:
@@ -10,20 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Step 2: Set up SSH for deployment using GitHub Secrets
       - name: Set up SSH for deployment
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
 
+      # Step 3: Test SSH connection to the server
+      - name: Test SSH Connection
+        run: |
+          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} "echo Connection Successful"
+        env:
+          SSH_PORT: 22  # Replace with the correct SSH port if different
+
+      # Step 4: Deploy Laravel to backadm-dmc (Stagging)
       - name: Deploy Laravel to backadm-dmc
         env:
-          SSH_PORT: 22  # Replace with your InMotion SSH port if different
+          SSH_PORT: 22  # Update to the correct SSH port if different
         run: |
-          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
+          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF' nawaj-tech
             cd /path/to/public_html/backadm-dmc
             git pull origin staging
-            
-          EOF
+             
