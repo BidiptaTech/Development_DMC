@@ -24,6 +24,7 @@
                             </a>
                         </div>
                     </div>
+                    <x-alert />
                     <div class="card-body p-4">
                         <form id="hotelForm" method="POST" action="{{ route('storeroom') }}" enctype="multipart/form-data">
                             @csrf

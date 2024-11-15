@@ -35,8 +35,8 @@ class HotelController extends Controller
                     'id' => $hotel->id,
                     'hotel_name' => $hotel->name,
                     'location' => $hotel->location,
-                    'star' => $hotel->star,
-                    'base_price' => $hotel->base_price,
+                    'rating' => $hotel->rating,
+                    'price' => 5000,
                     'image' => $hotel->image ?? '',
                     'status' => $hotel->status,
                 ];
@@ -123,7 +123,6 @@ class HotelController extends Controller
                 'category' => $room->category ?? '',
                 'room_type' => $room_type,
                 'rate_type' => $days,
-                
                 'kids_below_6' => $room->kids_below_6 ?? '',
                 'kids_above_6' => $room->kids_above_6 ?? '',
                 'breakfast_kids_below_6' => $room->breakfast_kids_below_6 ?? '',
@@ -191,7 +190,43 @@ class HotelController extends Controller
         return response()->json($category_facilities);
     }
 
+    public function location(Request $request)
+    {
+        $location = $request->query('location');
+        
+        // Get hotels with their related categories and facilities
+        $hotels = Hotel::where('location', $location)->get();
 
+
+        if ($hotels->isEmpty()) {
+            return response()->json([
+                'message' => 'No hotel with this location:  found'
+            ], 404);
+        }
+
+        $hotelDetails = $hotels->map(function ($hotel) {   
+            $categories = Category::where('id', $hotel->cat_id)->get();
+            return [
+                'id'=> $hotel->id,
+                'name'=> $hotel->name,
+                'location'=> $hotel->location,
+                'rating'=> 5,
+                'amenities' =>$categories->map(function ($category){
+                    return [
+                        $category->name => $category->name,
+                    ];
+                }),
+                'pricePerNight'=> 5000,
+            ];
+        });
+    
+        return response()->json([
+            'success' => true,
+            'data' => $hotelDetails,
+        ]);
+    }
+
+    
 
 
 }
