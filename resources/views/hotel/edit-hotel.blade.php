@@ -41,7 +41,7 @@
                                 <select id="category_type" name="category_type" class="form-control" required>
                                     <option value="">Select Category Type</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_type', $hotel->category_type) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                        <option value="{{ $category->id }}" {{ old('category_type', $hotel->cat_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -73,7 +73,7 @@
                             <!-- Zip code -->
                             <div class="mb-3">
                                 <label for="pincode" class="form-label"><strong>Zip Code</strong></label>
-                                <input type="number" class="form-control" id="pincode" name="pincode" value="{{ old('pincode', $hotel->pincode) }}" placeholder="Enter Zip Code" required>
+                                <input type="number" class="form-control" id="pincode" name="pincode" value="{{ old('zipcode', $hotel->zipcode) }}" placeholder="Enter Zip Code" required>
                             </div>
 
                             <!-- Latitude and Longitude -->
@@ -91,7 +91,7 @@
                                 <label for="main_image" class="form-label"><strong>Banner Image</strong></label>
                                 <input type="file" class="form-control" id="main_image" name="main_image">
                                 @if($hotel->main_image)
-                                    <img src="{{ asset('storage/'.$hotel->main_image) }}" alt="Hotel Image" style="width: 100px; height: auto; margin-top: 10px;">
+                                    <img src="{{ $hotel->main_image }}" alt="Hotel Image" style="width: 100px; height: auto; margin-top: 10px;">
                                 @endif
                             </div>
 
@@ -143,15 +143,14 @@
                             <div class="mb-3">
                                 <label for="status" class="form-label"><strong>Status</strong></label>
                                 <select name="hotel_status" class="form-control" required>
-                                    <option value="1" {{ old('hotel_status', $hotel->hotel_status) == 1 ? 'selected' : '' }}>Active</option>
-                                    <option value="0" {{ old('hotel_status', $hotel->hotel_status) == 0 ? 'selected' : '' }}>Inactive</option>
+                                    <option value="1" {{ old('status', $hotel->status) == 1 ? 'selected' : '' }}>Active</option>
+                                    <option value="0" {{ old('status', $hotel->status) == 0 ? 'selected' : '' }}>Inactive</option>
                                 </select>
                             </div>
 
                             <!-- Submit and Reset Buttons -->
                             <div class="d-flex align-items-center gap-3">
-                                <button type="submit" class="btn btn-primary px-4">Update</button>
-                                <button type="reset" class="btn btn-secondary px-4">Reset</button>
+                                <button type="submit" class="btn btn-primary px-4">Update and Next</button>
                             </div>
                         </form>
                     </div>

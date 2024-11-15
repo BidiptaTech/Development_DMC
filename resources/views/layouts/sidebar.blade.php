@@ -2,18 +2,18 @@
 <div class="sidenav-menu">
 
     <!-- Brand Logo -->
-    <a href="index.html" class="logo">
-        <span class="logo-light">
-            <span class="logo-lg"><img src="{{ asset('assets/images/logo-light.png') }}" alt="logo"></span>
-            <span class="logo-sm"><img src="{{ asset('assets/images/logo-sm.png') }}" alt="small logo"></span>
-        </span>
-
-        <span class="logo-dark">
-            <span class="logo-lg"><img src="{{ asset('assets/images/logo-dark.png') }}" alt="dark logo"></span>
-            <span class="logo-sm"><img src="{{ asset('assets/images/logo-sm.png') }}" alt="small logo"></span>
-        </span>
+    <a href="{{ url('/') }}" class="logo d-flex align-items-center">
+        @php
+            $logoSetting = \App\Helpers\CommonHelper::masterSettingsName('logo');
+            $fileStorage = \App\Helpers\CommonHelper::masterSettingsName('file_storage')['master_value'] ?? 'local'; // Default to local if not set
+        @endphp
+        <div class="logo-icon">
+            <img src="{{ $logoSetting['master_value'] }}" class="logo-img" alt="Logo" style="width: 80px; height: auto;">
+        </div>
+        <div class="logo-name flex-grow-1">
+            <h5 class="mb-0 text-white">{{ \App\Helpers\CommonHelper::masterSettingsName('name')['master_value'] }}</h5>
+        </div>
     </a>
-
 
     <!-- Sidebar Hover Menu Toggle Button -->
     <button class="button-sm-hover">
@@ -41,7 +41,7 @@
             <li class="side-nav-title">Hotels</li>
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#sidebarPagesError" aria-expanded="false" aria-controls="sidebarPagesError" class="side-nav-link">
-                    <span class="menu-icon"><i data-lucide="shield-x"></i></span>
+                    <span class="menu-icon"><i data-lucide="building" class="icon"></i>
                     <span class="menu-text"> All Hotels </span>
                     <span class="menu-arrow"></span>
                 </a>
@@ -72,7 +72,7 @@
             <li class="side-nav-title">User</li>
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#sidebarAppsEmail" aria-expanded="false" aria-controls="sidebarAppsEmail" class="side-nav-link">
-                    <span class="menu-icon"><i data-lucide="mail"></i></span>
+                    <span class="menu-icon"><i data-lucide="user"></i></span>
                     <span class="menu-text"> Users </span>
                     <span class="menu-arrow"></span>
                 </a>
@@ -98,7 +98,12 @@
                                 <span class="menu-text">Features</span>
                             </a>
                         </li>  
-                        @endif                     
+                        @endif  
+                        <li class="side-nav-item">
+                            <a href="{{ route('room_type') }}" class="side-nav-link">
+                                <span class="menu-text">Room Type</span>
+                            </a>
+                        </li>                   
                     </ul>
                 </div>
             </li>
@@ -107,7 +112,7 @@
             <li class="side-nav-title">Settings</li>
             <li class="side-nav-item">
                 <a href="{{ route('master-setting') }}" class="side-nav-link">
-                    <span class="menu-icon"><i data-lucide="calendar-days"></i></span>
+                    <span class="menu-icon"><i data-lucide="settings"></i></span>
                     <span class="menu-text"> Master Settings </span>
                 </a>
             </li>

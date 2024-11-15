@@ -50,6 +50,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('store-setting', [MasterSettingController::class, 'store'])->name('store-setting');
         Route::resource('category', CategoryController::class);
         Route::resource('facility', FacilityController::class);
+        Route::resource('room_type', RoomtypeController::class);
         
         Route::resource('hotels', HotelController::class);
         Route::get('/hotels/{hotel}/contact', [HotelController::class, 'hotelcontacts'])->name('hotels.contact');
