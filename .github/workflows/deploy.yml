@@ -1,4 +1,4 @@
-name: Deploy Laravel to backadm-dmc (Staging)
+name: Deploy Laravel to backadm-dmc (Stagging)
 
 on:
   push:
