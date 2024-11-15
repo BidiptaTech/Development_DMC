@@ -18,12 +18,12 @@ jobs:
       - name: Set up SSH for deployment
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY_VPS }}
+          ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
 
       # Step 3: Test SSH connection to the server
       - name: Test SSH Connection
         run: |
-          ssh -v -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} "echo Connection Successful"
+          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} "echo Connection Successful"
         env:
           SSH_PORT: 22  # Update if using a non-standard SSH port
 
