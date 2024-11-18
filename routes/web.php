@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\RoomsController;
+use App\Http\Controllers\RoomtypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
@@ -50,6 +52,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('store-setting', [MasterSettingController::class, 'store'])->name('store-setting');
         Route::resource('category', CategoryController::class);
         Route::resource('facility', FacilityController::class);
+        Route::resource('roomType', RoomtypeController::class);
+        Route::get('/hotels/search', [RoomtypeController::class, 'search'])->name('hotels.search');
+
+        
         // Route::resource('room_type', RoomtypeController::class);
         
         Route::resource('hotels', HotelController::class);
