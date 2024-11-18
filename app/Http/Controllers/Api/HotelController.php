@@ -194,7 +194,7 @@ class HotelController extends Controller
     {
         $location = $request->query('location');
         
-        // Get hotels with their related categories and facilities
+        // Get hotels with location requested
         $hotels = Hotel::where('location', $location)->get();
 
 
@@ -226,7 +226,7 @@ class HotelController extends Controller
         ]);
     }
 
-    
+
 
 
 }
