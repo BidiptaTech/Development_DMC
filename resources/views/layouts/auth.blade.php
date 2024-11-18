@@ -4,8 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--favicon-->
-    <link rel="icon" href="{{ URL::asset('build/images/favicon-32x32.png') }}" type="image/png">
-    <title>@yield('title') | Laravel & Bootstrap 5 Admin Dashboard Template</title>
+    @php
+    $faviconSetting = \App\Helpers\CommonHelper::masterSettingsName('favicon');
+    $fileStorage = \App\Helpers\CommonHelper::masterSettingsName('file_storage')['master_value'] ?? 'local'; // Default to local if not set
+    @endphp
+    <link rel="icon" href="{{ $faviconSetting['master_value'] }}" type="image/png">
+    <title>@yield('title') | Coactive Dmc</title>
 
     @yield('css')
 

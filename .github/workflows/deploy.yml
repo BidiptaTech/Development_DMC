@@ -18,7 +18,7 @@ jobs:
       - name: Set up SSH for deployment
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY_VPS }}
 
       # Step 3: Test SSH connection to the server
       - name: Test SSH Connection
@@ -35,7 +35,9 @@ jobs:
           ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
             cd /home/dmcdemo/public_html/backadm-dmc
             git pull origin stagging
+
             php artisan config:cache
             php artisan route:cache
             php artisan migrate --force
           EOF
+
