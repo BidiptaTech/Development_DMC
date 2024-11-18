@@ -243,7 +243,8 @@ class HotelController extends Controller
     */
     public function hotelrooms($hotelId){
         $hotel = Hotel::findOrFail($hotelId);
-        return view('hotel.rooms', compact('hotel'));
+        $rooms = Room::where('hotel_id', $hotelId)->get();
+        return view('hotel.rooms', compact('hotel','rooms'));
     }
 
     /*
@@ -268,7 +269,7 @@ class HotelController extends Controller
         $room->cancellation_type = $request->cancellation_type;
         $room->cancellation_charge = $request->charge ?? 0; 
         $room->status = $request->hotel_status;
-        $room->room_type_id = $request->room_type;
+        // $room->room_type_id = $request->room_type;
         $room->is_complete = 1;
 
         if ($room->save()) {
@@ -280,7 +281,57 @@ class HotelController extends Controller
         }
     }
 
+    /*
+    * Edit Room Details .
+    * Date 18-11-2024
+    */
+    public function editroom(Request $request, $id){
+        $room = Room::findOrFail($id);
+        return view('hotel.editroom', compact('room'));
+    }
 
+    /*
+    * Update Room Details .
+    * Date 18-11-2024
+    */
+    public function updateroom(Request $request)
+    {
+        $request->validate([
+            'room_number' => 'required',
+            'max_capacity' => 'required',
+            'available' => 'required',
+            'cancellation_type' => 'required',
+            'hotel_status' => 'required',
+        ]);
+        $id = $request->id;
+        $room = Room::findOrFail($id);
+        // Update the room details
+        $room->hotel_id = $room->hotel_id;
+        $room->room_number = $request->room_number;
+        $room->max_capacity = $request->max_capacity;
+        $room->is_available = $request->available;
+        $room->cancellation_type = $request->cancellation_type;
+        $room->cancellation_charge = $request->charge ?? 0;
+        $room->status = $request->hotel_status;
+        // $room->room_type_id = $request->room_type;
+        $room->is_complete = 1;
 
+        // Save the updated room
+        if ($room->save()) {
+            return redirect()->route('hotels.room', ['hotel' => $room->hotel_id])
+                ->with('success', 'Room details updated successfully!');
+        } else {
+            return redirect()->back()
+                ->with('error', 'An error occurred while updating the room details.');
+        }   
+    }
+
+    /*
+    * Delete Room Details .
+    * Date 18-11-2024
+    */
+    public function deleteroom($id){
+        dd($id);
+    }
     
 }
