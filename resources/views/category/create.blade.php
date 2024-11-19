@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white;">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Add New Role</h5>
+                            <h5 class="mb-0">Add New Category</h5>
                             <!-- Back Button -->
                             <a href="javascript:history.back()" class="btn btn-sm btn-outline-light">
                                 <i class="mdi mdi-arrow-left"></i> Back
