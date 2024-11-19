@@ -1,4 +1,4 @@
-name: Deploy Laravel to backadm-dmc (Stagging)
+name: Deploy Laravel to backadm-dmc
 
 on:
   push:
@@ -10,34 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Set up SSH for deployment using GitHub Secrets
       - name: Set up SSH for deployment
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY_VPS }}
 
-      # Step 3: Test SSH connection to the server
-      - name: Test SSH Connection
+      - name: Deploy Laravel
         run: |
-          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} "echo Connection Successful"
-        env:
-          SSH_PORT: 22  # Replace with the correct SSH port if different
-
-      # Step 4: Deploy Laravel to backadm-dmc (Stagging)
-      - name: Deploy Laravel to backadm-dmc
-        env:
-          SSH_PORT: 22  # Update to the correct SSH port if different
-        run: |
-          ssh -p $SSH_PORT -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
+          ssh -p 22 -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
             cd /home/dmcdemo/public_html/backadm-dmc
             git pull origin stagging
 
+
+            # Install dependencies
+            composer install --no-dev --optimize-autoloader
+
+            # Set permissions
+            chmod -R 755 /home/dmcdemo/public_html/backadm-dmc
+            chmod -R 775 /home/dmcdemo/public_html/backadm-dmc/storage
+            chmod -R 775 /home/dmcdemo/public_html/backadm-dmc/bootstrap/cache
+
+            # Run artisan commands
+
             php artisan config:cache
             php artisan route:cache
+            php artisan view:cache
             php artisan migrate --force
           EOF
-
