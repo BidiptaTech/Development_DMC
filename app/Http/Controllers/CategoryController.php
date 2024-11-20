@@ -72,6 +72,7 @@ class CategoryController extends Controller
     */
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $category = Category::where('id',$id)->first();
         //image upload using helper
         $image = $request->file('icon');
@@ -80,7 +81,7 @@ class CategoryController extends Controller
         }
         $category->name = $request->input('name');
         $category->category_type = $request->input('category_type');
-        $category->status = $request->input('status');
+        $category->status = $request->input('category_status');
         $category->icon = $storage_file['master_value'] ?? $category->icon;
         $category->save();
 
@@ -107,4 +108,5 @@ class CategoryController extends Controller
         
     
     }
+
 }

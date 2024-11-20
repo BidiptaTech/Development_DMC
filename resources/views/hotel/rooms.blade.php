@@ -62,14 +62,14 @@
                         <label for="charge" class="form-label"><strong>Cancellation Charge</strong></label>
                         <input type="number" class="form-control" name="charge" id="charge" placeholder="Enter Cancellation Charge">
                      </div>
-                     <div class="mb-3">
-                        <label for="status" class="form-label"><strong>Status</strong></label>
-                        <select name="hotel_status" class="form-control" required>
-                           <option value="">Select Status</option>
-                           <option value="1">Active</option>
-                           <option value="0">Inactive</option>
-                        </select>
+
+                     <div class="form-check form-switch">
+                        <label for="hotel_status" class="form-label"><strong>Status</strong></label>
+                        <input type="hidden" name="hotel_status" value="0">
+                        <input class="form-check-input" name="hotel_status" type="checkbox" id="hotel_status" value="1">
+                        <label class="form-check-label"></label>
                      </div>
+
                      <!-- Submit and Previous Buttons -->
                      <div class="d-flex align-items-center gap-3">
                         <a href="{{ route('contactdetails.edit', $hotel->id) }}" class="btn btn-secondary px-4" id="previousButton">Previous</a>

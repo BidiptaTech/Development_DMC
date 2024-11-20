@@ -63,13 +63,13 @@
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="form-check form-switch">
                                 <label for="category_status" class="form-label"><strong>Status</strong></label>
-                                <select name="status" class="form-control" required>
-                                    <option value="">Status</option>
-                                    <option value="1" {{ $category->status == 1 ? 'selected' : '' }}>Active</option>
-                                    <option value="0" {{ $category->status == 0 ? 'selected' : '' }}>Inactive</option>
-                                </select>
+                                <input type="hidden" name="category_status" value="0">
+                                <input class="form-check-input" name="category_status" 
+                                    @if($category->status == 1) checked @endif 
+                                    type="checkbox" id="category_status" value="1">
+                                <label class="form-check-label"></label>
                             </div>
 
                             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
