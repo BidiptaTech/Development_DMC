@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('room_type', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('room_id');
             $table->decimal('breakfast', 8, 2)->nullable(); 
             $table->decimal('lunch', 8, 2)->nullable(); 
             $table->decimal('dinner', 8, 2)->nullable(); 
@@ -23,7 +22,6 @@ return new class extends Migration
             $table->integer('inserted_by_user');
             $table->text('description')->nullable(); 
             $table->integer('status');
-            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade'); 
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
         });

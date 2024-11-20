@@ -39,13 +39,13 @@
 
                         <!-- Room Type -->
                         <div class="mb-3">
-                            <label for="status" class="form-label"><strong>Room Type</strong></label>
-                            <select name="room_type" class="form-control" required>
-                                <option value="">Select One</option>
-                                <option value="1" {{ $room->room_type == 1 ? 'selected' : '' }}>Single Room</option>
-                                <option value="2" {{ $room->room_type == 2 ? 'selected' : '' }}>Double Room</option>
-                                <option value="3" {{ $room->room_type == 3 ? 'selected' : '' }}>Delux Room</option>
-                                <option value="4" {{ $room->room_type == 4 ? 'selected' : '' }}>Premium Room</option>
+                            <label for="room_type" class="form-label"><strong>Room Type</strong></label>
+                            <select name="room_type" id="room_type" class="form-control" required>
+                                @foreach($roomtypes as $roomtype)
+                                    <option value="{{ $roomtype->id }}" {{ $room->room_type_id == $roomtype->id ? 'selected' : '' }}>
+                                        {{ $roomtype->name }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -66,20 +66,19 @@
                             </select>
                         </div>
 
-                        <!-- Cancellation Type -->
                         <div class="mb-3">
-                            <label for="status" class="form-label"><strong>Cancellation Type</strong></label>
-                            <select name="cancellation_type" class="form-control" required>
+                            <label for="cancellation_type" class="form-label"><strong>Cancellation Type</strong></label>
+                            <select name="cancellation_type" class="form-control" id="cancellation_type" required onchange="toggleChargeField()">
                                 <option value="">Select One</option>
                                 <option value="1" {{ $room->cancellation_type == 1 ? 'selected' : '' }}>Free</option>
                                 <option value="0" {{ $room->cancellation_type == 0 ? 'selected' : '' }}>Chargable</option>
                             </select>
                         </div>
 
-                        <!-- Cancellation Charge -->
-                        <div class="mb-3">
-                            <label for="input35" class="form-label"><strong>Cancellation Charge</strong></label>
-                            <input type="number" class="form-control" name="charge" placeholder="Enter Cancellation Charge" value="{{ $room->cancellation_charge }}">
+                        <!-- Cancellation Charge (initially hidden) -->
+                        <div class="mb-3" id="cancellation_charge_field" style="{{ $room->cancellation_type == 0 ? 'display: block;' : 'display: none;' }}">
+                            <label for="charge" class="form-label"><strong>Cancellation Charge</strong></label>
+                            <input type="number" class="form-control" name="charge" id="charge" placeholder="Enter Cancellation Charge" value="{{ $room->cancellation_charge }}">
                         </div>
 
                         <!-- Status -->
@@ -103,4 +102,21 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    function toggleChargeField() {
+        var cancellationType = document.getElementById('cancellation_type').value;
+        var chargeField = document.getElementById('cancellation_charge_field');
+        if (cancellationType == "0") { // If Chargable is selected
+            chargeField.style.display = "block"; // Show the charge field
+        } else {
+            chargeField.style.display = "none"; // Hide the charge field
+        }
+    }
+    window.onload = function() {
+        toggleChargeField();
+    };
+</script>
 @endsection
