@@ -38,11 +38,11 @@ jobs:
             # composer install --no-dev --optimize-autoloader
 
             # Ensure correct folder permissions
-            find /home/dmcdemo/public_html/backadm-dmc -type f -exec chmod 644 {} \; # Files
-            find /home/dmcdemo/public_html/backadm-dmc -type d -exec chmod 755 {} \; # Directories
-            chmod -R 777 /home/dmcdemo/public_html/backadm-dmc/storage
-            chmod -R 777 /home/dmcdemo/public_html/backadm-dmc/cache
-            chmod -R 777 /home/dmcdemo/public_html/backadm-dmc/bootstrap/cache
+            # find /home/dmcdemo/public_html/backadm-dmc -type f -exec chmod 644 {} \; # Files
+            # find /home/dmcdemo/public_html/backadm-dmc -type d -exec chmod 755 {} \; # Directories
+            # chmod -R 777 /home/dmcdemo/public_html/backadm-dmc/storage
+            # chmod -R 777 /home/dmcdemo/public_html/backadm-dmc/cache
+            # chmod -R 777 /home/dmcdemo/public_html/backadm-dmc/bootstrap/cache
 
             # Create symlink for storage
             # php artisan storage:link
