@@ -58,7 +58,7 @@ class CategoryController extends Controller
     }
 
     /*
-    * Show the form for editing the specified role.
+    * Show the form fors editing the specified role.
     * Date 07-10-2024
     */
     public function edit($id)
