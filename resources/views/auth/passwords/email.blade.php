@@ -9,12 +9,15 @@
   <!--authentication-->
 
 <div class="mx-3 mx-lg-0">
-
+  @php
+      $logoSetting = \App\Helpers\CommonHelper::masterSettingsName('logo');
+      $fileStorage = \App\Helpers\CommonHelper::masterSettingsName('file_storage')['master_value'] ?? 'local'; // Default to local if not set
+  @endphp
   <div class="card my-5 col-xl-9 col-xxl-8 mx-auto rounded-4 overflow-hidden p-4">
     <div class="row g-4 align-items-center">
       <div class="col-lg-6 d-flex">
         <div class="card-body">
-          <img src="{{ URL::asset('build/images/logo1.png') }}" class="mb-4" width="145" alt="">
+          <img src="{{ $logoSetting['master_value'] }}" class="mb-4" width="145" alt="">
           <h4 class="fw-bold">Forgot Password?</h4>
           <p class="mb-0">Enter your registered email ID to reset the password</p>
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Facility;
 use Illuminate\Http\Request;
 use App\Models\Hotel;
 use App\Models\Room;
@@ -31,7 +32,8 @@ class HotelController extends Controller
     public function create()
     {
         $categories = Category::where('category_type', 1)->get();
-        return view('hotel.add-hotel', compact('categories'));
+        $facilities = Facility::all();
+        return view('hotel.add-hotel', compact('categories', 'facilities'));
     }
 
     /*
@@ -40,6 +42,8 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
+
+        
         $validatedData = $request->validate([
             'name' => 'required|string',
             'city' => 'required|string',
@@ -47,7 +51,8 @@ class HotelController extends Controller
             'category_type' => 'required',
             'state' => 'required',
             'country' => 'required', 
-            'hotel_status' => 'required', 
+            'hotel_status' => 'required',
+            'facilities' => 'required|array', 
         ]);
 
         $imagePath = null;
@@ -85,6 +90,7 @@ class HotelController extends Controller
             'management_comp_name' => $request->input('management_comp_name'),
             'status' => $request->input('hotel_status'),
             'images' => json_encode($imagePaths),
+            'facilities' => json_encode($request->facilities),
             'is_complete' => 1,
         ]);
         

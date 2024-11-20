@@ -7,14 +7,16 @@ use App\Models\Category;
 use App\Models\Facility;
 use App\Models\Hotel;
 use App\Models\Room;
+use App\Models\RoomType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RoomtypeController extends Controller
 {
     //Render Index page of Room Type (roomType/roomsType.blade.php)
     public function index(Request $request)
     {
-        $rooms = Room::all();
+        $rooms = RoomType::orderBy('created_at', 'desc')->get();
 
         return view('roomType.roomsType',compact('rooms'));
     }
@@ -29,41 +31,71 @@ class RoomtypeController extends Controller
     //Handle Store Function Of New Room Type Details
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'hotelUniqueId' => 'required',
-            'roomType' => 'required',
+        
+        // dd($request->all());
+        $validatedData = $this->validate($request, [
+            
+            'roomType' => 'required|string',
             'breakfast' => 'required',
             'lunch' => 'required',
             'dinner' => 'required',
             'extra_bed' => 'required',
-            'facilities' => 'required',
-            'status_type' => 'required',
-            'icon' => 'required',
+            'facilities' => 'required|array',
+            'room_status' => 'required',
+            'description' => 'required|string',
+            
         ]);
-        $image = $request->file('icon');
-        $storage_file = CommonHelper::image_path('file_storage', $image);
-        $role = Category::create([
-            'name' => $request->input('name'),
-            'category_type' => $request->input('category_type'),
-            'status' => $request->input('category_status'),
-            'icon' => $storage_file['master_value'],
+        
+        $userId = Auth::id(); 
+        $roomType = RoomType::create([
+            'name' => $request->roomType, // Save the room type name
+            'breakfast' => $request->breakfast,
+            'lunch' => $request->lunch,
+            'dinner' => $request->dinner,
+            'extra_bed' => $request->extra_bed,
+            'facilities' => json_encode($request->facilities),
+            'inserted_by_user' => $userId,
+            'description' => $request->description,
+            'status' => $request->room_status,
+            'hotel_id'=> $request->hotel_id,
         ]);
-        return redirect()->route('category.index')
+        return redirect()->route('roomType.index')
             ->with('success', 'Category created successfully');
+    }
+
+    public function edit($id)
+    {
+        $roomType = RoomType::where('id',$id)->first();
+        $hotel = Hotel::where('id',$roomType)->first();
+        return view('roomType.edit-roomsType', compact('roomType'));
     }
 
     //Send Selected hotel facilities through AJAX Call
     public function getHotelFacilities($hotelId)
     {
-        $facilities = Facility::where('hotel_id', $hotelId)->get();
+        $hotel = Hotel::findOrFail($hotelId);
+        if(!$hotel){
+            return response()->json(['error'=> 'Hotel not found']) ;
+        }
 
-        if ($facilities->isEmpty()) {
+        if (empty(json_decode($hotel->facilities, true))) {
             return response()->json(['success' => false, 'facilities' => []], 404);
+        }
+
+        $facilityNames = []; // Initialize an empty array
+
+        $facilityIds = json_decode($hotel->facilities, true); // Decode JSON string into array
+
+        foreach ($facilityIds as $facilityId) {
+            $facility = Facility::find($facilityId); // Use find for cleaner code
+            if ($facility) {
+                $facilityNames[] = $facility->name; // Add the facility name to the array
+            }
         }
 
         return response()->json([
             'success' => true,
-            'facilities' => $facilities,
+            'facilities' => $facilityNames,
         ]);
     }
 
