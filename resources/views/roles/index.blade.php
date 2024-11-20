@@ -105,7 +105,7 @@
     <script src="{{ URL::asset('build/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ URL::asset('build/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
     
-    <script>
+    <script>    
         // Initialize DataTable
         $(document).ready(function() {
             $('#example2').DataTable({

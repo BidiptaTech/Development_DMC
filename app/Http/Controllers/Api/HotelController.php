@@ -194,8 +194,8 @@ class HotelController extends Controller
     {
         $location = $request->query('location');
         
-        // Get hotels with their related categories and facilities
-        $hotels = Hotel::where('location', $location)->get();
+        // Get hotels with location requested
+        $hotels = Hotel::where('city', $location)->get();
 
 
         if ($hotels->isEmpty()) {
@@ -209,7 +209,7 @@ class HotelController extends Controller
             return [
                 'id'=> $hotel->id,
                 'name'=> $hotel->name,
-                'location'=> $hotel->location,
+                'location'=> $hotel->city,
                 'rating'=> 5,
                 'amenities' =>$categories->map(function ($category){
                     return [
@@ -226,7 +226,7 @@ class HotelController extends Controller
         ]);
     }
 
-    
+
 
 
 }

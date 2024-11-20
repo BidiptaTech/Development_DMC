@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Facility;
 use Illuminate\Http\Request;
 use App\Models\Hotel;
 use App\Models\Room;
 use App\Models\Setting;
 use App\Models\Category;
+use App\Models\RoomType;
 use App\Helpers\CommonHelper;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,7 +32,8 @@ class HotelController extends Controller
     public function create()
     {
         $categories = Category::where('category_type', 1)->get();
-        return view('hotel.add-hotel', compact('categories'));
+        $facilities = Facility::all();
+        return view('hotel.add-hotel', compact('categories', 'facilities'));
     }
 
     /*
@@ -39,6 +42,8 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
+
+        
         $validatedData = $request->validate([
             'name' => 'required|string',
             'city' => 'required|string',
@@ -46,7 +51,8 @@ class HotelController extends Controller
             'category_type' => 'required',
             'state' => 'required',
             'country' => 'required', 
-            'hotel_status' => 'required', 
+            'hotel_status' => 'required',
+            'facilities' => 'required|array', 
         ]);
 
         $imagePath = null;
@@ -84,6 +90,7 @@ class HotelController extends Controller
             'management_comp_name' => $request->input('management_comp_name'),
             'status' => $request->input('hotel_status'),
             'images' => json_encode($imagePaths),
+            'facilities' => json_encode($request->facilities),
             'is_complete' => 1,
         ]);
         
@@ -173,8 +180,6 @@ class HotelController extends Controller
         }
     }
 
-
-
     /*
     * Soft Delete Hotels.
     * Date 05-11-2024
@@ -243,7 +248,9 @@ class HotelController extends Controller
     */
     public function hotelrooms($hotelId){
         $hotel = Hotel::findOrFail($hotelId);
-        return view('hotel.rooms', compact('hotel'));
+        $roomtypes = RoomType::where('status', 1)->get();
+        $rooms = Room::where('hotel_id', $hotelId)->get();
+        return view('hotel.rooms', compact('hotel','rooms','roomtypes'));
     }
 
     /*
@@ -280,7 +287,66 @@ class HotelController extends Controller
         }
     }
 
+    /*
+    * Edit Room Details .
+    * Date 18-11-2024
+    */
+    public function editroom(Request $request, $id){
+        $room = Room::findOrFail($id);
+        $roomtypes = RoomType::where('status', 1)->get();
+        return view('hotel.editroom', compact('room','roomtypes'));
+    }
 
+    /*
+    * Update Room Details .
+    * Date 18-11-2024
+    */
+    public function updateroom(Request $request)
+    {
+        $request->validate([
+            'room_number' => 'required',
+            'max_capacity' => 'required',
+            'available' => 'required',
+            'cancellation_type' => 'required',
+            'hotel_status' => 'required',
+        ]);
+        $id = $request->id;
+        $room = Room::findOrFail($id);
+        // Update the room details
+        $room->hotel_id = $room->hotel_id;
+        $room->room_number = $request->room_number;
+        $room->max_capacity = $request->max_capacity;
+        $room->is_available = $request->available;
+        $room->cancellation_type = $request->cancellation_type;
+        $room->cancellation_charge = $request->charge ?? 0;
+        $room->status = $request->hotel_status;
+        $room->room_type_id = $request->room_type;
+        $room->is_complete = 1;
 
+        // Save the updated room
+        if ($room->save()) {
+            return redirect()->route('hotels.room', ['hotel' => $room->hotel_id])
+                ->with('success', 'Room details updated successfully!');
+        } else {
+            return redirect()->back()
+                ->with('error', 'An error occurred while updating the room details.');
+        }   
+    }
+
+    /*
+    * Delete Room Details .
+    * Date 18-11-2024
+    */
+    public function deleteroom($id){
+        $room = Room::where('id', $id)->first();
+        $delete =Room::where('id', $id)->delete();
+        if ($delete) {
+            return redirect()->route('hotels.room', ['hotel' => $room->hotel_id])
+                ->with('success', 'Room details deleted successfully!');
+        } else {
+            return redirect()->back()
+                ->with('error', 'An error occurred while updating the room details.');
+        }  
+    }
     
 }
