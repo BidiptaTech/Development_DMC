@@ -54,6 +54,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('facility', FacilityController::class);
         Route::resource('roomType', RoomtypeController::class);
         Route::get('/hotels/search', [RoomtypeController::class, 'search'])->name('hotels.search');
+        Route::get('/hotels/{hotelId}/facilities', [RoomtypeController::class, 'getHotelFacilities']);
 
         
         // Route::resource('room_type', RoomtypeController::class);
