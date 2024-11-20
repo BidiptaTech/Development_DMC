@@ -21,58 +21,46 @@
                 </div>
             </div>
             <x-alert />
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="example2" class="table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Chargeable</th>
-                                    <th>Comment</th>
-                                    <th>Status</th>
-                                    <th width="280px">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($facilities as $facility)
-                                    <tr>
-                                        <td>{{ $facility->name }}</td>
-                                        <td>
-                                            @if($facility->is_chargeable == 1)
-                                                Yes
-                                            @else
-                                                No
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ $facility->chargable_comment }}
-                                        </td>
-                                        <td>
-                                            @if($facility->status == 1)
-                                                Active
-                                            @else
-                                                Inactive
-                                            @endif
-                                        </td>
-                                        
-                                        <td>
-                                            <a href="{{ route('facility.edit', $facility->id) }}" class="btn btn-warning btn-sm" style="width: 36px; height: 36px; padding: 0;">
-                                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff">
-                                                    <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
-                                                </svg>
-                                            </a>
-                                            <button type="button" class="btn btn-danger btn-sm" style="width: 36px; height: 36px; padding: 0;" data-toggle="modal" data-target="#deleteModal" onclick="setDeleteForm('{{ route('facility.destroy', $facility->id) }}')">
-                                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff">
-                                                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
-                                                </svg>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+            <div class="container mt-4">
+                <div class="row">
+                    @foreach($facilities as $facility)
+                    <div class="col-md-2 col-sm-4 col-6 mb-3">
+                        <div class="card position-relative" style="border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f8f9fa; height: 60px;">
+                            <div class="position-absolute" style="top: -8px; right: -8px; display: flex; gap: 5px;">
+                                <a href="{{ route('facility.edit', $facility->id) }}" 
+                                    class="btn btn-outline-primary btn-sm" 
+                                    title="Edit"
+                                    style="border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 10px; border: 1px solid #007bff;"
+                                >
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                
+                                <!-- Delete Icon -->
+                                <button 
+                                    class="btn btn-danger btn-sm" 
+                                    title="Delete"
+                                    data-toggle="modal" data-target="#deleteModal" onclick="setDeleteForm('{{ route('facility.destroy', $facility->id) }}')"
+                                    style="border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 10px; border: 1px solid #dc3545;"
+                                >
+                                    &times;
+                                </button>
+                            </div>
+
+                            <!-- Feature Name and Icon -->
+                            <div class="card-body d-flex justify-content-between align-items-center text-center" style="padding: 5px;">
+                                <!-- Feature Icon -->
+                                <div class="d-flex justify-content-center align-items-center" style="flex-grow: 1;">
+                                    <img src="{{ $facility->icon }}" alt="Facility Icon" style="height: 30px; object-fit: cover; border-radius: 5px;">
+                                </div>
+
+                                <!-- Feature Name -->
+                                <h6 class="card-title text-dark" style="font-size: 10px; font-weight: bold; margin: 0; flex-grow: 2;">
+                                    {{ $facility->name }}
+                                </h6>
+                            </div>
+                        </div>
                     </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -98,7 +86,6 @@
                 </div>
             </div>
             <!-- End of Modal -->
-        </div>
     </div>
 @endsection
 

@@ -51,13 +51,11 @@
                            @endforelse
                         </select>
                      </div>
-                     <div class="mb-3">
-                        <label for="status" class="form-label"><strong>Status</strong></label>
-                        <select name="facility_status" class="form-control" required>
-                           <option value="">Select Status</option>
-                           <option value="1">Active</option>
-                           <option value="0">Inactive</option>
-                        </select>
+                     <div class="form-check form-switch">
+                        <label for="facility_status" class="form-label"><strong>Status</strong></label>
+                        <input type="hidden" name="facility_status" value="0">
+                        <input class="form-check-input" name="facility_status" type="checkbox" id="facility_status" value="1">
+                        <label class="form-check-label"></label>
                      </div>
                      <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                         <button type="submit" class="btn btn-primary">Submit</button>

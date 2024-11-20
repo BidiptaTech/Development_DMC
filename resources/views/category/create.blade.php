@@ -40,13 +40,11 @@
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="form-check form-switch">
                                 <label for="category_status" class="form-label"><strong>Status</strong></label>
-                                <select id="category_status" name="category_status" class="form-control" required>
-                                    <option value="">Select Status</option>
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                </select>
+                                <input type="hidden" name="category_status" value="0">
+                                <input class="form-check-input" name="category_status" type="checkbox" id="category_status" value="1">
+                                <label class="form-check-label"></label>
                             </div>
                             
                             <div class="col-xs-12 col-sm-12 col-md-12 text-center">

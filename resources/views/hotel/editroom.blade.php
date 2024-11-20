@@ -82,13 +82,13 @@
                         </div>
 
                         <!-- Status -->
-                        <div class="mb-3">
-                            <label for="status" class="form-label"><strong>Status</strong></label>
-                            <select name="hotel_status" class="form-control" required>
-                                <option value="">Select Status</option>
-                                <option value="1" {{ $room->status == 1 ? 'selected' : '' }}>Active</option>
-                                <option value="0" {{ $room->status == 0 ? 'selected' : '' }}>Inactive</option>
-                            </select>
+                        <div class="form-check form-switch">
+                            <label for="hotel_status" class="form-label"><strong>Status</strong></label>
+                            <input type="hidden" name="hotel_status" value="0">
+                            <input class="form-check-input" name="hotel_status" 
+                                @if($room->status == 1) checked @endif 
+                                type="checkbox" id="hotel_status" value="1">
+                            <label class="form-check-label"></label>
                         </div>
 
                         <!-- Submit Button -->

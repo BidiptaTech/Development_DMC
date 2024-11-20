@@ -1,5 +1,6 @@
 @extends('layouts.layout')
 @section('css')
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
     <link href="{{ URL::asset('build/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
 @endsection 
 
@@ -32,7 +33,7 @@
                                     <td>{{ $f->name }}</td>
                                     <td>
                                         <!-- Button to open modal -->
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#featureModal{{ $f->id }}">
+                                        <button type="button" class="btn btn-blue" data-bs-toggle="modal" data-bs-target="#featureModal{{ $f->id }}">
                                             View Roles
                                         </button>
                                     </td>
@@ -83,13 +84,11 @@
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('scripts')  
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
     function checkStatus(checkbox, id) {

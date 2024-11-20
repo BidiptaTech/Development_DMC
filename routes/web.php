@@ -47,7 +47,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['admin']], function () {
         Route::get('/features', [FeaturesController::class, 'index'])->name('features'); 
         Route::post('/save-feature-roles/{id}', [FeaturesController::class, 'saveFeatureRoles'])->name('save-feature-roles');
-        Route::post('/update-status', [FeaturesController::class, 'statusupdate']);
+        Route::post('/update-status', [FeaturesController::class, 'statusUpdate']);
         Route::get('master-setting', [MasterSettingController::class, 'index'])->name('master-setting');
         Route::post('store-setting', [MasterSettingController::class, 'store'])->name('store-setting');
         Route::resource('category', CategoryController::class);

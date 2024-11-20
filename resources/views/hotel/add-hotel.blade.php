@@ -142,15 +142,7 @@
                                 <input type="text" class="form-control" id="policies" name="policies" placeholder="Enter Policies">
                             </div>
 
-                            <!-- Status -->
-                            <div class="mb-3">
-                                <label for="status" class="form-label"><strong>Status</strong></label>
-                                <select name="hotel_status" class="form-control" required>
-                                    <option value="">Select Status</option>
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                </select>
-                            </div>
+                            
 
                             <!-- Facilities Selection (loaded dynamically) -->
                             <div class="mb-3">
@@ -175,6 +167,14 @@
                                     @endforelse
                                     
                                 </div>
+                            </div>
+
+                            
+                            <div class="form-check form-switch">
+                                <label for="hotel_status" class="form-label"><strong>Status</strong></label>
+                                <input type="hidden" name="hotel_status" value="0">
+                                <input class="form-check-input" name="hotel_status" type="checkbox" id="hotel_status" value="1">
+                                <label class="form-check-label"></label>
                             </div>
 
                             <!-- Submit and Reset Buttons -->
