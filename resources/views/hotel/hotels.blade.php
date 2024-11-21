@@ -13,7 +13,7 @@
         <div class="card page-title-box rounded-0">
             <div class="d-flex justify-content-between align-items-center flex-column flex-sm-row gap-2">
                 <div class="flex-grow-1">
-                    <h4 class="font-18 fw-semibold mb-0">All Hotels</h4>
+                    <h4 class="font-18 fw-semibold mb-0">Hotels</h4>
                 </div>
                 <!-- Add Role Button Row -->
                 <div class="mt-3 mt-sm-0">
