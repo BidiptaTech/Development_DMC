@@ -34,7 +34,7 @@
                                 <th>Dinner</th>
                                 <th>Extra Bed</th>
                                 <th>Facilities</th>
-                                <th>Inserted By</th>
+                                
                                 <th>Description</th>
                                 <th>Action</th>
                             </tr>
@@ -43,10 +43,46 @@
                             @foreach ($rooms as $roomType)
                                 <tr>
                                     <td>{{ $roomType->name }}</td>
-                                    <td>{{ $roomType->breakfast }}</td>
-                                    <td>{{ $roomType->lunch }}</td>
-                                    <td>{{ $roomType->dinner }}</td>
-                                    <td>{{$roomType->extra_bed}}</td>
+                                    <!-- Breakfast Toggle -->
+                                    <td>
+                                        <button class="btn btn-link toggle-icon" data-id="{{ $roomType->id }}" data-field="breakfast" data-value="{{ $roomType->breakfast }}">
+                                            @if ($roomType->breakfast == 1)
+                                                <i class="fas fa-toggle-on text-success" style="font-size: 24px;"></i>
+                                            @else
+                                                <i class="fas fa-toggle-off text-danger" style="font-size: 24px;"></i>
+                                            @endif
+                                        </button>
+                                    </td>
+                                    <!-- Lunch Toggle -->
+                                    <td>
+                                        <button class="btn btn-link toggle-icon" data-id="{{ $roomType->id }}" data-field="lunch" data-value="{{ $roomType->lunch }}">
+                                            @if ($roomType->lunch == 1)
+                                                <i class="fas fa-toggle-on text-success" style="font-size: 24px;"></i>
+                                            @else
+                                                <i class="fas fa-toggle-off text-danger" style="font-size: 24px;"></i>
+                                            @endif
+                                        </button>
+                                    </td>
+                                    <!-- Dinner Toggle -->
+                                    <td>
+                                        <button class="btn btn-link toggle-icon" data-id="{{ $roomType->id }}" data-field="dinner" data-value="{{ $roomType->dinner }}">
+                                            @if ($roomType->dinner == 1)
+                                                <i class="fas fa-toggle-on text-success" style="font-size: 24px;"></i>
+                                            @else
+                                                <i class="fas fa-toggle-off text-danger" style="font-size: 24px;"></i>
+                                            @endif
+                                        </button>
+                                    </td>
+                                    <!-- Extra Bed Toggle -->
+                                    <td>
+                                        <button class="btn btn-link toggle-icon" data-id="{{ $roomType->id }}" data-field="extra_bed" data-value="{{ $roomType->extra_bed }}">
+                                            @if ($roomType->extra_bed == 1)
+                                                <i class="fas fa-toggle-on text-success" style="font-size: 24px;"></i>
+                                            @else
+                                                <i class="fas fa-toggle-off text-danger" style="font-size: 24px;"></i>
+                                            @endif
+                                        </button>
+                                    </td>
                                     <td>
                                         @php
                                             $facilities = json_decode($roomType->facilities, true); // Decode the JSON to an array
@@ -58,7 +94,7 @@
                                             No Facility
                                         @endif
                                     </td>
-                                    <td>{{$roomType->inserted_by_user}}</td>
+                                   
                                     <td>{{$roomType->description}}</td>
                                     
                                     <td>
@@ -112,27 +148,76 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="{{ URL::asset('build/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ URL::asset('build/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
-
+    
+    <!-- data table -->
     <script>
         $(document).ready(function() {
             $('#example').DataTable();
         });
     </script>
-    
+    <!-- data table -->
     <script>
         $(document).ready(function() {
             var table = $('#example2').DataTable({
                 lengthChange: false,
-                buttons: ['copy', 'excel', 'pdf', 'print']
+                buttons: ['copy', 'excel', 'pdf', 'print'],
             });
 
             table.buttons().container().appendTo('#example2_wrapper .col-md-6:eq(0)');
         });
     </script>
 
+    <!-- Delete modal open -->
     <script>
         function setDeleteForm(action) {
             document.getElementById('deleteForm').action = action;
         }
     </script>
+
+    <!-- Toggle button Script -->
+    <script>
+    $(document).ready(function () {
+        // Handle toggle click
+        $('.toggle-icon').on('click', function () {
+            const button = $(this);
+            const id = button.data('id');
+            const field = button.data('field');
+            const currentValue = button.data('value');
+    
+            // Toggle the value (1 to 0 or 0 to 1)
+            const newValue = currentValue == 1 ? 0 : 1;
+    
+            // Send AJAX request to update the field
+            $.ajax({
+                url: '{{ route("roomType.toggle") }}', // Replace with the actual toggle route
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: id,
+                    field: field,
+                    value: newValue,
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Update the icon based on the new value
+                        if (newValue == 1) {
+                            button.html('<i class="fas fa-toggle-on text-success" style="font-size: 24px;"></i>');
+                        } else {
+                            button.html('<i class="fas fa-toggle-off text-danger" style="font-size: 24px;"></i>');
+                        }
+    
+                        // Update the button's data-value attribute
+                        button.data('value', newValue);
+                    } else {
+                        alert('Failed to update. Please try again.');
+                    }
+                },
+                error: function () {
+                    alert('An error occurred. Please try again.');
+                },
+            });
+        });
+    });
+</script>
+    
 @endsection

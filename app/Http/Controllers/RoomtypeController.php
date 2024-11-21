@@ -66,8 +66,46 @@ class RoomtypeController extends Controller
     public function edit($id)
     {
         $roomType = RoomType::where('id',$id)->first();
-        $hotel = Hotel::where('id',$roomType)->first();
-        return view('roomType.edit-roomsType', compact('roomType'));
+        $hotel = Hotel::where('id',$roomType->hotel_id)->first();
+
+        if(!$hotel){
+            return response()->json(['error'=> 'Hotel not found']) ;
+        }
+
+        $facilities = []; // Initialize an empty array
+
+        $facilityIds = json_decode($hotel->facilities, true); // Decode JSON string into array
+
+        foreach ($facilityIds as $facilityId) {
+            $facility = Facility::find($facilityId); // Use find for cleaner code
+            if ($facility) {
+                $facilities[] = $facility->name; // Add the facility name to the array
+            }
+        }
+        return view('roomType.edit-roomsType', compact('roomType','hotel','facilities'));
+    }
+
+    public function update(Request $request, $id){
+        $userId = Auth::id();
+        $roomType = RoomType::where('id',$id)->first();
+        $request->name!=null?$roomType->name = $request->name:'';
+        $roomType->breakfast = $request->breakfast;
+        $roomType->lunch = $request->lunch;
+        $roomType->dinner = $request->dinner;
+        $roomType->extra_bed = $request->extra_bed;
+        $roomType->facilities = json_encode($request->facilities);
+        $roomType->status = $request->room_status;
+        $roomType->hotel_id = $request->hotel_id;
+        $roomType->description = $request->description;
+        $roomType->save();
+
+        return redirect()->route('roomType.index')->with('success', 'Categories updated successfully.');
+    }
+
+    public function destroy($id){
+        $roomType = RoomType::find($id);
+        $roomType->delete();
+        return redirect()->route('roomType.index')->with('success','Room Type deleted successfully');
     }
 
     //Send Selected hotel facilities through AJAX Call
@@ -112,5 +150,22 @@ class RoomtypeController extends Controller
        
         return response()->json($hotels);
     }
+
+    public function toggle(Request $request)
+{
+    $roomType = RoomType::findOrFail($request->id);
+
+    // Update the specified field with the new value
+    $field = $request->field;
+    if (in_array($field, ['breakfast', 'lunch', 'dinner', 'extra_bed'])) {
+        $roomType->$field = $request->value;
+        $roomType->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json(['success' => false, 'message' => 'Invalid field']);
+}
+
 
 }

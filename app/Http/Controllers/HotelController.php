@@ -107,9 +107,10 @@ class HotelController extends Controller
     */
     public function edit($id)
     {
+        $facilities = Facility::all();
         $categories = Category::where('category_type', 1)->get();
         $hotel = Hotel::findOrFail($id);
-        return view('hotel.edit-hotel', compact('categories', 'hotel'));
+        return view('hotel.edit-hotel', compact('categories', 'hotel','facilities'));
     }
 
     /*
@@ -127,6 +128,7 @@ class HotelController extends Controller
             'state' => 'required',
             'country' => 'required',
             'hotel_status' => 'required',
+            
         ]);
 
         // Find the hotel by ID
@@ -170,6 +172,7 @@ class HotelController extends Controller
             'status' => $request->input('hotel_status'),
             'images' => json_encode($imagePaths), // Store the updated image paths as a JSON array
             'is_complete' => 1,
+            'facilities' => json_encode($request->facilities),
         ]);
 
         // After updating the hotel, redirect based on the completion status

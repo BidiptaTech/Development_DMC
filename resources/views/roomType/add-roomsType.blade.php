@@ -106,8 +106,6 @@
 </div>
 <!-- End of the form -->
 
-
-
 @endsection
 
 @section('scripts')

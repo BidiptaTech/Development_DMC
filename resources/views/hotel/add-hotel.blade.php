@@ -158,7 +158,7 @@
                                             id="facility_{{$facility->id}}" 
                                             value="{{$facility->id}}"
                                         >
-                                        <label class="form-check-label" for="facility{{$facility->id}}">
+                                        <label class="form-check-label" for="facility_{{$facility->id}}">
                                             {{$facility->name}}
                                         </label>
                                     </div>

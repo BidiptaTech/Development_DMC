@@ -33,6 +33,7 @@
                             <div class="mb-3">
                                 <label for="input35" class="form-label"><strong>Enter Hotel Name</strong></label>
                                 <input type="text" class="form-control" id="input35" name="name" value="{{ old('name', $hotel->name) }}" placeholder="Enter Hotel Name" required>
+
                             </div>
 
                             <!-- Category Type -->
@@ -149,6 +150,34 @@
                                 <label class="form-check-label"></label>
                             </div>
 
+                            <!-- Facilities Selection (loaded dynamically) -->
+                            <div class="mb-3">
+                                <label for="facilities" class="form-label"><strong>Select Facilities</strong></label>
+                                <div id="facilities-container" class="d-flex flex-wrap">
+                                    <!-- Facilities will be appended here dynamically -->
+                                    @forelse ($facilities as $facility)
+                                    <div class="form-check form-check-inline me-3">
+                                        <input 
+                                            class="form-check-input"
+                                            type="checkbox" 
+                                            name="facilities[]" 
+                                            id="facility_{{$facility->id}}" 
+                                            value="{{$facility->id}}"
+                                            @if(in_array($facility->id, old('facilities', json_decode($hotel->facilities, true) ?? [])))
+                                                checked
+                                            @endif
+                                        >
+                                        <label class="form-check-label" for="facility_{{$facility->id}}">
+                                            {{$facility->name}}
+                                        </label>
+                                    </div>
+                                    @empty
+                                        
+                                    @endforelse
+                                    
+                                </div>
+                            </div>
+
                             <!-- Submit and Reset Buttons -->
                             <div class="d-flex align-items-center gap-3">
                                 <button type="submit" class="btn btn-primary px-4">Update and Next</button>
@@ -160,4 +189,93 @@
         </div>
 	</div>
 </div>
+@endsection
+
+@section('scripts')
+<!-- Script For Fetching Hotels  -->
+<script>
+    $(document).ready(function () {
+        $('#hotelName').select2({
+            placeholder: 'Search for a hotel...', // Adds the placeholder
+            ajax: {
+                url: '{{ route("hotels.search") }}', // Backend route for fetching hotel data
+                type: 'GET',
+                dataType: 'json',
+                delay: 20, // Debounce to reduce server load
+                data: function (params) {
+                    return {
+                        query: params.term // Send the user's input as 'query'
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.map(function (hotel) {
+                            return {
+                                id: hotel.id, // Value submitted with the form
+                                text: `${hotel.name} - ${hotel.city || 'No Location'}` // Text displayed
+                            };
+                        })
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 1 // Allow search from 1 character
+        });
+    });
+</script>
+
+<!-- Script For Fetching Facilities  -->
+<script>
+    $(document).ready(function () {
+        $('#hotelName').on('change', function () {
+            
+            let hotelId = $(this).val(); // Get the selected hotel's ID
+            let facilitiesContainer = $('#facilities-container');
+            let noFacilitiesMsg = $('#no-facilities-msg');
+
+            // Clear previous facilities
+            facilitiesContainer.empty();
+            noFacilitiesMsg.show();
+
+            if (hotelId) {
+                // Make AJAX call to fetch facilities
+                
+                $.ajax({
+                    url: `/hotels/${hotelId}/facilities`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.success && data.facilities.length > 0) {
+                            noFacilitiesMsg.hide();
+                            // Append facilities checkboxes
+                            data.facilities.forEach(function (facility) {
+                                let checkbox = `
+                                    <div class="form-check form-check-inline me-3">
+                                        <input 
+                                            class="form-check-input"
+                                            type="checkbox" 
+                                            name="facilities[]" 
+                                            id="facility_${facility.id}" 
+                                            value="${facility.id}"
+                                        >
+                                        <label class="form-check-label" for="facility_${facility.id}">
+                                            ${facility.name}
+                                        </label>
+                                    </div>
+                                `;
+                                facilitiesContainer.append(checkbox);
+                            });
+                        } else {
+                            noFacilitiesMsg.text('No facilities found for this hotel.').show();
+                        }
+                    },
+                    error: function () {
+                        noFacilitiesMsg.text('Error fetching facilities. Please try again.').show();
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 @endsection
