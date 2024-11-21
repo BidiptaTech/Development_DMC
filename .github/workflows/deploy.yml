@@ -29,7 +29,7 @@ jobs:
             cd /home/dmcdemo/public_html/backadm-dmc
             
             # Pull the latest code
-            git pull origin stagging
+            git pull origin stagging --force
             
             # Set ownership to ensure proper permissions
             chown -R dmcdemo:dmcdemo /home/dmcdemo/public_html/backadm-dmc
