@@ -46,8 +46,8 @@
                                         </div>
                                     </td>
                                 </tr>
-                                
-                                <!-- Start Modal -->
+
+                                <!-- Modal -->
                                 <div class="modal fade" id="featureModal{{ $f->id }}" tabindex="-1" aria-labelledby="featureModalLabel{{ $f->id }}" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered" role="document">
                                         <div class="modal-content">
@@ -76,7 +76,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- End Modal -->
                             @endforeach
                         </tbody>
                     </table>
@@ -84,6 +83,8 @@
             </div>
         </div>
     </div>
+</div>
+
 @endsection
 
 @section('scripts')  

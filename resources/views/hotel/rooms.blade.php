@@ -166,7 +166,6 @@
          </div>
       </div>
       <!-- end modal -->
-   </div>
 </div>
 <!-- end view room -->
 @endsection

@@ -17,7 +17,7 @@
                 </div>
                 <!-- Add User Button Row -->
                 <div class="mt-3 mt-sm-0">
-                    <a href="{{ route('category.create') }}" class="btn btn-primary">Add New Category</a>
+                    <a href="{{ route('category.create') }}" class="btn btn-blue">Add New Category</a>
                 </div>
             </div>
         </div>
@@ -50,21 +50,24 @@
                                     <td>
                                         <img src="{{ $category->icon }}" alt="Category Icon" style="width: 50px; height: 50px;">
                                     </td>
-                                    <td>
+                                    <td class="d-flex justify-content-start align-items-center" style="gap: 8px;">
+                                        <!-- Edit Button -->
                                         <a href="{{ route('category.edit', $category->id) }}" 
-                                           class="btn btn-warning btn-sm" 
-                                           style="width: 36px; height: 36px; padding: 0;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" 
-                                                 viewBox="0 -960 960 960" width="24px" fill="#ffffff">
+                                        class="btn btn-blue btn-sm d-flex align-items-center justify-content-center rounded-circle" 
+                                        style="width: 28px; height: 28px; padding: 0;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#ffffff">
                                                 <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
                                             </svg>
                                         </a>
-                                        <button type="button" class="btn btn-danger btn-sm" 
-                                                style="width: 36px; height: 36px; padding: 0;" 
-                                                data-toggle="modal" data-target="#deleteModal" 
+
+                                        <!-- Delete Button -->
+                                        <button type="button" 
+                                                class="btn btn-danger btn-sm d-flex align-items-center justify-content-center rounded-circle" 
+                                                style="width: 28px; height: 28px; padding: 0;" 
+                                                data-toggle="modal" 
+                                                data-target="#deleteModal" 
                                                 onclick="setDeleteForm('{{ route('category.destroy', $category->id) }}')">
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" 
-                                                 viewBox="0 -960 960 960" width="24px" fill="#ffffff">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#ffffff">
                                                 <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
                                             </svg>
                                         </button>
