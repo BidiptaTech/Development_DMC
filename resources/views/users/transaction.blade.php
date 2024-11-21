@@ -35,7 +35,7 @@
             @foreach ($transaction as $tran)
             <tr>
               <td>{{ $tran->type }}</td>
-              <td>{{ $tran->user->name }} </td>
+              <td>{{ $tran->user->name ?? ''}} </td>
               <td>{{ $tran->user_transaction->name }} </td>
               <td>{{ $tran->amount }}</td>
               <td> @if($tran->user_id == auth::user()->id ) <span class="badge bg-success">Credited</span>

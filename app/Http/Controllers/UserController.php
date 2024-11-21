@@ -37,7 +37,11 @@ class UserController extends Controller
         if (!Auth::user()->can('view users')) {
             abort(403, 'You do not have permission to access this page.');
         }else{
-            $users = User::with('roles')->where('user_type', '>=', $this->auth_user->user_type)->get();
+            if($this->auth_user->user_type == 1){
+                $users = User::with('roles')->where('user_type', '>=', $this->auth_user->user_type)->get();
+            }else{
+                $users = User::with('roles')->where('user_type', '>', $this->auth_user->user_type)->get();
+            }
             return view('users.users',compact('users'));
         }
     }
