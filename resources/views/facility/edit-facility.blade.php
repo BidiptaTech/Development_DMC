@@ -64,11 +64,11 @@
                             </div>
 
                             <div class="form-check form-switch">
-                                <label for="category_status" class="form-label"><strong>Status</strong></label>
-                                <input type="hidden" name="category_status" value="0">
-                                <input class="form-check-input" name="category_status" 
+                                <label for="facility_status" class="form-label"><strong>Status</strong></label>
+                                <input type="hidden" name="facility_status" value="0">
+                                <input class="form-check-input" name="facility_status" 
                                     @if($category->status == 1) checked @endif 
-                                    type="checkbox" id="category_status" value="1">
+                                    type="checkbox" id="facility_status" value="1">
                                 <label class="form-check-label"></label>
                             </div>
 
@@ -80,7 +80,6 @@
                 </div>
             </div>
         </div>
-    </div>
 </div>
 
 @endsection
