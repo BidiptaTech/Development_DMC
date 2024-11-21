@@ -7,7 +7,7 @@
   <body class="bg-register">
 
 
-    <!--authentication-->
+    <!--authentications-->
 
      <div class="container-fluid my-5">
         <div class="row">
