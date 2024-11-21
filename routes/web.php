@@ -27,7 +27,7 @@ Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', function () {
         return view('index');
-    });
+    })->name('dashboard');
 
     // cache clear route    
     Route::get('/clear', function () {
