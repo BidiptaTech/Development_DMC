@@ -40,7 +40,7 @@ class RoomtypeController extends Controller
             'lunch' => 'required',
             'dinner' => 'required',
             'extra_bed' => 'required',
-            'facilities' => 'required|array',
+            // 'facilities' => 'required|array',
             'room_status' => 'required',
             'description' => 'required|string',
             

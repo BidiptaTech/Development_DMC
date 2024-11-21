@@ -11,3 +11,4 @@ class RoomType extends Model
     protected $table = 'room_type'; 
     protected $guarded = []; 
 }
+

@@ -100,7 +100,6 @@
             </div>
         </div>
         <!-- End Modal -->
-    </div>
 </div>
 @endsection
 
