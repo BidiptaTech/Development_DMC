@@ -46,36 +46,6 @@
                                         </div>
                                     </td>
                                 </tr>
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="featureModal{{ $f->id }}" tabindex="-1" aria-labelledby="featureModalLabel{{ $f->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="featureModalLabel{{ $f->id }}">{{ $f->name }} Roles</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <form action="{{ route('save-feature-roles', $f->id) }}" method="POST">
-                                                @csrf
-                                                <div class="modal-body">
-                                                    @foreach($roles as $role)
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="roles[]" value="{{ $role->id }}"
-                                                                @if(is_array(json_decode($f->feature_roles)) && in_array($role->id, json_decode($f->feature_roles))) 
-                                                                    checked 
-                                                                @endif> <!-- Check if the role ID exists in feature_roles array -->
-                                                            <label>{{ $role->name }}</label>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Save</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
                             @endforeach
                         </tbody>
                     </table>
@@ -83,6 +53,38 @@
             </div>
         </div>
     </div>
+
+    <!-- Modals Section -->
+    @foreach ($features as $f)
+        <div class="modal fade" id="featureModal{{ $f->id }}" tabindex="-1" aria-labelledby="featureModalLabel{{ $f->id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="featureModalLabel{{ $f->id }}">{{ $f->name }} Roles</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('save-feature-roles', $f->id) }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            @foreach($roles as $role)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="roles[]" value="{{ $role->id }}"
+                                        @if(is_array(json_decode($f->feature_roles)) && in_array($role->id, json_decode($f->feature_roles))) 
+                                            checked 
+                                        @endif> <!-- Check if the role ID exists in feature_roles array -->
+                                    <label>{{ $role->name }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
 </div>
 
 @endsection
