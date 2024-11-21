@@ -20,7 +20,7 @@ class FacilityController extends Controller
     */
     public function index(Request $request)
     {
-        $facilities = Facility::orderBy('id', 'desc')->get();
+        $facilities = Facility::with('categories')->orderBy('id', 'desc')->get();
         return view('facility.facility',compact('facilities'));
     }
 
@@ -96,7 +96,7 @@ class FacilityController extends Controller
         $facility = Facility::where('id',$id)->first();
         $facility->name = $request->input('name');
         $facility->category_id = $request->input('category_type');
-        $facility->status = $request->input('status');
+        $facility->status = $request->input('facility_status');
         $facility->is_chargeable = $request->input('chargeable');
         $facility->chargable_comment = $request->input('comment');
         $facility->inserted_by_user = Auth::user()->id;

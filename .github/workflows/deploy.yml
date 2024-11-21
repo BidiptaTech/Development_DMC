@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
+      # Step 1: Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -20,38 +20,44 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY_VPS }}
 
-      # Step 3: Deploy Laravel
+      # Step 3: Deploy Laravel application to the server
       - name: Deploy Laravel
         run: |
-          ssh -p 22 -o StrictHostKeyChecking=no ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
+          # Connect to the VPS via SSH and perform deployment tasks
+          ssh -o StrictHostKeyChecking=no -p 22 ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
             set -e
-            # Navigate to the project directory
+
+            # Navigate to the project directory on the server
             cd /home/dmcdemo/public_html/backadm-dmc
-            
-            # Pull the latest code
+
+
+            # Pull the latest changes from the remote "stagging" branch and overwrite the remote files
+            git fetch --all
+            git reset --hard origin/stagging
             git pull origin stagging
-            
-            # Set ownership to ensure proper permissions
+
+            # Set file and directory permissions for the application
+
             chown -R dmcdemo:dmcdemo /home/dmcdemo/public_html/backadm-dmc
-            
-            # Install PHP dependencies
+
+            # Install PHP dependencies with Composer
             composer install --no-dev --optimize-autoloader
-            
-            # Set file and folder permissions
-            find /home/dmcdemo/public_html/backadm-dmc -type f -exec chmod 644 {} \; # Files
-            find /home/dmcdemo/public_html/backadm-dmc -type d -exec chmod 755 {} \; # Directories
+
+            # Set file permissions for Laravel's directories
+            find /home/dmcdemo/public_html/backadm-dmc -type f -exec chmod 644 {} \;  # Files
+            find /home/dmcdemo/public_html/backadm-dmc -type d -exec chmod 755 {} \;  # Directories
             chmod -R 775 /home/dmcdemo/public_html/backadm-dmc/storage
             chmod -R 775 /home/dmcdemo/public_html/backadm-dmc/bootstrap/cache
-            
-            # Create symbolic link for storage
+
+            # Create symbolic link for Laravel storage
             php artisan storage:link
-            
-            # Clear and cache configuration, routes, and views
+
+            # Clear and cache the application config, routes, and views
             php artisan config:clear
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-            
-            # Run database migrations
-            php artisan migrate --force
+
+            # Uncomment to run database migrations if necessary
+            # php artisan migrate --force
           EOF

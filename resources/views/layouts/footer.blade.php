@@ -4,8 +4,8 @@
                     <!-- Left Column -->
                     <div class="col-md-6 text-center text-md-start">
                         <span>
-                            <script>document.write(new Date().getFullYear())</script> 
-                            © Adminox - By <strong class="text-uppercase">Coderthemes</strong>
+                            <script>document.write(new Date().getFullYear())</script>
+                            © Dmc - Proudly Crafted By <strong class="text-uppercase">Coactive IT Solutions Pvt Ltd</strong>
                         </span>
                     </div>
                     <!-- Right Column -->

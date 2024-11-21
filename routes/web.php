@@ -27,7 +27,7 @@ Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', function () {
         return view('index');
-    });
+    })->name('dashboard');
 
     // cache clear route    
     Route::get('/clear', function () {
@@ -56,25 +56,20 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/hotels/search', [RoomtypeController::class, 'search'])->name('hotels.search');
         Route::get('/hotels/{hotelId}/facilities', [RoomtypeController::class, 'getHotelFacilities']);
         Route::post('/roomType/toggle', [RoomTypeController::class, 'toggle'])->name('roomType.toggle');
-
-
-        
-        // Route::resource('room_type', RoomtypeController::class);
         
         Route::resource('hotels', HotelController::class);
         Route::get('/hotels/{hotel}/contact', [HotelController::class, 'hotelcontacts'])->name('hotels.contact');
         Route::post('/updatecontacts', [HotelController::class, 'updatecontacts'])->name('hotels.createcontacts');
         Route::get('/hotels/{hotel}/room', [HotelController::class, 'hotelrooms'])->name('hotels.room');
         Route::get('/editcontacts/{hotel}', [HotelController::class, 'editcontacts'])->name('contactdetails.edit');
-       
         Route::post('storeroom', [HotelController::class, 'storeroom'])->name('storeroom');
         Route::get('editroom/{id}', [HotelController::class, 'editroom'])->name('rooms.edit');
         Route::post('updateroom', [HotelController::class, 'updateroom'])->name('room.update');
         Route::delete('deleteroom/{id}', [HotelController::class, 'deleteroom'])->name('rooms.destroy');
     });
 
-    // authentication check for manager (route can access admin & manager)
-    Route::group(['middleware' => ['manager']], function () {
+        // authentication check for manager (route can access admin & manager)
+        Route::group(['middleware' => ['manager']], function () {
         Route::resource('users', UserController::class);
         Route::resource('roles', RoleController::class);  
         Route::get('/get-roles-by-user-type/{userType}', [UserController::class, 'getRolesByUserType']);

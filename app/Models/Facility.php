@@ -12,4 +12,10 @@ class Facility extends Model
     use SoftDeletes;
     protected $table = 'facilities'; 
     protected $guarded = []; 
+
+    public function categories()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
 }

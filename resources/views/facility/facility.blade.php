@@ -3,6 +3,8 @@
 @section('title', 'Facility')
 
 @section('css')
+<link href="https://cdn.jsdelivr.net/npm/ekko-lightbox/dist/ekko-lightbox.css" rel="stylesheet">
+
     <link href="{{ URL::asset('build/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
 @endsection
 
@@ -16,7 +18,7 @@
                     </div>
                     <!-- Add Facility Button -->
                     <div class="mt-3 mt-sm-0">
-                        <a href="{{ route('facility.create') }}" class="btn btn-primary">Add New Facility</a>
+                        <a href="{{ route('facility.create') }}" class="btn btn-blue">Add New Facility</a>
                     </div>
                 </div>
             </div>
@@ -25,41 +27,66 @@
                 <div class="row">
                     @foreach($facilities as $facility)
                     <div class="col-md-2 col-sm-4 col-6 mb-3">
-                        <div class="card position-relative" style="border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f8f9fa; height: 60px;">
+                        <!-- Card -->
+                        <div class="card position-relative facility-card" 
+                            style="border: 1px solid #e0e0e0; border-radius: 10px; @if($facility->is_chargeable == 1) background-color: #ffa366;@else background-color: #f8f9fa; @endif height: 60px;"
+                            data-bs-toggle="modal"data-bs-target="#facilityModal-{{ $facility->id }}">
+
+                            <!-- Action Buttons -->
                             <div class="position-absolute" style="top: -8px; right: -8px; display: flex; gap: 5px;">
                                 <a href="{{ route('facility.edit', $facility->id) }}" 
                                     class="btn btn-outline-primary btn-sm" 
                                     title="Edit"
-                                    style="border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 10px; border: 1px solid #007bff;"
-                                >
+                                    style="border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 10px; border: 1px solid #007bff;">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                
-                                <!-- Delete Icon -->
                                 <button 
                                     class="btn btn-danger btn-sm" 
                                     title="Delete"
-                                    data-toggle="modal" data-target="#deleteModal" onclick="setDeleteForm('{{ route('facility.destroy', $facility->id) }}')"
-                                    style="border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 10px; border: 1px solid #dc3545;"
-                                >
+                                    onclick="setDeleteForm('{{ route('facility.destroy', $facility->id) }}')"
+                                    style="border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 10px; border: 1px solid #dc3545;">
                                     &times;
                                 </button>
                             </div>
 
-                            <!-- Feature Name and Icon -->
+                            <!-- Facility Icon and Name -->
                             <div class="card-body d-flex justify-content-between align-items-center text-center" style="padding: 5px;">
-                                <!-- Feature Icon -->
                                 <div class="d-flex justify-content-center align-items-center" style="flex-grow: 1;">
                                     <img src="{{ $facility->icon }}" alt="Facility Icon" style="height: 30px; object-fit: cover; border-radius: 5px;">
                                 </div>
-
-                                <!-- Feature Name -->
                                 <h6 class="card-title text-dark" style="font-size: 10px; font-weight: bold; margin: 0; flex-grow: 2;">
                                     {{ $facility->name }}
                                 </h6>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Modal for Each Facility -->
+                    <div class="modal fade" id="facilityModal-{{ $facility->id }}" tabindex="-1" aria-labelledby="facilityModalLabel-{{ $facility->id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="facilityModalLabel-{{ $facility->id }}">
+                                        Details for {{ $facility->name }}
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="text-center">
+                                        <!-- Facility Icon -->
+                                        <img src="{{ $facility->icon }}" alt="Facility Icon" style="height: 60px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                                        <!-- Facility Name -->
+                                        <h5>{{ $facility->name }}</h5>
+                                            <span><b>Category </b> : {{ $facility->categories->name }}</span> <br>
+                                            @if($facility->is_chargeable == 1)
+                                            <span><b>Comment</b> : {{ $facility->chargable_comment ?? 'No comment available' }}</span>
+                                            @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     @endforeach
                 </div>
             </div>

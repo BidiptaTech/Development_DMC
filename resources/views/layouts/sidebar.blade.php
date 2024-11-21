@@ -32,11 +32,12 @@
             <li class="side-nav-title">Navigation</li>
 
             <li class="side-nav-item">
-                <a href="/" class="side-nav-link">
+                <a href="{{ route('dashboard') }}" class="side-nav-link">
                     <span class="menu-icon"><i data-lucide="calendar-days"></i></span>
-                    <span class="menu-text"> Dashboard </span>
+                    <span class="menu-text">Dashboard</span>
                 </a>
             </li>
+
             @if(auth()->user()->user_type = 1)
             <li class="side-nav-title">Hotels</li>
             <li class="side-nav-item">
