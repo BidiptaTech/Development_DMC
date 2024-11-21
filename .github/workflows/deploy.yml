@@ -30,12 +30,14 @@ jobs:
             # Navigate to the project directory on the server
             cd /home/dmcdemo/public_html/backadm-dmc
 
+
             # Pull the latest changes from the remote "stagging" branch and overwrite the remote files
             git fetch --all
             git reset --hard origin/stagging
-            git pull origin stagging --force
+            git pull origin stagging
 
             # Set file and directory permissions for the application
+
             chown -R dmcdemo:dmcdemo /home/dmcdemo/public_html/backadm-dmc
 
             # Install PHP dependencies with Composer
