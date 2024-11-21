@@ -76,12 +76,13 @@
                                 <label for="facilities" class="form-label"><strong>Select Facilities</strong></label>
                                 <div id="facilities-container" class="d-flex flex-wrap">
                                     <!-- Facilities will be appended here dynamically -->
-                                    <p class="text-muted" id="no-facilities-msg">Enter a valid Hotel ID to load facilities</p>
+                                    
                                 </div>
+                                <p class="text-muted" id="no-facilities-msg">Enter a valid Hotel ID to load facilities</p>
                             </div>
 
                             <div class="mb-3">
-                                <label for="description" class="form-label"><strong>Room Type Name</strong></label>
+                                <label for="description" class="form-label"><strong>Description</strong></label>
                                 <input type="text" id="description" name="description" placeholder="Enter Room Description" class="form-control" required>
                             </div>
 
@@ -187,7 +188,14 @@
                                 facilitiesContainer.append(checkbox);
                             });
                         } else {
-                            noFacilitiesMsg.text('No facilities found for this hotel.').show();
+                            noFacilitiesMsg.html(`
+                            No facilities found for this hotel.
+                            <div>
+                                <a href="/hotels/${hotelId}/edit" class="text-primary">
+                                    Add Facilities
+                                </a>
+                            </div>
+                        `).show();
                         }
                     },
                     error: function () {

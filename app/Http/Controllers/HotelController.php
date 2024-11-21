@@ -42,8 +42,6 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
-
-        
         $validatedData = $request->validate([
             'name' => 'required|string',
             'city' => 'required|string',

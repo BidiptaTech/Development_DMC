@@ -192,6 +192,7 @@
 @endsection
 
 @section('scripts')
+
 <!-- Script For Fetching Hotels  -->
 <script>
     $(document).ready(function () {

@@ -98,7 +98,8 @@
                                         </label>
                                     </div>
                                     @empty
-                                        No facility found for this hotel
+                                        No facility found for this hotel.&nbsp;&nbsp;&nbsp;
+                                        <a href="{{ route('hotels.edit', ['hotel' => $hotel->id]) }}">Add Hotel Facility</a>
                                     @endforelse
                                     
                                 </div>

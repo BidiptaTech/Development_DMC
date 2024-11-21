@@ -92,6 +92,7 @@ class FacilityController extends Controller
         if($image){
         $storage_file = CommonHelper::image_path('file_storage', $image);
         }
+        
         $facility = Facility::where('id',$id)->first();
         $facility->name = $request->input('name');
         $facility->category_id = $request->input('category_type');

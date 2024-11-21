@@ -75,11 +75,12 @@ class RoomtypeController extends Controller
         $facilities = []; // Initialize an empty array
 
         $facilityIds = json_decode($hotel->facilities, true); // Decode JSON string into array
-
-        foreach ($facilityIds as $facilityId) {
-            $facility = Facility::find($facilityId); // Use find for cleaner code
-            if ($facility) {
-                $facilities[] = $facility->name; // Add the facility name to the array
+        if($facilityIds){
+            foreach ($facilityIds as $facilityId) {
+                $facility = Facility::find($facilityId); // Use find for cleaner code
+                if ($facility) {
+                    $facilities[] = $facility->name; // Add the facility name to the array
+                }
             }
         }
         return view('roomType.edit-roomsType', compact('roomType','hotel','facilities'));
@@ -117,7 +118,7 @@ class RoomtypeController extends Controller
         }
 
         if (empty(json_decode($hotel->facilities, true))) {
-            return response()->json(['success' => false, 'facilities' => []], 404);
+            return response()->json(['facilities' => []]);
         }
 
         $facilityNames = []; // Initialize an empty array
