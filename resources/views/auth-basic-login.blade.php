@@ -9,7 +9,7 @@
               <div class="card-body p-5">
                   <img src="{{ URL::asset('build/images/logo1.png') }}" class="mb-4" width="145" alt="">
                   <h4 class="fw-bold">Get Started Now</h4>
-                  <p class="mb-0">Enter your credentials to login your account</p>
+                  <p class="mb-0">Please Enter your credentials to login your account</p>
 
                   <div class="form-body my-4">
 										<form class="row g-3">
