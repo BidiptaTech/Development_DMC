@@ -13,6 +13,8 @@ jobs:
       # Step 1: Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: stagging
 
       # Step 2: Set up SSH for deployment
       - name: Set up SSH for deployment
@@ -23,41 +25,36 @@ jobs:
       # Step 3: Deploy Laravel application to the server
       - name: Deploy Laravel
         run: |
-          # Connect to the VPS via SSH and perform deployment tasks
           ssh -o StrictHostKeyChecking=no -p 22 ${{ secrets.STAGING_SERVER_USERNAME }}@${{ secrets.STAGING_SERVER_IP }} << 'EOF'
             set -e
 
-            # Navigate to the project directory on the server
+            # Navigate to the project directory
             cd /home/dmcdemo/public_html/backadm-dmc
 
-
-            # Pull the latest changes from the remote "stagging" branch and overwrite the remote files
+            # Ensure clean Git state for this repository
+            git remote remove origin || true
+            git init
+            git remote add origin git@github.com:BidiptaTech/Development_DMC.git
             git fetch --all
             git reset --hard origin/stagging
-            git pull origin stagging
+            git checkout stagging
 
-            # Set file and directory permissions for the application
-
+            # Set file and directory permissions
             chown -R dmcdemo:dmcdemo /home/dmcdemo/public_html/backadm-dmc
 
-            # Install PHP dependencies with Composer
+            # Install PHP dependencies
             composer install --no-dev --optimize-autoloader
 
-            # Set file permissions for Laravel's directories
+            # Set file permissions
             find /home/dmcdemo/public_html/backadm-dmc -type f -exec chmod 644 {} \;  # Files
             find /home/dmcdemo/public_html/backadm-dmc -type d -exec chmod 755 {} \;  # Directories
             chmod -R 775 /home/dmcdemo/public_html/backadm-dmc/storage
             chmod -R 775 /home/dmcdemo/public_html/backadm-dmc/bootstrap/cache
 
-            # Create symbolic link for Laravel storage
-            php artisan storage:link
-
-            # Clear and cache the application config, routes, and views
+            # Run Laravel Artisan commands
             php artisan config:clear
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-
-            # Uncomment to run database migrations if necessary
             # php artisan migrate --force
           EOF

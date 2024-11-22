@@ -1,6 +1,5 @@
 <!-- Sidenav Menu Start -->
 <div class="sidenav-menu">
-
     <!-- Brand Logo -->
     <a href="{{ url('/') }}" class="logo d-flex align-items-center">
         @php
@@ -38,7 +37,7 @@
                 </a>
             </li>
 
-            @if(auth()->user()->user_type = 1)
+            @if(auth()->user())
             <li class="side-nav-title">Hotels</li>
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#sidebarPagesError" aria-expanded="false" aria-controls="sidebarPagesError" class="side-nav-link">
@@ -110,16 +109,20 @@
                 </div>
             </li>
             @endif
-            @if(auth()->user()->user_type == 1)
-            <li class="side-nav-title">Settings</li>
-            <li class="side-nav-item">
-                <a href="{{ route('master-setting') }}" class="side-nav-link">
-                    <span class="menu-icon"><i data-lucide="settings"></i></span>
-                    <span class="menu-text"> Master Settings </span>
-                </a>
-            </li>
+
+            @if((auth()->user()->user_type == 1))
+            
+                <li class="side-nav-title">Settings</li>
+                <li class="side-nav-item">
+                    <a href="{{ route('master-setting') }}" class="side-nav-link">
+                        <span class="menu-icon"><i data-lucide="settings"></i></span>
+                        <span class="menu-text"> Master Settings </span>
+                    </a>
+                </li>
             @endif
-            @if(auth()->user()->user_type = 1 || auth()->user()->user_type = 2)
+
+
+            @if(auth()->user()->user_type == 1 || auth()->user()->user_type == 2)
             <li class="side-nav-title">Tranasaction</li>
             <li class="side-nav-item">
                 <a data-bs-toggle="collapse" href="#sidebarPages" aria-expanded="false" aria-controls="sidebarPages" class="side-nav-link">
