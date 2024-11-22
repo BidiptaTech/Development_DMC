@@ -42,14 +42,14 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
-
-        
+        $unique_id = $request->input('unique_id');
         $validatedData = $request->validate([
             'name' => 'required|string',
             'city' => 'required|string',
             'pincode' => 'required|integer', 
             'category_type' => 'required',
             'state' => 'required',
+            'unique_id' => 'required',
             'country' => 'required', 
             'hotel_status' => 'required',
             'facilities' => 'required|array', 
@@ -71,6 +71,7 @@ class HotelController extends Controller
 
         $hotel = Hotel::create([
             'name' => $request->input('name'),
+            'hotel_id' => $request->input('unique_id'),
             'address' => $request->input('address'),
             'city' => $request->input('city'),
             'cat_id' => $request->input('category_type'),
