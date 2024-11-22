@@ -6,6 +6,7 @@
     </div>
 @endif
 
+
 {{-- Notification for error message --}}
 @if ($message = Session::get('error'))
     <div class="alert alert-danger alert-dismissible fade show">

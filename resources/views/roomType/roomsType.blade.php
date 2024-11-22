@@ -34,7 +34,6 @@
                                 <th>Dinner</th>
                                 <th>Extra Bed</th>
                                 <th>Facilities</th>
-                                
                                 <th>Description</th>
                                 <th>Action</th>
                             </tr>
@@ -83,7 +82,7 @@
                                             @endif
                                         </button>
                                     </td>
-                                    <td>
+                                    <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         @php
                                             $facilities = json_decode($roomType->facilities, true); // Decode the JSON to an array
                                         @endphp

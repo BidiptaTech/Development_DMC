@@ -206,17 +206,18 @@ class HotelController extends Controller
 
         $hotelDetails = $hotels->map(function ($hotel) {   
             $categories = Category::where('id', $hotel->cat_id)->get();
+            $hotel = Hotel::select('images', 'rating')->find($hotel->id);
+
             return [
                 'id'=> $hotel->id,
                 'name'=> $hotel->name,
                 'location'=> $hotel->city,
-                'rating'=> 5,
+                'star' => 3,
                 'amenities' =>$categories->map(function ($category){
-                    return [
-                        $category->name => $category->name,
-                    ];
+                    return $category->name;
                 }),
-                'pricePerNight'=> 5000,
+                'price'=> 5000,
+                'images' => [],
             ];
         });
     
