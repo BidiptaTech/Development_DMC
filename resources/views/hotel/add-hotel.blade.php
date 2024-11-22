@@ -34,6 +34,12 @@
                                 <input type="text" class="form-control" id="input35" name="name" placeholder="Enter Hotel Name" required>
                             </div>
 
+                            <!-- Hotel Unique Id -->
+                            <div class="mb-3">
+                                <label for="input35" class="form-label"><strong>Hotel Unique Id</strong></label>
+                                <input type="text" class="form-control" id="input35" name="unique_id" placeholder="Enter Unique Id" required>
+                            </div>
+
                             <!-- Category Type -->
                             <div class="mb-3">
                                 <label for="category_type" class="form-label"><strong>Category Type</strong></label>
@@ -142,8 +148,6 @@
                                 <input type="text" class="form-control" id="policies" name="policies" placeholder="Enter Policies">
                             </div>
 
-                            
-
                             <!-- Facilities Selection (loaded dynamically) -->
                             <div class="mb-3">
                                 <label for="facilities" class="form-label"><strong>Select Facilities</strong></label>
@@ -163,12 +167,9 @@
                                         </label>
                                     </div>
                                     @empty
-                                        
                                     @endforelse
-                                    
                                 </div>
                             </div>
-
                             
                             <div class="form-check form-switch">
                                 <label for="hotel_status" class="form-label"><strong>Status</strong></label>
@@ -188,7 +189,6 @@
         </div>
 </div>
 @endsection
-
 @section('scripts')
 
 <script>
@@ -223,7 +223,6 @@
 </script>
 
 <!-- Script For Fetching Facilities  -->
-
 <script>
     $(document).ready(function () {
         $('#hotelName').on('change', function () {
@@ -276,5 +275,4 @@
         });
     });
 </script>
-
 @endsection
