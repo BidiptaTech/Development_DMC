@@ -28,7 +28,6 @@
                                     <option value="">Search for a hotel...</option>
                                 </select>
                             </div>
-                            
 
                             <div class="mb-3">
                                 <label for="name" class="form-label"><strong>Room Type Name</strong></label>

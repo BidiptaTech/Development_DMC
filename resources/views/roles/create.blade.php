@@ -24,7 +24,9 @@
 
                             <!-- Name Field -->
                             <div class="mb-3">
-                                <label for="name" class="form-label"><strong>Role Name:</strong></label>
+                                <label for="name" class="form-label"><strong>Role Name:</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" id="name" name="name" placeholder="Enter Role Name" class="form-control @error('name') is-invalid @enderror" required>
                                 @error('name')
                                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -33,7 +35,9 @@
 
                             <!-- User Type Select -->
                             <div class="mb-3">
-                                <label for="inputUserType" class="form-label"><strong>User Type:</strong></label>
+                                <label for="inputUserType" class="form-label"><strong>User Type:</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <select class="form-select @error('user_type') is-invalid @enderror" id="inputUserType" name="user_type" required>
                                     <option selected disabled value>Choose User Type...</option>
                                     @foreach($userTypes as $key => $value)
