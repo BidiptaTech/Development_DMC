@@ -39,7 +39,7 @@
                         <tbody>
                             @foreach($categories as $category)
                                 <tr>
-                                    <td>{{ $category->name }}</td>
+                                    <td class="category-name">{{ $category->name }}</td>
                                     <td>
                                         @if($category->category_type == 1)
                                             {{ "hotel" }}
@@ -107,6 +107,18 @@
 @endsection
 
 @section('scripts')  
+{{-- <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all category name cells
+        const categoryNameCells = document.querySelectorAll('.category-name');
+
+        // Loop through each cell and prepend 'category-' to its content
+        categoryNameCells.forEach(cell => {
+            console.log("cell.textContent = ", cell.textContent)
+            cell.textContent = cell.textContent;
+        });
+    });
+</script> --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="{{ URL::asset('build/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
