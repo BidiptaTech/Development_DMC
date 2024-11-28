@@ -43,6 +43,7 @@ class LoginControllerApi extends Controller
         $token = $user->createToken('react-login')->plainTextToken;
 
         return response()->json([
+            'success' => true,
             'message' => 'Login successful',
             'user' => [
                 'id' => $user->id,
