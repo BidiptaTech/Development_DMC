@@ -206,7 +206,7 @@ class HotelController extends Controller
 
         $hotelDetails = $hotels->map(function ($hotel) {   
             $categories = Category::where('id', $hotel->cat_id)->get();
-            $hotel = Hotel::select('images', 'rating')->find($hotel->id);
+            $currentHotel = Hotel::select('images')->find($hotel->id);
 
             return [
                 'id'=> $hotel->id,
