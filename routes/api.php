@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\HotelController;
-use App\Http\Controllers\RoomtypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 /*
@@ -24,6 +22,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::get('/category', 'App\Http\Controllers\Api\HotelController@category');
     Route::get('/location', 'App\Http\Controllers\Api\HotelController@location');
     Route::get('/details', 'App\Http\Controllers\Api\HotelController@hotelDetails');
-    Route::get('/hotels/{hotelId}/facilities', [RoomtypeController::class, 'getHotelFacilities']);
+    Route::post('/create-tour', 'App\Http\Controllers\Api\TourController@createTour');
+    Route::get('/hotels/{hotelId}/facilities', [App\Http\Controllers\RoomtypeController::class, 'getHotelFacilities']);
 });
 

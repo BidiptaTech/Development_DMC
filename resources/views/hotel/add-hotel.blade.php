@@ -1,22 +1,15 @@
 @extends('layouts.layout')
-
-@section('title', 'Hotels')
-@section('css')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.css" rel="stylesheet">
-@endsection
-
 @section('script')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.js"></script>
 @endsection
 
 @section('content')
 <div class="page-content">
     <div class="page-container">
         <div class="row justify-content-center">
-            <div class="col-lg-11 col-md-10 col-sm-12">
+            <div class="col-lg-12 col-md-10 col-sm-12">
                 <div class="card">
-                    <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white; margin-top: 10px !important;">
+                    <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white;">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Add New Hotel</h5>
                             <a href="javascript:history.back()" class="btn btn-sm btn-outline-light">
@@ -104,9 +97,46 @@
                                 <label for="check_in_time" class="form-label"><strong>Check in Time</strong></label>
                                 <input type="time" class="form-control" id="check_in_time" name="check_in_time">
                             </div>
+
                             <div class="mb-3">
                                 <label for="check_out_time" class="form-label"><strong>Check out Time</strong></label>
                                 <input type="time" class="form-control" id="check_out_time" name="check_out_time">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="breakfast" class="form-label"><strong>Breakfast</strong></label>
+                                <select name="breakfast" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option value="1">Available</option>
+                                    <option value="0">Not Available</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="lunch" class="form-label"><strong>Lunch</strong></label>
+                                <select name="lunch" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option value="1">Available</option>
+                                    <option value="0">Not Available</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dinner" class="form-label"><strong>Dinner</strong></label>
+                                <select name="dinner" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option value="1">Available</option>
+                                    <option value="0">Not Available</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="extra_bed" class="form-label"><strong>Extra Bed</strong></label>
+                                <select name="extra_bed" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option value="1">Available</option>
+                                    <option value="0">Not Available</option>
+                                </select>
                             </div>
 
                             <!-- Additional Fields (Phone, Email, etc.) -->
@@ -189,8 +219,8 @@
         </div>
 </div>
 @endsection
-@section('scripts')
 
+@section('scripts')
 <script>
     $(document).ready(function () {
         $('#hotelName').select2({
@@ -221,8 +251,6 @@
         });
     });
 </script>
-
-<!-- Script For Fetching Facilities  -->
 <script>
     $(document).ready(function () {
         $('#hotelName').on('change', function () {

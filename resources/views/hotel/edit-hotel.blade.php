@@ -106,6 +106,42 @@
                                 <input type="time" class="form-control" id="check_out_time" name="check_out_time" value="{{ old('check_out_time', $hotel->check_out_time) }}">
                             </div>
 
+                            <div class="mb-3">
+                                <label for="breakfast" class="form-label"><strong>Breakfast</strong></label>
+                                <select name="breakfast" id="breakfast" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option value="1" {{ $hotel->breakfast == 1 ? 'selected' : '' }}>Available</option>
+                                    <option value="0" {{ $hotel->breakfast === 0 ? 'selected' : '' }}>Not Available</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="lunch" class="form-label"><strong>Lunch</strong></label>
+                                <select name="lunch" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option value="1" {{ $hotel->lunch == 1 ? 'selected' : '' }}>Available</option>
+                                    <option value="0" {{ $hotel->lunch === 0 ? 'selected' : '' }}>Not Available</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dinner" class="form-label"><strong>Dinner</strong></label>
+                                <select name="dinner" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option value="1" {{ $hotel->dinner == 1 ? 'selected' : '' }}>Available</option>
+                                    <option value="0" {{ $hotel->dinner === 0 ? 'selected' : '' }}>Not Available</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="extra_bed" class="form-label"><strong>Extra Bed</strong></label>
+                                <select name="extra_bed" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option value="1" {{ $hotel->extra_bed == 1 ? 'selected' : '' }}>Available</option>
+                                    <option value="0" {{ $hotel->extra_bed === 0 ? 'selected' : '' }}>Not Available</option>
+                                </select>
+                            </div>
+
                             <!-- Additional Fields (Phone, Email, etc.) -->
                             <div class="mb-3">
                                 <label for="hotel_owner_company_name" class="form-label"><strong>Hotel Owner Company Name</strong></label>
