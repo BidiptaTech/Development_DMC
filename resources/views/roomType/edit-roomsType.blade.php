@@ -40,41 +40,7 @@
                                 <input value="{{$roomType->name}}" type="text" id="roomType" name="roomType" placeholder="Enter Room Type Name" class="form-control" required>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="breakfast" class="form-label"><strong>Breakfast</strong></label>
-                                <select name="breakfast" id="breakfast" class="form-control" required>
-                                    <option value="">Select an option</option>
-                                    <option value="1" {{ $roomType->breakfast == 1 ? 'selected' : '' }}>Available</option>
-                                    <option value="0" {{ $roomType->breakfast === 0 ? 'selected' : '' }}>Not Available</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="lunch" class="form-label"><strong>Lunch</strong></label>
-                                <select name="lunch" class="form-control" required>
-                                    <option value="">Select an option</option>
-                                    <option value="1" {{ $roomType->lunch == 1 ? 'selected' : '' }}>Available</option>
-                                    <option value="0" {{ $roomType->lunch === 0 ? 'selected' : '' }}>Not Available</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="dinner" class="form-label"><strong>Dinner</strong></label>
-                                <select name="dinner" class="form-control" required>
-                                    <option value="">Select an option</option>
-                                    <option value="1" {{ $roomType->dinner == 1 ? 'selected' : '' }}>Available</option>
-                                    <option value="0" {{ $roomType->dinner === 0 ? 'selected' : '' }}>Not Available</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="extra_bed" class="form-label"><strong>Extra Bed</strong></label>
-                                <select name="extra_bed" class="form-control" required>
-                                    <option value="">Select an option</option>
-                                    <option value="1" {{ $roomType->extra_bed == 1 ? 'selected' : '' }}>Available</option>
-                                    <option value="0" {{ $roomType->extra_bed === 0 ? 'selected' : '' }}>Not Available</option>
-                                </select>
-                            </div>
+                            
                             
                             <!-- Facilities Selection (loaded dynamically) -->
                             <div class="mb-3">
