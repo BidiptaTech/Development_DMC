@@ -3,8 +3,7 @@
 @section('title', 'Facility')
 
 @section('css')
-<link href="https://cdn.jsdelivr.net/npm/ekko-lightbox/dist/ekko-lightbox.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/ekko-lightbox/dist/ekko-lightbox.css" rel="stylesheet">
     <link href="{{ URL::asset('build/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
 @endsection
 
@@ -29,8 +28,7 @@
                     <div class="col-md-2 col-sm-4 col-6 mb-3">
                         <!-- Card -->
                         <div class="card position-relative facility-card" 
-                            style="border: 1px solid #e0e0e0; border-radius: 10px; @if($facility->is_chargeable == 1) background-color: #ffa366;@else background-color: #f8f9fa; @endif height: 60px;"
-                            data-bs-toggle="modal"data-bs-target="#facilityModal-{{ $facility->id }}">
+                            style="border: 1px solid #e0e0e0; border-radius: 10px; @if($facility->is_chargeable == 1) background-color: #ffa366;@else background-color: #f8f9fa; @endif height: 60px;">
 
                             <!-- Action Buttons -->
                             <div class="position-absolute" style="top: -8px; right: -8px; display: flex; gap: 5px;">
@@ -40,17 +38,20 @@
                                     style="border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 10px; border: 1px solid #007bff;">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <button 
-                                    class="btn btn-danger btn-sm" 
-                                    title="Delete"
-                                    onclick="setDeleteForm('{{ route('facility.destroy', $facility->id) }}')"
-                                    style="border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 10px; border: 1px solid #dc3545;">
-                                    &times;
+                                <button type="button" 
+                                    class="btn btn-danger btn-sm d-flex align-items-center justify-content-center rounded-circle"
+                                    style="width: 28px; height: 28px; padding: 0;" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal" 
+                                    onclick="setDeleteForm('{{ route('facility.destroy', $facility->id) }}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#ffffff">
+                                        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+                                    </svg>
                                 </button>
                             </div>
 
                             <!-- Facility Icon and Name -->
-                            <div class="card-body d-flex justify-content-between align-items-center text-center" style="padding: 5px;">
+                            <div class="card-body d-flex justify-content-between align-items-center text-center" style="padding: 5px;" data-bs-toggle="modal"data-bs-target="#facilityModal-{{ $facility->id }}">
                                 <div class="d-flex justify-content-center align-items-center" style="flex-grow: 1;">
                                     <img src="{{ $facility->icon }}" alt="Facility Icon" style="height: 30px; object-fit: cover; border-radius: 5px;">
                                 </div>
@@ -97,12 +98,13 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="deleteModalLabel">Confirmation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             Are you sure you want to delete?
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <form id="deleteForm" action="" method="POST" style="display:inline">
                                 @csrf
                                 @method('DELETE')

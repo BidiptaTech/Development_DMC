@@ -21,37 +21,46 @@
                         <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf 
 
-                            <div class="mb-3">
-                                <label for="name" class="form-label"><strong>Name</strong></label>
-                                <input type="text" id="name" name="name" placeholder="Enter Name" class="form-control" required>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="name" class="form-label"><strong>Name</strong></label>
+                                    <input type="text" id="name" name="name" placeholder="Enter Name" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="category_type" class="form-label"><strong>Category Type</strong></label>
+                                    <select id="category_type" name="category_type" class="form-control" required>
+                                        <option value="">Select Category Type</option>
+                                        <option value="1">Hotel</option>
+                                        <option value="2">Facilities</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="icon" class="form-label"><strong>Icon</strong></label>
+                                    <input type="file" name="icon" class="form-control" required>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="name" class="form-label"><strong>Icon</strong></label>
-                                <input type="file" name="icon" class="form-control" required>
+                            <!-- Separate Row for Status -->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-check form-switch">
+                                        <input type="hidden" name="category_status" value="0">
+                                        <input class="form-check-input" name="category_status" type="checkbox" id="category_status" value="1">
+                                        <label for="category_status" class="form-check-label"><strong>Status</strong></label>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="category_type" class="form-label"><strong>Category Type</strong></label>
-                                <select id="category_type" name="category_type" class="form-control" required>
-                                    <option value="">Select Category Type</option>
-                                    <option value="1">Hotel</option>
-                                    <option value="2">Facilities</option>
-                                </select>
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <label for="category_status" class="form-label"><strong>Status</strong></label>
-                                <input type="hidden" name="category_status" value="0">
-                                <input class="form-check-input" name="category_status" type="checkbox" id="category_status" value="1">
-                                <label class="form-check-label"></label>
-                            </div>
-                            
-                            <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                            <!-- Submit Button -->
+                            <div class="row mt-4">
+                                <div class="col-md-12 text-center">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
                             </div>
                         </form>
                     </div>
+
                 </div>
             </div>
         </div>

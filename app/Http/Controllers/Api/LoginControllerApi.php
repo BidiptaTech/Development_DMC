@@ -49,6 +49,7 @@ class LoginControllerApi extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'token' => $token,
             ],
         ])->cookie('token', $token, 60 * 24, '/', null, true, true);
     }
