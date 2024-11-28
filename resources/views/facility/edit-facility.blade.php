@@ -20,11 +20,14 @@
                             @csrf 
                             @method('PUT')
 
+                        <div class="row">
+                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="name" class="form-label"><strong>Name</strong></label>
                                 <input value="{{ old('name', $facility->name) }}" type="text" id="name" name="name" placeholder="Enter Facility Name" class="form-control" required>
                             </div>
-
+                        </div>
+                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="icon" class="form-label"><strong>Icon</strong></label>
                                 <input type="file" name="icon" class="form-control">
@@ -34,7 +37,8 @@
                                     </div>
                                 @endif
                             </div>
-
+                        </div>
+                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="chargeable" class="form-label"><strong>Chargeable</strong></label>
                                 <select name="chargeable" class="form-control" id="chargeable" required onchange="toggleCommentField()">
@@ -43,12 +47,16 @@
                                     <option value="0" {{ old('is_chargeable', $facility->is_chargeable ?? '') == '0' ? 'selected' : '' }}>No</option>
                                 </select>
                             </div>
+                        </div>
 
+                        <div class="col-md-6">
                             <div class="mb-3" id="comment_section" style="display: {{ old('chargeable', $facility->chargeable) == '1' ? 'block' : 'none' }};">
                                 <label for="comment" class="form-label"><strong>Comment</strong></label>
                                 <input type="text" name="comment" id="comment" placeholder="Enter Comment Name" class="form-control" value="{{ old('comment', $facility->chargable_comment) }}">
                             </div>
+                        </div>
 
+                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="category_type" class="form-label"><strong>Category Type</strong></label>
                                 <select id="category_type" name="category_type" class="form-control" required>
@@ -62,6 +70,7 @@
                                     @endforelse
                                 </select>
                             </div>
+                        </div>
 
                             <div class="form-check form-switch">
                                 <label for="facility_status" class="form-label"><strong>Status</strong></label>
