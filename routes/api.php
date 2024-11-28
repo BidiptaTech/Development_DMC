@@ -23,6 +23,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/location', 'App\Http\Controllers\Api\HotelController@location');
     Route::get('/details', 'App\Http\Controllers\Api\HotelController@hotelDetails');
     Route::get('/hotels/{hotelId}/facilities', [RoomtypeController::class, 'getHotelFacilities']);
+    Route::post('/login', 'App\Http\Controllers\Api\LoginControllerApi@login');
 });
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -21,8 +21,10 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $categories = Category::where('status', 1)->orderBy('id', 'desc')->get();
-
-        return view('category.index',compact('categories'));
+        // Decode the category names to ensure no HTML entities or special characters are escaped
+        
+       
+        return view('category.index', compact('categories'));
     }
 
     /*
