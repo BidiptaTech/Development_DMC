@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('hotels', function (Blueprint $table) {
-            $table->json('facilities')->nullable();
+            $table->string('breakfast')->nullable(); 
+            $table->string('lunch')->nullable(); 
+            $table->string('dinner')->nullable(); 
+            $table->string('extra_bed')->nullable(); 
         });
     }
 
