@@ -20,25 +20,33 @@
                             @csrf
                             @method('PUT')
 
-                            <div class="mb-3">
-                                <label for="name" class="form-label"><strong>Name</strong></label>
-                                <input value="{{ $category->name }}" type="text" name="name"placeholder="Enter Name" class="form-control" required>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label"><strong>Name</strong></label>
+                                    <input value="{{ $category->name }}" type="text" name="name"placeholder="Enter Name" class="form-control" required>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="name" class="form-label"><strong>Icon</strong></label>
-                                <input type="file" name="icon" class="form-control">
-                                <img src="{{ $category->icon }}" alt="Category Icon" style="width: 50px; height: 32px;">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label"><strong>Icon</strong></label>
+                                    <input type="file" name="icon" class="form-control">
+                                    <img src="{{ $category->icon }}" alt="Category Icon" style="width: 50px; height: 32px;">
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="category_type" class="form-label"><strong>Category Type</strong></label>
-                                <select name="category_type" class="form-control" required>
-                                    <option value="">Select Category Type</option>
-                                    <option value="1" {{ $category->category_type == 1 ? 'selected' : '' }}>Hotel</option>
-                                    <option value="2" {{ $category->category_type == 2 ? 'selected' : '' }}>Facilities</option>
-                                </select>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="category_type" class="form-label"><strong>Category Type</strong></label>
+                                    <select name="category_type" class="form-control" required>
+                                        <option value="">Select Category Type</option>
+                                        <option value="1" {{ $category->category_type == 1 ? 'selected' : '' }}>Hotel</option>
+                                        <option value="2" {{ $category->category_type == 2 ? 'selected' : '' }}>Facilities</option>
+                                    </select>
+                                </div>
                             </div>
+                        </div>
 
                             <div class="form-check form-switch">
                                 <label for="category_status" class="form-label"><strong>Status</strong></label>
