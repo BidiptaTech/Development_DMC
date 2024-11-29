@@ -71,8 +71,12 @@ class HotelController extends Controller
 
         $hotel = Hotel::create([
             'name' => $request->input('name'),
-            'hotel_id' => $request->input('unique_id'),
+            'hotel_unique_id' => $request->input('unique_id'),
             'address' => $request->input('address'),
+            'breakfast' => $request->input('breakfast'),
+            'lunch' => $request->input('lunch'),
+            'dinner' => $request->input('dinner'),
+            'extra_bed' => $request->input('extra_bed'),
             'city' => $request->input('city'),
             'cat_id' => $request->input('category_type'),
             'state' => $request->input('state'),

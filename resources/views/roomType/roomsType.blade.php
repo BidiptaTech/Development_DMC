@@ -29,10 +29,6 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Breakfast</th>
-                                <th>Lunch</th>
-                                <th>Dinner</th>
-                                <th>Extra Bed</th>
                                 <th>Facilities</th>
                                 <th>Description</th>
                                 <th>Action</th>
@@ -43,37 +39,9 @@
                                 <tr>
                                     <td>{{ $roomType->name }}</td>
                                     <!-- Breakfast Toggle -->
-                                    <td>
-                                        <button class="btn btn-link toggle-icon" data-id="{{ $roomType->id }}" data-field="breakfast" data-value="{{ $roomType->breakfast }}">
-                                            @if ($roomType->breakfast == 1)
-                                                <i class="fas fa-toggle-on text-success" style="font-size: 24px;"></i>
-                                            @else
-                                                <i class="fas fa-toggle-off text-danger" style="font-size: 24px;"></i>
-                                            @endif
-                                        </button>
-                                    </td>
-                                    <!-- Lunch Toggle -->
-                                    <td>
-                                        <button class="btn btn-link toggle-icon" data-id="{{ $roomType->id }}" data-field="lunch" data-value="{{ $roomType->lunch }}">
-                                            @if ($roomType->lunch == 1)
-                                                <i class="fas fa-toggle-on text-success" style="font-size: 24px;"></i>
-                                            @else
-                                                <i class="fas fa-toggle-off text-danger" style="font-size: 24px;"></i>
-                                            @endif
-                                        </button>
-                                    </td>
-                                    <!-- Dinner Toggle -->
-                                    <td>
-                                        <button class="btn btn-link toggle-icon" data-id="{{ $roomType->id }}" data-field="dinner" data-value="{{ $roomType->dinner }}">
-                                            @if ($roomType->dinner == 1)
-                                                <i class="fas fa-toggle-on text-success" style="font-size: 24px;"></i>
-                                            @else
-                                                <i class="fas fa-toggle-off text-danger" style="font-size: 24px;"></i>
-                                            @endif
-                                        </button>
-                                    </td>
+                                    
                                     <!-- Extra Bed Toggle -->
-                                    <td>
+                                    <!-- <td>
                                         <button class="btn btn-link toggle-icon" data-id="{{ $roomType->id }}" data-field="extra_bed" data-value="{{ $roomType->extra_bed }}">
                                             @if ($roomType->extra_bed == 1)
                                                 <i class="fas fa-toggle-on text-success" style="font-size: 24px;"></i>
@@ -81,7 +49,7 @@
                                                 <i class="fas fa-toggle-off text-danger" style="font-size: 24px;"></i>
                                             @endif
                                         </button>
-                                    </td>
+                                    </td> -->
                                     <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         @php
                                             $facilities = json_decode($roomType->facilities, true); // Decode the JSON to an array

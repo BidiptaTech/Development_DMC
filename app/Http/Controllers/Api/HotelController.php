@@ -195,54 +195,55 @@ class HotelController extends Controller
 
     /*Search hotel with location*/
     public function location(Request $request)
-{
-    $location = $request->query('location');
-    // Fetch hotels matching the location
-    $hotels = Hotel::where('city', $location)->get();
+    {
+        $location = $request->query('location');
+        // Fetch hotels matching the location
+        $hotels = Hotel::where('city', $location)->get();
 
-    // If no hotels are found, return a 404 response
-    if ($hotels->isEmpty()) {
+        // If no hotels are found, return a 404 response
+        if ($hotels->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => "No hotels found in the location: $location",
+            ], 404);
+        }
+
+        // Process hotel details
+        $hotelDetails = $hotels->map(function ($hotel) {
+            // Fetch the category for the hotel
+            $category = Category::find($hotel->cat_id);
+
+            // Decode facilities JSON (handle null or empty cases)
+            $facilityIds = json_decode($hotel->facilities, true) ?? [];
+
+            // Fetch related facilities
+            $relatedFacilities = Facility::whereIn('id', $facilityIds)->get();
+
+            // Decode images JSON if it's a JSON column
+            // $images = is_string($hotel->images) ? json_decode($hotel->images, true) : $hotel->images;
+
+            return [
+                'id' => $hotel->id,
+                'name' => $hotel->name,
+                'location' => $hotel->city,
+                'star' => $category ? $category->name : 'Unknown', // Handle missing category
+                'image'=>$hotel->main_image ?? '',
+                'amenities' => $relatedFacilities->map(function ($amenity) {
+                    return [
+                        'id' => $amenity->id,
+                        'amenityName' => $amenity->name,
+                    ];
+                }),
+                'price' => 5000, // Replace with actual pricing logic if needed
+                // 'images' => $images ?: [], 
+            ];
+        });
+
         return response()->json([
-            'success' => false,
-            'message' => "No hotels found in the location: $location",
-        ], 404);
+            'success' => true,
+            'data' => $hotelDetails,
+        ],200, [], JSON_UNESCAPED_UNICODE);
     }
-
-    // Process hotel details
-    $hotelDetails = $hotels->map(function ($hotel) {
-        // Fetch the category for the hotel
-        $category = Category::find($hotel->cat_id);
-
-        // Decode facilities JSON (handle null or empty cases)
-        $facilityIds = json_decode($hotel->facilities, true) ?? [];
-
-        // Fetch related facilities
-        $relatedFacilities = Facility::whereIn('id', $facilityIds)->get();
-
-        // Decode images JSON if it's a JSON column
-        $images = is_string($hotel->images) ? json_decode($hotel->images, true) : $hotel->images;
-
-        return [
-            'id' => $hotel->id,
-            'name' => $hotel->name,
-            'location' => $hotel->city,
-            'star' => $category ? $category->name : 'Unknown', // Handle missing category
-            'amenities' => $relatedFacilities->map(function ($amenity) {
-                return [
-                    'id' => $amenity->id,
-                    'amenityName' => $amenity->name,
-                ];
-            }),
-            'price' => 5000, // Replace with actual pricing logic if needed
-            'images' => $images ?: [], // Default to an empty array if images are null
-        ];
-    });
-
-    return response()->json([
-        'success' => true,
-        'data' => $hotelDetails,
-    ],200, [], JSON_UNESCAPED_UNICODE);
-}
 }
 
 

@@ -1,7 +1,5 @@
 @extends('layouts.layout')
-
 @section('content')
-
 <!-- Start of the form -->
 <div class="page-content">
     <div class="page-container">
@@ -83,5 +81,4 @@
     </div>
 </div>
 <!-- End of the form -->
-
 @endsection
