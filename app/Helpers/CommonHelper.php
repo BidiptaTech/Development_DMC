@@ -64,4 +64,13 @@ class CommonHelper
         ];
     }
     
+    /*
+    *Create Id for all table
+    *Date 29-11-2024
+    */
+    public static function createId($previousId)
+    {
+        return $previousId + 1;
+    }
+
 }
