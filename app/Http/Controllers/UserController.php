@@ -55,8 +55,9 @@ class UserController extends Controller
         if (!Auth::user()->can('create users')) {
             abort(403, 'You do not have permission to access this page.');
         }else{
-            $ipAddress = '36.255.66.84';
-            $user_countryCode = CommonHelper::getCountryInfo($ipAddress);
+            $ipAddress = request()->ip();
+            $usercountryCode = CommonHelper::getCountryInfo($ipAddress);
+            $user_countryCode = $usercountryCode['country_code'];
             $countryCodes = User::countryCodes();
             $authUserType =  $this->auth_user->user_type; 
             $userTypes = array_filter(User::getUserTypes(), function($key) use ($authUserType) {
@@ -75,13 +76,19 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'yourname' => 'required|max:255',
-            'role' => 'required|exists:roles,id', 
+            // 'role' => 'required|exists:roles,id', 
             'user_type' => 'required',
-            'code' => 'required',
             'phone' => 'required|max:15', 
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8', 
         ]);
+        //for unique user id calling helper
+        $user_max_id = User::max('userId') ?? 0;
+        $usersId = CommonHelper::createId($user_max_id);
+        while (User::where('userId', $usersId)->exists()) {
+            $usersId = CommonHelper::createId($usersId);
+        }
+
         $user = User::create([
             'name' => $request->input('yourname'),
             'role_id' => $request->input('role'), 
@@ -89,6 +96,7 @@ class UserController extends Controller
             'country_code' => $request->input('code'),
             'phone' => $request->input('phone'),
             'email' => $request->input('email'),
+            'userId' => $usersId,
             'password' => bcrypt($request->input('password')),
         ]);
         //insert user role

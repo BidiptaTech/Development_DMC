@@ -21,6 +21,7 @@
                     <div class="card-body p-4">
                         <form action="{{ route('users.store') }}" method="POST">
                             @csrf
+                            <input type="hidden" class="form-control" name="code" value="{{ $user_countryCode }}">
 
                             <!-- Name Field -->
                             <div class="mb-3 row">
