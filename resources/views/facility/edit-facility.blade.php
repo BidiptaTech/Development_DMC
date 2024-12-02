@@ -74,7 +74,7 @@
                                 <select id="category_type" name="category_type" class="form-control" required>
                                     <option value="">Select Category Type</option>
                                     @forelse ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id', $facility->category_id) == $category->id ? 'selected' : '' }}>
+                                        <option value="{{ $category->category_id }}" {{ old('category_id', $facility->category_id) == $category->id ? 'selected' : '' }}>
                                             {{ $category->name }}
                                         </option>
                                     @empty

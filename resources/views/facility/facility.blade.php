@@ -78,7 +78,7 @@
                                         <img src="{{ $facility->icon }}" alt="Facility Icon" style="height: 60px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
                                         <!-- Facility Name -->
                                         <h5>{{ $facility->name }}</h5>
-                                            <span><b>Category </b> : {{ $facility->categories->name }}</span> <br>
+                                            <span><b>Category </b> : {{ $facility->categories->name ?? 'no category ' }}</span> <br>
                                             @if($facility->is_chargeable == 1)
                                             <span><b>Comment</b> : {{ $facility->chargable_comment ?? 'No comment available' }}</span>
                                             @endif
