@@ -23,19 +23,31 @@
 
                             <!-- Hotel Name -->
                             <div class="mb-3">
-                                <label for="input35" class="form-label"><strong>Hotel Name</strong></label>
+                                <label for="input35" class="form-label"><strong>Hotel Name</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="input35" name="name" placeholder="Enter Hotel Name" required>
+                                @error('name')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Hotel Unique Id -->
                             <div class="mb-3">
-                                <label for="input35" class="form-label"><strong>Hotel Unique Id</strong></label>
+                                <label for="input35" class="form-label"><strong>Hotel Unique Id</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="input35" name="unique_id" placeholder="Enter Unique Id" required>
+                                @error('unique_id')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Category Type -->
                             <div class="mb-3">
-                                <label for="category_type" class="form-label"><strong>Category Type</strong></label>
+                                <label for="category_type" class="form-label"><strong>Category Type</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <select id="category_type" name="category_type" class="form-control" required>
                                     <option value="">Select Category Type</option>
                                     @forelse ($categories as $category)
@@ -44,6 +56,9 @@
                                         <option>No categories available</option>
                                     @endforelse
                                 </select>
+                                @error('category_type')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Address -->
@@ -54,31 +69,53 @@
 
                             <!-- City -->
                             <div class="mb-3">
-                                <label for="city" class="form-label"><strong>City</strong></label>
+                                <label for="city" class="form-label"><strong>City</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="city" name="city" placeholder="Enter City" required>
+                                @error('city')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- State -->
                             <div class="mb-3">
-                                <label for="state" class="form-label"><strong>State</strong></label>
+                                <label for="state" class="form-label"><strong>State</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="state" name="state" placeholder="Enter State" required>
+                                @error('state')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Country -->
                             <div class="mb-3">
-                                <label for="country" class="form-label"><strong>Country</strong></label>
+                                <label for="country" class="form-label"><strong>Country</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="country" name="country" placeholder="Enter Country" required>
+                                @error('country')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Zip code -->
                             <div class="mb-3">
-                                <label for="pincode" class="form-label"><strong>Zip Code</strong></label>
+                                <label for="pincode" class="form-label"><strong>Zip Code</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="number" class="form-control" id="pincode" name="pincode" placeholder="Enter Zip Code" required>
+                                @error('pincode')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Latitude and Longitude -->
                             <div class="mb-3">
-                                <label for="latitude" class="form-label"><strong>Latitude</strong></label>
+                                <label for="latitude" class="form-label"><strong>Latitude</strong>
+                                    
+                                </label>
                                 <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Enter Latitude">
                             </div>
                             <div class="mb-3">
@@ -88,13 +125,20 @@
 
                             <!-- Main Image -->
                             <div class="mb-3">
-                                <label for="main_image" class="form-label"><strong>Banner Image</strong></label>
+                                <label for="main_image" class="form-label"><strong>Banner Image</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="file" class="form-control" id="main_image" name="main_image" required>
+                                @error('main_image')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Check in and Check out time -->
                             <div class="mb-3">
-                                <label for="check_in_time" class="form-label"><strong>Check in Time</strong></label>
+                                <label for="check_in_time" class="form-label"><strong>Check in Time</strong>
+                                    
+                                </label>
                                 <input type="time" class="form-control" id="check_in_time" name="check_in_time">
                             </div>
 
@@ -151,13 +195,23 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="phone" class="form-label"><strong>Phone</strong></label>
+                                <label for="phone" class="form-label"><strong>Phone</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone" required>
+                                @error('phone')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="mb-3">
-                                <label for="email" class="form-label"><strong>Email</strong></label>
+                                <label for="email" class="form-label"><strong>Email</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email" required>
+                                @error('email')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Additional Images -->

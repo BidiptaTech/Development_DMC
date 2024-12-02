@@ -29,34 +29,49 @@
                         <input type="text" class="form-control" name="room_number" placeholder="Enter Room Number">
                      </div>
                      <div class="mb-3">
-                        <label for="room_type" class="form-label"><strong>Room Type</strong></label>
+                        <label for="room_type" class="form-label"><strong>Room Type</strong>
+                           <span style="color: red; font-weight: bold;">*</span>
+                        </label>
                         <select name="room_type" id="room_type" class="form-control" required>
                            <option value="">Select One</option>
                            @foreach($roomtypes as $roomtype)
                            <option value="{{ $roomtype->id }}">{{ $roomtype->name }}</option>
                            @endforeach
                         </select>
+                        @error('room_type')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
                      </div>
                      <div class="mb-3">
                         <label for="input35" class="form-label"><strong>Max capacity</strong></label>
                         <input type="number" class="form-control" name="max_capacity" placeholder="Enter Hotel Number">
                      </div>
                      <div class="mb-3">
-                        <label for="status" class="form-label"><strong>Check availability</strong></label>
+                        <label for="status" class="form-label"><strong>Check availability</strong>
+                           <span style="color: red; font-weight: bold;">*</span>
+                        </label>
                         <select name="available" class="form-control" required>
                            <option value="">Select One</option>
                            <option value="0">Booked</option>
                            <option value="1">Available</option>
                            <option value="2">Cleaning</option>
                         </select>
+                        @error('available')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
                      </div>
                      <div class="mb-3">
-                        <label for="cancellation_type" class="form-label"><strong>Cancellation Type</strong></label>
+                        <label for="cancellation_type" class="form-label"><strong>Cancellation Type</strong>
+                           <span style="color: red; font-weight: bold;">*</span>
+                        </label>
                         <select name="cancellation_type" id="cancellation_type" class="form-control" required onchange="toggleChargeField()">
                            <option value="">Select One</option>
                            <option value="1">Chargeable</option>
                            <option value="0">Free</option>
                         </select>
+                        @error('cancellation_type')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
                      </div>
                      <div class="mb-3" id="cancellation_charge_field" style="display: none;">
                         <label for="charge" class="form-label"><strong>Cancellation Charge</strong></label>

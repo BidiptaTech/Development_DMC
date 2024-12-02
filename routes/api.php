@@ -12,9 +12,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
 Route::post('/v1/login', 'App\Http\Controllers\Api\LoginControllerApi@login');
-
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::get('/hotels', 'App\Http\Controllers\Api\HotelController@index');
     Route::get('/hotel-details', 'App\Http\Controllers\Api\HotelController@details');
@@ -25,4 +23,3 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/create-tour', 'App\Http\Controllers\Api\TourController@createTour');
     Route::get('/hotels/{hotelId}/facilities', [App\Http\Controllers\RoomtypeController::class, 'getHotelFacilities']);
 });
-

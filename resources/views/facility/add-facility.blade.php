@@ -21,40 +21,60 @@
                      <div class="row">
                            <div class="col-md-6">
                               <div class="mb-3">
-                                 <label for="name" class="form-label"><strong>Name</strong></label>
+                                 <label for="name" class="form-label"><strong>Name</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                 </label>
                                  <input type="text" id="name" name="name" placeholder="Enter Facility Name" class="form-control" required>
+                                 @error('name')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                               </div>
                            </div>
 
                            <div class="col-md-6">
                               <div class="mb-3">
-                                 <label for="icon" class="form-label"><strong>Icon</strong></label>
+                                 <label for="icon" class="form-label"><strong>Icon</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                 </label>
                                  <input type="file" name="icon" class="form-control" required>
+                                 @error('name')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                               </div>
                            </div>
 
                            <div class="col-md-6">
                               <div class="mb-3">
-                                 <label for="chargeable" class="form-label"><strong>Chargeable</strong></label>
+                                 <label for="chargeable" class="form-label"><strong>Chargeable</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                 </label>
                                  <select name="chargeable" class="form-control" id="chargeable" required onchange="toggleCommentField()">
                                        <option value="">Select One</option>
                                        <option value="1" {{ old('chargeable', $facility->chargeable ?? '') == '1' ? 'selected' : '' }}>Yes</option>
                                        <option value="0" {{ old('chargeable', $facility->chargeable ?? '') == '0' ? 'selected' : '' }}>No</option>
                                  </select>
+                                 @error('name')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                               </div>
                            </div>
 
                            <!-- Comment Section (Only shows if 'Chargeable' is Yes) -->
                            <div class="col-md-6" id="comment_section" style="display: none;">
                               <div class="mb-3">
-                                 <label for="comment" class="form-label"><strong>Comment</strong></label>
+                                 <label for="comment" class="form-label"><strong>Comment</strong>
+                                    
+                                 </label>
                                  <input type="text" name="comment" id="comment" placeholder="Enter Comment Name" class="form-control">
+                                 
                               </div>
                            </div>
 
                            <div class="col-md-6">
                               <div class="mb-3">
-                                 <label for="category_type" class="form-label"><strong>Category Type</strong></label>
+                                 <label for="category_type" class="form-label"><strong>Category Type</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                 </label>
                                  <select id="category_type" name="category_type" class="form-control" required>
                                        <option value="">Select Category Type</option>
                                        @forelse ($categories as $category)
@@ -65,6 +85,9 @@
                                        <option>No categories available</option>
                                        @endforelse
                                  </select>
+                                 @error('name')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                               </div>
                            </div>
                      </div>
