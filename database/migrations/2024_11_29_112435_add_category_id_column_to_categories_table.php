@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('categories', function (Blueprint $table) {
             //
-            $table->unsignedBigInteger('category_id')->unique()->after('id');
+            $table->unsignedBigInteger('category_id')->nullable()->after('id');
         });
     }
 
