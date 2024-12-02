@@ -61,7 +61,7 @@ class HotelController extends Controller
         $tax = Setting::where('name', 'tax_percentage')->first();
         $tax_percentage = $tax ? $tax->value : 0;
 
-        $id = $request->id;
+        $id = $request->query('id');
         $hotel_details = RoomRate::where('hotel_id', $id)->get();
 
         if ($hotel_details->isEmpty()) {

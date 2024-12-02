@@ -19,6 +19,7 @@ class TourController extends Controller
             'destination' => 'required|string',
             'adult' => 'required|integer',
             'child' => 'required|integer',
+            'infant'=> 'required|integer',
             'check_in' => 'required|string',
             'check_out' => 'required|string',
         ]);
@@ -28,10 +29,11 @@ class TourController extends Controller
         $tour = new Tour();
         $tour->destination = $request->destination;  
         $tour->adult = $request->adult;  
-        $tour->child = $request->child;  
+        $tour->child = $request->child;
+        $tour->infant = $request->infant;
         $tour->check_in_time = $checkInTime;  
         $tour->check_out_time = $checkOutTime; 
-        $tour->save();
+        $tour->save(); 
         return response()->json(['message' => 'Tour created successfully'], 201);
     }
 

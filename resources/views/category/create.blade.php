@@ -15,7 +15,7 @@
                                 <i class="mdi mdi-arrow-left"></i> Back
                             </a>
                         </div>
-                        
+
                     </div>
                     <div class="card-body p-4">
                         <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data">
@@ -23,21 +23,36 @@
 
                             <div class="row">
                                 <div class="col-md-12 mb-3">
-                                    <label for="name" class="form-label"><strong>Name</strong></label>
+                                    <label for="name" class="form-label"><strong>Name</strong>
+                                        <span style="color: red; font-weight: bold;">*</span>
+                                    </label>
                                     <input type="text" id="name" name="name" placeholder="Enter Name" class="form-control" required>
+                                    @error('name')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="category_type" class="form-label"><strong>Category Type</strong></label>
+                                    <label for="category_type" class="form-label"><strong>Category Type</strong>
+                                        <span style="color: red; font-weight: bold;">*</span>
+                                    </label>
                                     <select id="category_type" name="category_type" class="form-control" required>
                                         <option value="">Select Category Type</option>
                                         <option value="1">Hotel</option>
                                         <option value="2">Facilities</option>
                                     </select>
+                                    @error('name')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 
                                 <div class="col-md-6 mb-3">
-                                    <label for="icon" class="form-label"><strong>Icon</strong></label>
+                                    <label for="icon" class="form-label"><strong>Icon</strong>
+                                        <span style="color: red; font-weight: bold;">*</span>
+                                    </label>
                                     <input type="file" name="icon" class="form-control" required>
+                                    @error('name')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 

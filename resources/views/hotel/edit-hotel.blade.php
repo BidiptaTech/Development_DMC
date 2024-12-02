@@ -31,55 +31,89 @@
 
                             <!-- Hotel Name -->
                             <div class="mb-3">
-                                <label for="input35" class="form-label"><strong>Enter Hotel Name</strong></label>
+                                <label for="input35" class="form-label"><strong>Enter Hotel Name</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="input35" name="name" value="{{ old('name', $hotel->name) }}" placeholder="Enter Hotel Name" required>
+                                @error('name')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
 
                             </div>
 
                             <!-- Category Type -->
                             <div class="mb-3">
-                                <label for="category_type" class="form-label"><strong>Category Type</strong></label>
+                                <label for="category_type" class="form-label"><strong>Category Type</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <select id="category_type" name="category_type" class="form-control" required>
                                     <option value="">Select Category Type</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}" {{ old('category_type', $hotel->cat_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                     @endforeach
                                 </select>
+                                @error('category_type')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Address -->
                             <div class="mb-3">
-                                <label for="address" class="form-label"><strong>Address</strong></label>
+                                <label for="address" class="form-label"><strong>Address</strong>
+                                    
+                                </label>
                                 <input type="text" class="form-control" id="address" name="address" value="{{ old('address', $hotel->address) }}" placeholder="Enter Address">
                             </div>
 
                             <!-- City -->
                             <div class="mb-3">
-                                <label for="city" class="form-label"><strong>City</strong></label>
+                                <label for="city" class="form-label"><strong>City</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="city" name="city" value="{{ old('city', $hotel->city) }}" placeholder="Enter City" required>
+                                @error('city')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- State -->
                             <div class="mb-3">
-                                <label for="state" class="form-label"><strong>State</strong></label>
+                                <label for="state" class="form-label"><strong>State</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="state" name="state" value="{{ old('state', $hotel->state) }}" placeholder="Enter State" required>
+                                @error('state')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Country -->
                             <div class="mb-3">
-                                <label for="country" class="form-label"><strong>Country</strong></label>
+                                <label for="country" class="form-label"><strong>Country</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="country" name="country" value="{{ old('country', $hotel->country) }}" placeholder="Enter Country" required>
+                                @error('country')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Zip code -->
                             <div class="mb-3">
-                                <label for="pincode" class="form-label"><strong>Zip Code</strong></label>
+                                <label for="pincode" class="form-label"><strong>Zip Code</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input type="number" class="form-control" id="pincode" name="pincode" value="{{ old('zipcode', $hotel->zipcode) }}" placeholder="Enter Zip Code" required>
+                                @error('pincode')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Latitude and Longitude -->
                             <div class="mb-3">
-                                <label for="latitude" class="form-label"><strong>Latitude</strong></label>
+                                <label for="latitude" class="form-label"><strong>Latitude</strong>
+                                    
+                                </label>
                                 <input type="text" class="form-control" id="latitude" name="latitude" value="{{ old('latitude', $hotel->latitude) }}" placeholder="Enter Latitude">
                             </div>
                             <div class="mb-3">
