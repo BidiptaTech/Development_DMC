@@ -49,11 +49,19 @@ class CategoryController extends Controller
         ]);
         $image = $request->file('icon');
         $storage_file = CommonHelper::image_path('file_storage', $image);
-        $role = Category::create([
+
+        $category_max_id = User::max('userId') ?? 0;
+        $categoryId = CommonHelper::createId($category_max_id);
+        while (Category::where('category_id', $categoryId)->exists()) {
+            $categoryId = CommonHelper::createId($categoryId);
+        }
+        $category = Category::create([
             'name' => $request->input('name'),
             'category_type' => $request->input('category_type'),
             'status' => $request->input('category_status'),
             'icon' => $storage_file['master_value'],
+            'category_id' => $categoryId,
+            
         ]);
         return redirect()->route('category.index')
             ->with('success', 'Category created successfully');

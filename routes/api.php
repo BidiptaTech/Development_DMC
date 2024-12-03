@@ -25,5 +25,4 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/create-tour', 'App\Http\Controllers\Api\TourController@createTour');
     Route::get('/hotels/{hotelId}/facilities', [App\Http\Controllers\RoomtypeController::class, 'getHotelFacilities']);
     Route::post('/logout', 'App\Http\Controllers\Api\LoginControllerApi@logout');
-    
 });
