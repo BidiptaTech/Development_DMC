@@ -49,6 +49,10 @@ class HotelController extends Controller
             'pincode' => 'required|integer', 
             'category_type' => 'required',
             'state' => 'required',
+            'address' => 'required',
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'check_in_time' => 'required',
             'unique_id' => 'required',
             'country' => 'required', 
             'hotel_status' => 'required',
@@ -73,10 +77,18 @@ class HotelController extends Controller
             'name' => $request->input('name'),
             'hotel_unique_id' => $request->input('unique_id'),
             'address' => $request->input('address'),
-            'breakfast' => $request->input('breakfast'),
-            'lunch' => $request->input('lunch'),
-            'dinner' => $request->input('dinner'),
-            'extra_bed' => $request->input('extra_bed'),
+            'includes_breakfast' => $request->input('includes_breakfast'),
+            'breakfast_type' => $request->input('breakfast_type'),
+            'breakfast_price' => $request->input('breakfast_price'),
+            'includes_lunch' => $request->input('includes_lunch'),
+            'lunch_type' => $request->input('lunch_type'),
+            'lunch_price' => $request->input('lunch_price'),
+            'includes_dinner' => $request->input('includes_dinner'),
+            'dinner_type' => $request->input('dinner_type'),
+            'dinner_price' => $request->input('dinner_price'),
+            'infant_age_limit' => $request->input('infant_age_limit'),
+            'child_age_limit' => $request->input('child_age_limit'),
+            'weekend_days' => json_encode($request->weekend_days),
             'city' => $request->input('city'),
             'cat_id' => $request->input('category_type'),
             'state' => $request->input('state'),
@@ -286,6 +298,18 @@ class HotelController extends Controller
         $room->room_type_id = $request->room_type;
         $room->is_complete = 1;
 
+        //implement room rate data .
+
+        foreach ($request->event as $index => $eventName) {
+            RoomRate::create([
+               'event_name' => $eventName,
+               'event_type' => $request->event_type[$index],
+               'price' => $request->price[$index],
+               'start_date' => $request->start_date[$index],
+               'end_date' => $request->end_date[$index],
+            ]);
+         }
+        //end room rate data
         if ($room->save()) {
             return redirect()->back()
                 ->with('success', 'Room details saved successfully!');
