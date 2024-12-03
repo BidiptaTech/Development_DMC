@@ -83,7 +83,7 @@ class UserController extends Controller
             'password' => 'required|min:8', 
         ]);
         //for unique user id calling helper
-        $user_max_id = User::max('userId') ?? 0;
+        $user_max_id = User::max('userId') ?? 1;
         $usersId = CommonHelper::createId($user_max_id);
         while (User::where('userId', $usersId)->exists()) {
             $usersId = CommonHelper::createId($usersId);
@@ -155,6 +155,7 @@ class UserController extends Controller
             'country_code' => $request->input('code'),
             'phone' => $request->input('phone'),
             'email' => $request->input('email'),
+            'userId' => $user->userId,
             'password' => $request->filled('password') ? bcrypt($request->input('password')) : $user->password,
         ]);
         //update user role
@@ -209,14 +210,15 @@ class UserController extends Controller
         if($walletBalance < $validatedData['amount'] && $this->auth_user->id != 1){
             return redirect()->back()->with('error', 'You dont have much balance, please add balance.');
         }else{
-            DB::transaction(function () use ($validatedData) {
+            $user = User::where('id', $validatedData['userId'])->first();
+            DB::transaction(function () use ($validatedData, $user) {
                 $wallet = Wallet::create([
-                    'user_id' => $validatedData['userId'], 
+                    'user_id' => $user->userId, 
                     'balance' => $validatedData['amount'], 
                 ]);
                 if($wallet){
                     $transaction = Transaction::create([
-                        'user_id' => $validatedData['userId'], 
+                        'user_id' => $user->userId, 
                         'type' => 'transaction', 
                         'amount' => $validatedData['amount'], 
                         'credited_from' => $this->auth_user->id, 
@@ -233,8 +235,8 @@ class UserController extends Controller
     */
     public function transaction()
     {
-        $transaction = Transaction::where('user_id', $this->auth_user->id)
-        ->orWhere('credited_from', $this->auth_user->id)
+        $transaction = Transaction::where('userId', $this->auth_user->userId)
+        ->orWhere('credited_from', $this->auth_user->userId)
         ->get();
         return view('users.transaction',compact('transaction'));
     }
