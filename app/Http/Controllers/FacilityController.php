@@ -59,6 +59,11 @@ class FacilityController extends Controller
         
         $storage_file = CommonHelper::image_path('file_storage', $image);
 
+        $facility_max_id = Category::max('facilityId') ?? 0;
+        $facilityId = CommonHelper::createId($facility_max_id);
+        while (Category::where('facilityId', $facilityId)->exists()) {
+            $facilityId = CommonHelper::createId($facilityId);
+        }
         
         $facility = Facility::create([
             'name' => $request->input('name'),
@@ -68,6 +73,7 @@ class FacilityController extends Controller
             'is_chargeable' => $request->input('chargeable'),
             'chargable_comment' => $request->input('comment'),
             'inserted_by_user' => Auth::user()->id,
+            'facilityId' => $facilityId,
         ]);
         return redirect()->route('facility.index')
             ->with('success', 'Facility created successfully');

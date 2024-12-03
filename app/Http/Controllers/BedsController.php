@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bed;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Facility;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\CommonHelper;
 
-class CategoryController extends Controller
+class BedsController extends Controller
 {
     /*
     * Display a listing of the Category.
@@ -20,11 +21,9 @@ class CategoryController extends Controller
     */
     public function index(Request $request)
     {
-        $categories = Category::where('status', 1)->orderBy('id', 'desc')->get();
+        $beds = Bed::all();
         // Decode the category names to ensure no HTML entities or special characters are escaped
-        
-       
-        return view('category.index', compact('categories'));
+        return view('beds.beds', compact('beds'));
     }
 
     /*
@@ -33,7 +32,7 @@ class CategoryController extends Controller
     */
     public function create()
     {
-        return view('category.create');
+        return view('beds.add-beds');
     }
 
     /*
