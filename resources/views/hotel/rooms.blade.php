@@ -24,11 +24,8 @@
                   <form id="hotelForm" method="POST" action="{{ route('storeroom') }}" enctype="multipart/form-data">
                      @csrf
                      <input type="hidden" class="form-control" name="id" value="{{ $hotel->id }}">
-                     <div class="mb-3">
-                        <label for="input35" class="form-label"><strong>Room Number</strong></label>
-                        <input type="text" class="form-control" name="room_number" placeholder="Enter Room Number">
-                     </div>
-                     <div class="mb-3">
+                     <div class="row">
+                     <div class="col-md-4 mb-3">
                         <label for="room_type" class="form-label"><strong>Room Type</strong>
                            <span style="color: red; font-weight: bold;">*</span>
                         </label>
@@ -42,11 +39,49 @@
                            <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                      </div>
-                     <div class="mb-3">
-                        <label for="input35" class="form-label"><strong>Max capacity</strong></label>
-                        <input type="number" class="form-control" name="max_capacity" placeholder="Enter Hotel Number">
+                     <div class="col-md-4 mb-3">
+                        <label for="input35" class="form-label"><strong>No of Room</strong></label>
+                        <span style="color: red; font-weight: bold;">*</span>
+                        <input type="text" class="form-control" name="room_number" placeholder="Enter Number of Room ">
+                        @error('room_number')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
                      </div>
-                     <div class="mb-3">
+                        <!-- Occupancy Input -->
+                        <div class="col-md-4 mb-3">
+                           <label for="input35" class="form-label"><strong>Occupancy</strong></label>
+                           <span style="color: red; font-weight: bold;">*</span>
+                           <input type="number" id="occupancy" class="form-control" name="max_capacity" 
+                                    placeholder="Enter Occupancy" min="1" max="10">
+                           @error('max_capacity')
+                                 <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+
+                        <!-- Adult Dropdown -->
+                        <div class="col-md-4 mb-3">
+                           <label for="adult" class="form-label"><strong>Adults</strong></label>
+                           <span style="color: red; font-weight: bold;">*</span>
+                           <select id="adult" class="form-control" name="adult_count" disabled>
+                                 <option value="">Select Adults</option>
+                           </select>
+                           @error('adult_count')
+                                 <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+
+                        <!-- Child Dropdown -->
+                        <div class="col-md-4 mb-3">
+                           <label for="child" class="form-label"><strong>Children</strong></label>
+                           <span style="color: red; font-weight: bold;">*</span>
+                           <select id="child" class="form-control" name="child_count" disabled>
+                                 <option value="">Select Children</option>
+                           </select>
+                           @error('child_count')
+                                 <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+                     <div class="col-md-4 mb-3">
                         <label for="status" class="form-label"><strong>Check availability</strong>
                            <span style="color: red; font-weight: bold;">*</span>
                         </label>
@@ -60,7 +95,7 @@
                            <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                      </div>
-                     <div class="mb-3">
+                     <div class="col-md-4 mb-3">
                         <label for="cancellation_type" class="form-label"><strong>Cancellation Type</strong>
                            <span style="color: red; font-weight: bold;">*</span>
                         </label>
@@ -75,14 +110,70 @@
                      </div>
                      <div class="mb-3" id="cancellation_charge_field" style="display: none;">
                         <label for="charge" class="form-label"><strong>Cancellation Charge</strong></label>
+                        <span style="color: red; font-weight: bold;">*</span>
                         <input type="number" class="form-control" name="charge" id="charge" placeholder="Enter Cancellation Charge">
+                        @error('charge')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
                      </div>
+                     <!-- hotels rate -->
+                     <label for="charge" class="form-label"><b>Room Price</b></label>
+                     <hr>
+                     <div id="hotelRatesContainer">
+                           <!-- Original set of hotel rate fields -->
+                           <div class="hotel-rate-form">
+                              
+                              <div class="row">
+                                 <!-- Event Name -->
+                                 <div class="col-md-4 mb-3">
+                                    <label for="event" class="form-label"><strong>Event Name</strong></label>
+                                    <input type="text" class="form-control" name="event[]" placeholder="Enter Event Name">
+                                 </div>
 
+                                 <!-- Event Type Dropdown -->
+                                 <div class="col-md-4 mb-3">
+                                    <label for="event_type" class="form-label"><strong>Event Type</strong></label>
+                                    <select class="form-control" name="event_type[]">
+                                       <option value="">Select Event Type</option>
+                                       <option value="Fair Date">Fair Date</option>
+                                       <option value="Blackout Date">Blackout Date</option>
+                                    </select>
+                                 </div>
+
+                                 <!-- Price -->
+                                 <div class="col-md-4 mb-3">
+                                    <label for="price" class="form-label"><strong>Price</strong></label>
+                                    <input type="number" class="form-control" name="price[]" placeholder="Enter Price">
+                                 </div>
+
+                                 <!-- Start Date -->
+                                 <div class="col-md-4 mb-3">
+                                    <label for="start_date" class="form-label"><strong>Start Date</strong></label>
+                                    <input type="date" class="form-control" name="start_date[]">
+                                 </div>
+
+                                 <!-- End Date -->
+                                 <div class="col-md-4 mb-3">
+                                    <label for="end_date" class="form-label"><strong>End Date</strong></label>
+                                    <input type="date" class="form-control" name="end_date[]">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+                        <!-- Add New Button -->
+                        <div class="text-end mb-3">
+                           <button type="button" class="btn btn-primary" id="addNewRate">Add New</button>
+                        </div>
+                        <!-- end of hotels rate -->
                      <div class="form-check form-switch">
                         <label for="hotel_status" class="form-label"><strong>Status</strong></label>
-                        <input type="hidden" name="hotel_status" value="0">
+                        <span style="color: red; font-weight: bold;">*</span>
                         <input class="form-check-input" name="hotel_status" type="checkbox" id="hotel_status" value="1">
                         <label class="form-check-label"></label>
+                        @error('hotel_status')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
                      </div>
 
                      <!-- Submit and Previous Buttons -->
@@ -223,5 +314,75 @@
    window.onload = function() {
        toggleChargeField();
    };
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const occupancyInput = document.getElementById("occupancy");
+        const adultDropdown = document.getElementById("adult");
+        const childDropdown = document.getElementById("child");
+
+        // Function to update adult dropdown options
+        function updateAdultOptions() {
+            const occupancy = parseInt(occupancyInput.value) || 0;
+
+            adultDropdown.innerHTML = `<option value="">Select Adults</option>`; // Reset options
+
+            if (occupancy > 0) {
+                for (let i = 1; i <= occupancy; i++) {
+                    adultDropdown.innerHTML += `<option value="${i}">${i}</option>`;
+                }
+                adultDropdown.disabled = false;
+                updateChildOptions(); // Update child options based on the new adult selection
+            } else {
+                adultDropdown.disabled = true;
+                childDropdown.disabled = true;
+            }
+        }
+
+        // Function to update child dropdown options
+        function updateChildOptions() {
+            const occupancy = parseInt(occupancyInput.value) || 0;
+            const adults = parseInt(adultDropdown.value) || 0;
+            const maxChildren = occupancy - adults;
+
+            childDropdown.innerHTML = `<option value="">Select Children</option>`; // Reset options
+
+            if (maxChildren > 0) {
+                for (let i = 0; i <= maxChildren; i++) {
+                    childDropdown.innerHTML += `<option value="${i}">${i}</option>`;
+                }
+                childDropdown.disabled = false;
+            } else {
+                childDropdown.disabled = true;
+            }
+        }
+
+        // Add event listeners
+        occupancyInput.addEventListener("input", updateAdultOptions);
+        adultDropdown.addEventListener("change", updateChildOptions);
+    });
+</script>
+
+<script>document.getElementById('addNewRate').addEventListener('click', function () {
+    // Get the container where forms will be appended
+    const container = document.getElementById('hotelRatesContainer');
+
+    // Clone the first form
+    const firstForm = container.querySelector('.hotel-rate-form');
+    const newForm = firstForm.cloneNode(true);
+
+    // Reset input values in the cloned form
+    const inputs = newForm.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        if (input.tagName === 'INPUT') {
+            input.value = '';
+        } else if (input.tagName === 'SELECT') {
+            input.selectedIndex = 0;
+        }
+    });
+
+    // Append the cloned form to the container
+    container.appendChild(newForm);
+});
 </script>
 @endsection
