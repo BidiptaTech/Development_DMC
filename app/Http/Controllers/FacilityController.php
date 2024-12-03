@@ -20,7 +20,7 @@ class FacilityController extends Controller
     */
     public function index(Request $request)
     {
-        $facilities = Facility::with('categories')->orderBy('id', 'desc')->get();
+        $facilities = Facility::with('categories')->get();
         return view('facility.facility',compact('facilities'));
     }
 
@@ -45,7 +45,7 @@ class FacilityController extends Controller
             'category_type' => 'required',
             'facility_status' => 'required',
         ]);
-    
+        
         $existingFacility = Facility::where('name', $request->input('name'))
             ->where('category_id', $request->input('category_type'))
             ->first();
@@ -54,8 +54,12 @@ class FacilityController extends Controller
             return redirect()->back()
                 ->with('error', 'Facility with this name and category already exists.');
         }
+        
         $image = $request->file('icon');
+        
         $storage_file = CommonHelper::image_path('file_storage', $image);
+
+        
         $facility = Facility::create([
             'name' => $request->input('name'),
             'category_id' => $request->input('category_type'),

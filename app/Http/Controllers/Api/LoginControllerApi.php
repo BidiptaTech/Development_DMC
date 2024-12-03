@@ -53,4 +53,22 @@ class LoginControllerApi extends Controller
             ],
         ])->cookie('token', $token, 60 * 24, '/', null, true, true);
     }
+
+    public function logout(Request $request)
+    {
+        
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['error'=> 'User not found'], 404);
+        }
+        $user->tokens->each(function ($token) {
+            $token->delete();
+        });
+        $cookie = cookie()->forget('token');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully logged out.',
+        ])->cookie($cookie);
+    }
 }
