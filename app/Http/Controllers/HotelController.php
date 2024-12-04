@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use Illuminate\Http\Request;
 use App\Models\Hotel;
-use App\Models\Room;
+use App\Models\Room; 
+use App\Models\Rate; 
 use App\Models\Setting;
 use App\Models\Category;
 use App\Models\RoomType;
@@ -44,19 +45,25 @@ class HotelController extends Controller
     {
         $unique_id = $request->input('unique_id');
         $validatedData = $request->validate([
+            'unique_id' => 'required',
             'name' => 'required|string',
-            'city' => 'required|string',
-            'pincode' => 'required|integer', 
             'category_type' => 'required',
-            'state' => 'required',
+            'phone' => 'required',
+            'email' => 'required',
             'address' => 'required',
+            'city' => 'required|string',
+            'state' => 'required',
+            'country' => 'required', 
+            'pincode' => 'required|integer', 
             'latitude' => 'required',
             'longitude' => 'required',
             'check_in_time' => 'required',
-            'unique_id' => 'required',
-            'country' => 'required', 
-            'hotel_status' => 'required',
+            'check_out_time' => 'required',
+            'breakfast' => 'required',
+            'lunch' => 'required',
+            'dinner' => 'required',
             'facilities' => 'required|array', 
+            'hotel_status' => 'required',
         ]);
 
         $imagePath = null;
@@ -73,22 +80,58 @@ class HotelController extends Controller
                 }
             }
 
+        if ($request->conference == 1) {
+            $conferenceData = [];
+            if ($request->has('conference_head')) {
+                foreach ($request->conference_head as $index => $head) {
+                    $conferenceData[] = [
+                        'head' => $head,
+                        'duration' => $request->conference_duration[$index] ?? null,
+                        'price' => $request->conference_price[$index] ?? null,
+                    ];
+                }
+            }
+            $conferenceDataJson = json_encode($conferenceData);
+        } else {
+            $conferenceDataJson = null;
+        }
+        if ($request->cancellation_type == 1) {
+            $cancellationData = [];
+            if ($request->has('cancellation_duration')) {
+                foreach ($request->cancellation_duration as $index => $duration) {
+                    $cancellationData[] = [
+                        'duration' => $duration,
+                        'price' => $request->cancellation_price[$index] ?? null,
+                    ];
+                }
+            }
+            $cancellationDataJson = json_encode($cancellationData);
+        } else {
+            $cancellationDataJson = null;
+        }
+    
+
         $hotel = Hotel::create([
             'name' => $request->input('name'),
             'hotel_unique_id' => $request->input('unique_id'),
             'address' => $request->input('address'),
-            'includes_breakfast' => $request->input('includes_breakfast'),
+            'includes_breakfast' => $request->input('breakfast'),
             'breakfast_type' => $request->input('breakfast_type'),
             'breakfast_price' => $request->input('breakfast_price'),
-            'includes_lunch' => $request->input('includes_lunch'),
+            'includes_lunch' => $request->input('lunch'),
             'lunch_type' => $request->input('lunch_type'),
             'lunch_price' => $request->input('lunch_price'),
-            'includes_dinner' => $request->input('includes_dinner'),
+            'includes_dinner' => $request->input('dinner'),
             'dinner_type' => $request->input('dinner_type'),
             'dinner_price' => $request->input('dinner_price'),
             'infant_age_limit' => $request->input('infant_age_limit'),
             'child_age_limit' => $request->input('child_age_limit'),
             'weekend_days' => json_encode($request->weekend_days),
+            '12_hour_book' => $request->input('booking_available'),
+            'conference_room' => $request->input('conference'),
+            'conference_data' => $conferenceDataJson,
+            'cancellation_type' => $request->input('cancellation_type'),
+            'cancellation_data' => $cancellationDataJson,
             'city' => $request->input('city'),
             'cat_id' => $request->input('category_type'),
             'state' => $request->input('state'),
@@ -280,29 +323,39 @@ class HotelController extends Controller
     public function storeroom(Request $request)
     {
         $request->validate([
-            'room_number' => 'required',
+            'room_type' => 'required',
             'max_capacity' => 'required',
-            'available' => 'required',
-            'cancellation_type' => 'required', 
+            'no_of_room' => 'required',
+            'weekday_price' => 'required',
+            'weekend_price' => 'required',
             'hotel_status' => 'required', 
         ]);
 
+        $event_details = 
+
         $room = new Room(); 
         $room->hotel_id = $request->id;
-        $room->room_number = $request->room_number;
-        $room->max_capacity = $request->max_capacity;
-        $room->is_available = $request->available;
-        $room->cancellation_type = $request->cancellation_type;
-        $room->cancellation_charge = $request->charge ?? 0; 
-        $room->status = $request->hotel_status;
         $room->room_type_id = $request->room_type;
+        $room->no_of_room = $request->no_of_room;
+        $room->weekday_price = $request->weekday_price;
+        $room->weekend_price = $request->weekend_price;
+        $room->max_capacity = $request->max_capacity;
+        $room->adult_count = $request->adult_count;
+        $room->child_count = $request->child_count;
+        $room->status = $request->hotel_status;
+
         $room->is_complete = 1;
-
         //implement room rate data .
-
         foreach ($request->event as $index => $eventName) {
-            RoomRate::create([
-               'event_name' => $eventName,
+            $rate_id = Rate::max('rate_id') ?? 1;
+            $rateId = CommonHelper::createId($rate_id);
+            while (Rate::where('rate_id', $rateId)->exists()) {
+                $rateId = CommonHelper::createId($rateId);
+            }
+            Rate::create([
+               'event' => $eventName,
+               'hotel_id' => $request->id,
+               'rate_id' => $rateId,
                'event_type' => $request->event_type[$index],
                'price' => $request->price[$index],
                'start_date' => $request->start_date[$index],
