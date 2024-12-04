@@ -1,5 +1,6 @@
 <?php
 
+use Brick\Math\BigInteger;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +19,7 @@ return new class extends Migration
 
         Schema::table('facilities', function (Blueprint $table) {
         
-                $table->unsignedBigInteger('category_id')->change(); // Assuming '1' is the default
+                $table->bigInteger('category_id')->unique()->change();
 
                 $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
             });
@@ -31,6 +32,10 @@ return new class extends Migration
     {
         Schema::table('facilities', function (Blueprint $table) {
             //
+            if (Schema::hasColumn('categories', 'category_id')) {
+                $table->dropUnique(['category_id']); // Drop unique constraint
+                $table->dropColumn('category_id'); // Drop the column
+            }
         });
     }
 };

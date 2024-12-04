@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rates', function (Blueprint $table) {
+        Schema::create('beds', function (Blueprint $table) {
             $table->id();
-            $table->string('event');
-            $table->string('event_type');
-            $table->integer('price');
-            $table->timestamps('start_date');
-            $table->timestamps('end_date');
+            $table->bigInteger('bedId');
+            $table->string('bed_type');
+            $table->text('description')->nullable();
+            $table->string('image')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes(); // Soft delete column for deleted_at
         });
     }
 
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rates');
+        Schema::dropIfExists('beds');
     }
 };
