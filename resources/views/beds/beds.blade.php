@@ -77,7 +77,7 @@
             </div>
         </div>
 
-        <!-- Category Delete Modal -->
+        <!-- Bed Delete Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" Category="dialog" 
              aria-labelledby="deleteModalLabel" aria-hidden="true">
             <div class="modal-dialog" Category="document">
