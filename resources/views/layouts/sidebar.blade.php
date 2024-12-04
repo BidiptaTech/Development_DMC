@@ -56,7 +56,7 @@
                             <a href="{{ route('facility.index') }}" class="side-nav-link">
                                 <span class="menu-text">Facility</span>
                             </a>
-                        </li>                        
+                        </li>
                         <li class="side-nav-item">
                             <a href="{{ route('hotels.index') }}" class="side-nav-link">
                                 <span class="menu-text">Hotel</span>
@@ -66,7 +66,12 @@
                             <a href="{{ route('roomType.index') }}" class="side-nav-link">
                                 <span class="menu-text">Room Type</span>
                             </a>
-                        </li>                     
+                        </li>
+                        <li class="side-nav-item">
+                            <a href="{{ route('beds.index') }}" class="side-nav-link">
+                                <span class="menu-text">Beds</span>
+                            </a>
+                        </li>           
                     </ul>
                 </div>
             </li>

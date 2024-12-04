@@ -59,9 +59,9 @@ class FacilityController extends Controller
         
         $storage_file = CommonHelper::image_path('file_storage', $image);
 
-        $facility_max_id = Category::max('facilityId') ?? 0;
+        $facility_max_id = Facility::max('facilityId') ?? 0;
         $facilityId = CommonHelper::createId($facility_max_id);
-        while (Category::where('facilityId', $facilityId)->exists()) {
+        while (Facility::where('facilityId', $facilityId)->exists()) {
             $facilityId = CommonHelper::createId($facilityId);
         }
         

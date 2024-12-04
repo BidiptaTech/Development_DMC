@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BedsController;
 use App\Http\Controllers\RoomsController;
 use App\Http\Controllers\RoomtypeController;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('category', CategoryController::class);
         Route::resource('facility', FacilityController::class);
         Route::resource('roomType', RoomtypeController::class);
+        Route::resource('beds', BedsController::class);
+        
         Route::get('/hotels/search', [RoomtypeController::class, 'search'])->name('hotels.search');
         Route::get('/hotels/{hotelId}/facilities', [RoomtypeController::class, 'getHotelFacilities']);
         Route::post('/roomType/toggle', [RoomTypeController::class, 'toggle'])->name('roomType.toggle');

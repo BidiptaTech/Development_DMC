@@ -42,28 +42,27 @@ class BedsController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|unique:roles,name',
-            'category_type' => 'required',
-            'icon' => 'required',
+            'bed_type' => 'required|unique:roles,name',
+            'image' => 'required',
+            'description' => 'required',
         ]);
-        $image = $request->file('icon');
+
+        $image = $request->file('image');
         $storage_file = CommonHelper::image_path('file_storage', $image);
 
-        $category_max_id = Category::max('category_id') ?? 0;
-        $categoryId = CommonHelper::createId($category_max_id);
-        while (Category::where('category_id', $categoryId)->exists()) {
-            $categoryId = CommonHelper::createId($categoryId);
+        $bed_max_id = Bed::max('bedId') ?? 0;
+        $bedId = CommonHelper::createId($bed_max_id);
+        while (Bed::where('bedId', $bedId)->exists()) {
+            $bedId = CommonHelper::createId($bedId);
         }
-        $category = Category::create([
-            'name' => $request->input('name'),
-            'category_type' => $request->input('category_type'),
-            'status' => $request->input('category_status'),
-            'icon' => $storage_file['master_value'],
-            'category_id' => $categoryId,
-            
+        $bed = Bed::create([
+            'bedId' => $bedId,
+            'bed_type' => $request->input(key: 'bed_type'),
+            'image' => $storage_file['master_value'],
+            'description'=> $request->input('description'),
         ]);
-        return redirect()->route('category.index')
-            ->with('success', 'Category created successfully');
+        return redirect()->route('beds.index')
+            ->with('success', 'Bed type created successfully');
     }
 
     /*
@@ -72,8 +71,8 @@ class BedsController extends Controller
     */
     public function edit($id)
     {
-        $category = Category::where('id',$id)->first();
-        return view('category.edit', compact('category'));
+        $bed = Bed::where('bedId',$id)->first();
+        return view('beds.edit-beds', compact('bed'));
     }
     /*
     * Update the specified role.
@@ -82,19 +81,18 @@ class BedsController extends Controller
     public function update(Request $request, $id)
     {
         // dd($request->all());
-        $category = Category::where('id',$id)->first();
+        $bed = Bed::where('bedId',$id)->first();
         //image upload using helper
-        $image = $request->file('icon');
+        $image = $request->file('image');
         if($image){
         $storage_file = CommonHelper::image_path('file_storage', $image);
         }
-        $category->name = $request->input('name');
-        $category->category_type = $request->input('category_type');
-        $category->status = $request->input('category_status');
-        $category->icon = $storage_file['master_value'] ?? $category->icon;
-        $category->save();
+        $bed->bed_type = $request->input('bed_type');
+        $bed->image = $storage_file['master_value'] ?? $bed->image;
+        $bed->description = $request->input('description');
+        $bed->save();
 
-        return redirect()->route('category.index')->with('success', 'Categories updated successfully.');
+        return redirect()->route('beds.index')->with('success', 'Bed Type updated successfully.');
     }
 
     /*
@@ -103,19 +101,18 @@ class BedsController extends Controller
     */
     public function destroy($id)
     {
-        $facility = Facility::where('category_id',$id)->get();
+        $bed = Bed::where('bedId',$id)->first();
 
-        if(count($facility) == 0){
-            $delete =Category::where('id', $id)->delete();
-            return redirect()->route('category.index')
-            ->with('success','Category deleted successfully');
+        if($bed){
+            $bed->delete();
+            return redirect()->route('beds.index')
+            ->with('success','Bed Type deleted successfully');
         }
         else{
             return redirect()->route(route: 'category.index')
-            ->with('denied','This Category is in use, Cannot be delete!');
+            ->with('denied','Either cannot delete or bed type not found!');
         }
         
-    
     }
 
 }

@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white;">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Add New Category</h5>
+                            <h5 class="mb-0">Add New Bed Type</h5>
                             <!-- Back Button -->
                             <a href="javascript:history.back()" class="btn btn-sm btn-outline-light">
                                 <i class="mdi mdi-arrow-left"></i> Back
@@ -18,53 +18,38 @@
 
                     </div>
                     <div class="card-body p-4">
-                        <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('beds.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf 
 
                             <div class="row">
                                 <div class="col-md-12 mb-3">
-                                    <label for="name" class="form-label"><strong>Name</strong>
+                                    <label for="name" class="form-label"><strong>Bed Type</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="text" id="name" name="name" placeholder="Enter Name" class="form-control" required>
-                                    @error('name')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="category_type" class="form-label"><strong>Category Type</strong>
-                                        <span style="color: red; font-weight: bold;">*</span>
-                                    </label>
-                                    <select id="category_type" name="category_type" class="form-control" required>
-                                        <option value="">Select Category Type</option>
-                                        <option value="1">Hotel</option>
-                                        <option value="2">Facilities</option>
-                                    </select>
-                                    @error('name')
+                                    <input type="text" id="name" name="bed_type" placeholder="Enter Bed Type" class="form-control" required>
+                                    @error('bed_type')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 
                                 <div class="col-md-6 mb-3">
-                                    <label for="icon" class="form-label"><strong>Icon</strong>
+                                    <label for="image" class="form-label"><strong>Image</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="file" name="icon" class="form-control" required>
-                                    @error('name')
+                                    <input type="file" name="image" class="form-control" required>
+                                    @error('image')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
                             <!-- Separate Row for Status -->
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-check form-switch">
-                                        <input type="hidden" name="category_status" value="0">
-                                        <input class="form-check-input" name="category_status" type="checkbox" id="category_status" value="1">
-                                        <label for="category_status" class="form-check-label"><strong>Status</strong></label>
-                                    </div>
-                                </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="name" class="form-label"><strong>Description</strong>
+                                
+                                </label>
+                                <input type="text" id="description" name="description" placeholder="Description..." class="form-control">
+                                
                             </div>
 
                             <!-- Submit Button -->

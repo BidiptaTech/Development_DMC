@@ -1,6 +1,6 @@
 @extends('layouts.layout')
 
-@section('title', 'Category')
+@section('title', 'Beds')
 
 @section('css')
     <link href="{{ URL::asset('build/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
@@ -13,11 +13,11 @@
         <div class="card page-title-box rounded-0">
             <div class="d-flex justify-content-between align-items-center flex-column flex-sm-row gap-2">
                 <div class="flex-grow-1">
-                    <h4 class="font-18 fw-semibold mb-0">Category</h4>
+                    <h4 class="font-18 fw-semibold mb-0">Beds</h4>
                 </div>
                 <!-- Add User Button Row -->
                 <div class="mt-3 mt-sm-0">
-                    <a href="{{ route('category.create') }}" class="btn btn-blue">Add New Category</a>
+                    <a href="{{ route('beds.create') }}" class="btn btn-blue">Add New Bed Type</a>
                 </div>
             </div>
         </div>
@@ -30,29 +30,26 @@
                     <table id="example2" class="table table-striped table-bordered">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>Logo</th>
+                                <th>Bed Type</th>
+                                <th>Image</th>
+                                <th>Description</th>
                                 <th width="280px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($beds as $category)
+                            @foreach($beds as $bed)
                                 <tr>
-                                    <td class="category-name">{{ $category->name }}</td>
+                                    <td class="category-name">{{ $bed->bed_type }}</td>
+                                    
                                     <td>
-                                        @if($category->category_type == 1)
-                                            {{ "hotel" }}
-                                        @else
-                                            {{ "Facility" }}
-                                        @endif
+                                        <img src="{{ $bed->image }}" alt="Category Icon" style="width: 50px; height: 50px;">
                                     </td>
                                     <td>
-                                        <img src="{{ $category->icon }}" alt="Category Icon" style="width: 50px; height: 50px;">
+                                        {{$bed->description}}
                                     </td>
                                     <td class="d-flex justify-content-start align-items-center" style="gap: 8px;">
                                         <!-- Edit Button -->
-                                        <a href="{{ route('category.edit', $category->id) }}" 
+                                        <a href="{{ route('beds.edit', $bed->bedId) }}"
                                         class="btn btn-blue btn-sm d-flex align-items-center justify-content-center rounded-circle" 
                                         style="width: 28px; height: 28px; padding: 0;">
                                             <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#ffffff">
@@ -66,7 +63,7 @@
                                                 style="width: 28px; height: 28px; padding: 0;" 
                                                 data-toggle="modal" 
                                                 data-target="#deleteModal" 
-                                                onclick="setDeleteForm('{{ route('category.destroy', $category->id) }}')">
+                                                onclick="setDeleteForm('{{ route('beds.destroy', $bed->bedId) }}')">
                                             <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#ffffff">
                                                 <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
                                             </svg>
