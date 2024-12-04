@@ -289,14 +289,15 @@ class HotelController extends Controller
                 'sales_director_email' => $request->sales_director_email,
                 'finance_director_cont_no' => $request->finance_director_cont_no,
                 'finance_director_email' => $request->finance_director_email,
-                'food&beverage_director_cont_no' => $request->beverage_director_cont_no,
-                'food&beverage_director_email' => $request->beverage_director_email,
+                'food_beverage_director_cont_no' => $request->beverage_director_cont_no,
+                'food_beverage_director_email' => $request->beverage_director_email,
                 'marketing_manager_cont_no' => $request->marketing_manager_cont_no,
                 'marketing_manager_email' => $request->marketing_manager_email,
                 'account_manager_cont_no' => $request->account_manager_cont_no,
                 'account_manager_email' => $request->account_manager_email,
                 'general_manager_cont_no' => $request->general_manager_cont_no,
                 'general_manager_email' => $request->general_manager_email,
+                'whatsapp' => $request->whatsapp,
             ]);
 
             return redirect()->route('hotels.room', ['hotel' => $hotel->id])->with('success', 'Hotel Contacts created successfully');
@@ -329,9 +330,9 @@ class HotelController extends Controller
             'weekday_price' => 'required',
             'weekend_price' => 'required',
             'hotel_status' => 'required', 
+            'extra_bed' => 'required', 
+            'child_cot' => 'required', 
         ]);
-
-        $event_details = 
 
         $room = new Room(); 
         $room->hotel_id = $request->id;
@@ -342,27 +343,35 @@ class HotelController extends Controller
         $room->max_capacity = $request->max_capacity;
         $room->adult_count = $request->adult_count;
         $room->child_count = $request->child_count;
+        $room->extra_bed = $request->extra_bed;
+        $room->bed_type = $request->bed_type;
+        $room->extra_bed_price = $request->extra_bed_price;
+        $room->child_cot = $request->child_cot;
+        $room->child_cot_price = $request->child_cot_price;
         $room->status = $request->hotel_status;
-
         $room->is_complete = 1;
-        //implement room rate data .
+        $room->room_id = 24;
+        $room->save();
+
+        $roomId = $room->id;  
         foreach ($request->event as $index => $eventName) {
             $rate_id = Rate::max('rate_id') ?? 1;
             $rateId = CommonHelper::createId($rate_id);
             while (Rate::where('rate_id', $rateId)->exists()) {
                 $rateId = CommonHelper::createId($rateId);
             }
+
             Rate::create([
-               'event' => $eventName,
-               'hotel_id' => $request->id,
-               'rate_id' => $rateId,
-               'event_type' => $request->event_type[$index],
-               'price' => $request->price[$index],
-               'start_date' => $request->start_date[$index],
-               'end_date' => $request->end_date[$index],
+                'event' => $eventName,
+                'room_id' => $roomId,  // Use the last inserted room ID here
+                'hotel_id' => $request->id,
+                'rate_id' => $rateId,
+                'event_type' => $request->event_type[$index],
+                'price' => $request->price[$index],
+                'start_date' => $request->start_date[$index],
+                'end_date' => $request->end_date[$index],
             ]);
-         }
-        //end room rate data
+        }
         if ($room->save()) {
             return redirect()->back()
                 ->with('success', 'Room details saved successfully!');
@@ -377,7 +386,7 @@ class HotelController extends Controller
     * Date 18-11-2024
     */
     public function editroom(Request $request, $id){
-        $room = Room::findOrFail($id);
+        $room = Room::with('rates')->findOrFail($id);
         $roomtypes = RoomType::where('status', 1)->get();
         return view('hotel.editroom', compact('room','roomtypes'));
     }
@@ -389,34 +398,60 @@ class HotelController extends Controller
     public function updateroom(Request $request)
     {
         $request->validate([
-            'room_number' => 'required',
+            'room_type' => 'required',
             'max_capacity' => 'required',
-            'available' => 'required',
-            'cancellation_type' => 'required',
-            'hotel_status' => 'required',
+            'no_of_room' => 'required',
+            'weekday_price' => 'required',
+            'weekend_price' => 'required',
+            'hotel_status' => 'required', 
+            'extra_bed' => 'required', 
+            'child_cot' => 'required', 
         ]);
+
+        // Get the room by ID
         $id = $request->id;
         $room = Room::findOrFail($id);
-        // Update the room details
-        $room->hotel_id = $room->hotel_id;
-        $room->room_number = $request->room_number;
-        $room->max_capacity = $request->max_capacity;
-        $room->is_available = $request->available;
-        $room->cancellation_type = $request->cancellation_type;
-        $room->cancellation_charge = $request->charge ?? 0;
-        $room->status = $request->hotel_status;
-        $room->room_type_id = $request->room_type;
-        $room->is_complete = 1;
 
-        // Save the updated room
-        if ($room->save()) {
-            return redirect()->route('hotels.room', ['hotel' => $room->hotel_id])
-                ->with('success', 'Room details updated successfully!');
-        } else {
-            return redirect()->back()
-                ->with('error', 'An error occurred while updating the room details.');
-        }   
+        // Update the room details
+        $room->hotel_id = $room->hotel_id; // Assuming hotel_id remains the same
+        $room->room_type_id = $request->room_type;
+        $room->no_of_room = $request->no_of_room;
+        $room->weekday_price = $request->weekday_price;
+        $room->weekend_price = $request->weekend_price;
+        $room->max_capacity = $request->max_capacity;
+        $room->adult_count = $request->adult_count;
+        $room->child_count = $request->child_count;
+        $room->extra_bed = $request->extra_bed;
+        $room->bed_type = $request->bed_type;
+        $room->extra_bed_price = $request->extra_bed_price;
+        $room->child_cot = $request->child_cot;
+        $room->child_cot_price = $request->child_cot_price;
+        $room->status = $request->hotel_status;
+        $room->is_complete = 1;
+        $room->save();
+        foreach ($request->event as $index => $eventName) {
+            $rate_id = Rate::max('rate_id') ?? 1;
+            $rateId = CommonHelper::createId($rate_id);
+            while (Rate::where('rate_id', $rateId)->exists()) {
+                $rateId = CommonHelper::createId($rateId);
+            }
+
+            Rate::create([
+                'event' => $eventName,
+                'room_id' => $room->id, 
+                'hotel_id' => $request->id,
+                'rate_id' => $rateId,
+                'event_type' => $request->event_type[$index],
+                'price' => $request->price[$index],
+                'start_date' => $request->start_date[$index],
+                'end_date' => $request->end_date[$index],
+            ]);
+        }
+
+        return redirect()->route('hotels.room', ['hotel' => $room->hotel_id])
+            ->with('success', 'Room details updated successfully!');
     }
+
 
     /*
     * Delete Room Details .

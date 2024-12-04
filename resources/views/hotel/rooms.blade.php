@@ -28,7 +28,7 @@
 
                      <div class="row">
                         <!-- Room Type -->
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                            <label for="room_type" class="form-label"><strong>Room Type</strong><span class="text-danger">*</span></label>
                            <select name="room_type" id="room_type" class="form-control" required>
                               <option value="">Select One</option>
@@ -42,7 +42,7 @@
                         </div>
 
                         <!-- Number of Rooms -->
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                            <label for="no_of_room" class="form-label"><strong>No of Room</strong><span class="text-danger">*</span></label>
                            <input type="text" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms">
                            @error('no_of_room')
@@ -50,7 +50,19 @@
                            @enderror
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
+                           <label for="bed_type" class="form-label"><strong>Bed Type</strong><span class="text-danger">*</span></label>
+                           <select name="bed_type" id="bed_type" class="form-control" required>
+                              <option value="">Select One</option>
+                              <option value="1">King Size</option>
+                              <option value="0">Queen Size</option>
+                           </select>
+                           @error('bed_type')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+
+                        <div class="col-md-3 mb-3">
                            <label for="weekday_price" class="form-label"><strong>Week Day Price</strong><span class="text-danger">*</span></label>
                            <input type="text" class="form-control" name="weekday_price" placeholder="Enter Number of Rooms">
                            @error('weekday_price')
@@ -58,7 +70,7 @@
                            @enderror
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                            <label for="weekend_price" class="form-label"><strong>Week End Price</strong><span class="text-danger">*</span></label>
                            <input type="text" class="form-control" name="weekend_price" placeholder="Enter Number of Rooms">
                            @error('weekend_price')
@@ -67,7 +79,7 @@
                         </div>
 
                         <!-- Occupancy -->
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                            <label for="occupancy" class="form-label"><strong>Maximum Occupancy</strong><span class="text-danger">*</span></label>
                            <input type="number" id="occupancy" class="form-control" name="max_capacity" placeholder="Enter Occupancy" min="1" max="10">
                            @error('max_capacity')
@@ -75,7 +87,7 @@
                            @enderror
                         </div>
                      
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                            <label for="adult" class="form-label"><strong>Adults</strong><span class="text-danger">*</span></label>
                            <select id="adult" class="form-control" name="adult_count" disabled>
                               <option value="">Select Adults</option>
@@ -84,8 +96,7 @@
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
                         </div>
-
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                            <label for="child" class="form-label"><strong>Children</strong><span class="text-danger">*</span></label>
                            <select id="child" class="form-control" name="child_count" disabled>
                               <option value="">Select Children</option>
@@ -94,19 +105,59 @@
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
                         </div>
+
+                        <div class="col-md-3 mb-3">
+                           <label for="extra_bed" class="form-label"><strong>Extra Bed Available</strong><span class="text-danger">*</span></label>
+                           <select name="extra_bed" id="extra_bed" class="form-control" required>
+                              <option value="">Select One</option>
+                              <option value="1">Yes</option>
+                              <option value="0">No</option>
+                           </select>
+                           @error('extra_bed')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+
+                        <div class="col-md-3 mb-3 extra-bed-price" style="display: none;">
+                           <label for="extra_bed_price" class="form-label"><strong>Price</strong><span class="text-danger">*</span></label>
+                           <input type="text" class="form-control" name="extra_bed_price" id="extra_bed_price" placeholder="Enter Price">
+                           @error('extra_bed_price')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                           <label for="child_cot" class="form-label"><strong>Child Cot Available</strong><span class="text-danger">*</span></label>
+                           <select name="child_cot" id="child_cot" class="form-control" required>
+                              <option value="">Select One</option>
+                              <option value="1">Yes</option>
+                              <option value="0">No</option>
+                           </select>
+                           @error('child_cot')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+
+                        <div class="col-md-3 mb-3 child-cot-price" style="display: none;">
+                           <label for="child_cot_price" class="form-label"><strong>Price</strong><span class="text-danger">*</span></label>
+                           <input type="text" class="form-control" name="child_cot_price" id="child_cot_price" placeholder="Enter Price">
+                           @error('child_cot_price')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+                        
                      </div>
 
-                     <!-- Room Price Section -->
                      <label for="charge" class="form-label"><b>Fair And Backout Price</b></label>
                      <hr>
                      <div id="hotelRatesContainer">
                         <div class="hotel-rate-form">
                            <div class="row">
-                              <div class="col-md-4 mb-3">
+                              <div class="col-md-3 mb-3">
                                  <label for="event" class="form-label"><strong>Event Name</strong></label>
                                  <input type="text" class="form-control" name="event[]" placeholder="Enter Event Name">
                               </div>
-                              <div class="col-md-4 mb-3">
+                              <div class="col-md-3 mb-3">
                                  <label for="event_type" class="form-label"><strong>Event Type</strong></label>
                                  <select class="form-control" name="event_type[]">
                                     <option value="">Select Event Type</option>
@@ -114,22 +165,28 @@
                                     <option value="Blackout Date">Blackout Date</option>
                                  </select>
                               </div>
-                              <div class="col-md-4 mb-3">
+                              <div class="col-md-3 mb-3">
                                  <label for="price" class="form-label"><strong>Price</strong></label>
                                  <input type="number" class="form-control" name="price[]" placeholder="Enter Price">
                               </div>
-                              <div class="col-md-4 mb-3">
+                              <div class="col-md-3 mb-3">
                                  <label for="start_date" class="form-label"><strong>Start Date</strong></label>
                                  <input type="date" class="form-control" name="start_date[]">
                               </div>
-         
+
                               <!-- End Date -->
-                              <div class="col-md-4 mb-3">
+                              <div class="col-md-3 mb-3">
                                  <label for="end_date" class="form-label"><strong>End Date</strong></label>
                                  <input type="date" class="form-control" name="end_date[]">
                               </div>
+                              <div class="col-md-3 mb-3 d-flex align-items-end">
+                                 <button type="button" class="btn btn-danger remove-rate">Delete</button>
+                              </div>
                            </div>
                         </div>
+                     </div>
+                     <div class="mb-3">
+                        <button type="button" id="addRateButton" class="btn btn-primary">Add More</button>
                      </div>
 
                      <div class="form-check form-switch">
@@ -164,18 +221,37 @@
                <table id="example2" class="table table-striped table-bordered">
                   <thead class="table-dark">
                      <tr>
-                        <th>Room Number</th>
-                        <th>Capacity</th>
-                        <th>Status</th>
+                        <th>Room Type</th>
+                        <th>Occupancy</th>
+                        <th>Weekday Price</th>
+                        <th>Weekend Price</th>
+                        <th>Extra Bed</th>
+                        <th>Child Cot</th>
                         <th>Action</th>
                      </tr>
                   </thead>
                   <tbody>
                      @foreach ($rooms as $room)
                      <tr>
-                        <td>{{ $room->room_number }}</td>
+                        <td>"Delux Room"</td>
                         <td>{{ $room->max_capacity }}</td>
-                        <td>{{ $room->status ? 'Active' : 'Inactive' }}</td>
+                        <td>{{ $room->weekday_price }}</td>
+                        <td>{{ $room->weekend_price }}</td>
+                        <td>
+                           @if($room->extra_bed === 1)
+                              <span class="badge bg-success">Available</span>
+                           @else
+                              <span class="badge bg-danger">Not Available</span>
+                           @endif
+                        </td>
+                        <td>
+                           @if($room->child_cot === 1)
+                              <span class="badge bg-success">Available</span>
+                           @else
+                              <span class="badge bg-danger">Not Available</span>
+                           @endif
+                        </td>
+
                         <td>
                            <a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-warning btn-sm">Edit</a>
                            <form method="POST" action="{{ route('rooms.destroy', $room->id) }}" class="d-inline-block">
@@ -281,27 +357,83 @@
         adultDropdown.addEventListener("change", updateChildOptions);
     });
 </script>
+<script>
+   document.addEventListener('DOMContentLoaded', function () {
+      // Handle Extra Bed Price
+      const extraBedSelect = document.getElementById('extra_bed');
+      const extraBedPrice = document.querySelector('.extra-bed-price');
+      extraBedSelect.addEventListener('change', function () {
+         if (this.value === '1') {
+            extraBedPrice.style.display = 'block';
+         } else {
+            extraBedPrice.style.display = 'none';
+         }
+      });
 
-<script>document.getElementById('addNewRate').addEventListener('click', function () {
-    // Get the container where forms will be appended
-    const container = document.getElementById('hotelRatesContainer');
+      // Handle Child Cot Price
+      const childCotSelect = document.getElementById('child_cot');
+      const childCotPrice = document.querySelector('.child-cot-price');
+      childCotSelect.addEventListener('change', function () {
+         if (this.value === '1') {
+            childCotPrice.style.display = 'block';
+         } else {
+            childCotPrice.style.display = 'none';
+         }
+      });
+   });
+</script>
+<script>
+   document.addEventListener('DOMContentLoaded', function () {
+      const hotelRatesContainer = document.getElementById('hotelRatesContainer');
+      const addRateButton = document.getElementById('addRateButton');
 
-    // Clone the first form
-    const firstForm = container.querySelector('.hotel-rate-form');
-    const newForm = firstForm.cloneNode(true);
+      // Add More functionality
+      addRateButton.addEventListener('click', function () {
+         const newRateForm = document.createElement('div');
+         newRateForm.classList.add('hotel-rate-form');
+         newRateForm.innerHTML = `
+            <div class="row">
+               <div class="col-md-3 mb-3">
+                  <label for="event" class="form-label"><strong>Event Name</strong></label>
+                  <input type="text" class="form-control" name="event[]" placeholder="Enter Event Name">
+               </div>
+               <div class="col-md-3 mb-3">
+                  <label for="event_type" class="form-label"><strong>Event Type</strong></label>
+                  <select class="form-control" name="event_type[]">
+                     <option value="">Select Event Type</option>
+                     <option value="Fair Date">Fair Date</option>
+                     <option value="Blackout Date">Blackout Date</option>
+                  </select>
+               </div>
+               <div class="col-md-3 mb-3">
+                  <label for="price" class="form-label"><strong>Price</strong></label>
+                  <input type="number" class="form-control" name="price[]" placeholder="Enter Price">
+               </div>
+               <div class="col-md-3 mb-3">
+                  <label for="start_date" class="form-label"><strong>Start Date</strong></label>
+                  <input type="date" class="form-control" name="start_date[]">
+               </div>
+               <div class="col-md-3 mb-3">
+                  <label for="end_date" class="form-label"><strong>End Date</strong></label>
+                  <input type="date" class="form-control" name="end_date[]">
+               </div>
+               <div class="col-md-3 mb-3 d-flex align-items-end">
+                  <button type="button" class="btn btn-danger remove-rate">Delete</button>
+               </div>
+            </div>
+         `;
+         hotelRatesContainer.appendChild(newRateForm);
+      });
 
-    // Reset input values in the cloned form
-    const inputs = newForm.querySelectorAll('input, select');
-    inputs.forEach(input => {
-        if (input.tagName === 'INPUT') {
-            input.value = '';
-        } else if (input.tagName === 'SELECT') {
-            input.selectedIndex = 0;
-        }
-    });
-
-    // Append the cloned form to the container
-    container.appendChild(newForm);
-});
+      // Delete functionality
+      hotelRatesContainer.addEventListener('click', function (event) {
+         if (event.target.classList.contains('remove-rate')) {
+            const rateForm = event.target.closest('.hotel-rate-form');
+            if (rateForm) {
+               hotelRatesContainer.removeChild(rateForm);
+            }
+         }
+      });
+   });
 </script>
 @endsection
