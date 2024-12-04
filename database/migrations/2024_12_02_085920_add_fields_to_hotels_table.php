@@ -18,11 +18,9 @@ return new class extends Migration
             $table->decimal('breakfast_price', 8, 2)->nullable()->comment("Price for breakfast");
         
             $table->integer('includes_lunch')->nullable()->default(0)->comment("0 = No, 1 = Yes");
-            $table->integer('lunch_type')->nullable()->comment("0 = buffet, 1 = set buffet");
             $table->decimal('lunch_price', 8, 2)->nullable()->comment("Price for lunch");
         
             $table->integer('includes_dinner')->nullable()->default(0)->comment("0 = No, 1 = Yes");
-            $table->integer('dinner_type')->nullable()->comment("0 = buffet, 1 = set buffet");
             $table->decimal('dinner_price', 8, 2)->nullable()->comment("Price for dinner");
         
             // Age limits for discounts or policies

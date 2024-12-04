@@ -176,9 +176,19 @@
                                     @enderror
                                 </div>
 
+                                <div class="mb-3 col-md-4">
+                                    <label for="check_out_time" class="form-label"><strong>Check out Time</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                    </label>
+                                    <input type="time" class="form-control" id="check_out_time" name="check_out_time">
+                                    @error('check_out_time')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <!-- Breakfast -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="breakfast" class="form-label"><strong>Breakfast</strong></label>
+                                    <label for="breakfast" class="form-label"><strong>Breakfast</strong><span style="color: red; font-weight: bold;">*</span></label>
                                     <select name="breakfast" id="breakfast" class="form-control" required>
                                         <option value="">Select an option</option>
                                         <option value="1">Available</option>
@@ -186,8 +196,8 @@
                                     </select>
                                 </div>
 
-                                <div id="breakfast-options" style="display: none;" class="col-md-4">
-                                    <div class="mb-3">
+                                <div class="row" id="breakfast-options" style="display: none;">
+                                    <div class="mb-3 col-md-4">
                                         <label for="breakfast_type" class="form-label"><strong>Breakfast Type</strong></label>
                                         <select name="breakfast_type" id="breakfast_type" class="form-control">
                                             <option value="">Select a type</option>
@@ -195,7 +205,7 @@
                                             <option value="1">Set Buffet</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-3 col-md-4">
                                         <label for="breakfast_price" class="form-label"><strong>Breakfast Price</strong></label>
                                         <input type="number" name="breakfast_price" id="breakfast_price" class="form-control" placeholder="Enter price">
                                     </div>
@@ -203,7 +213,7 @@
 
                                 <!-- Lunch -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="lunch" class="form-label"><strong>Lunch</strong></label>
+                                    <label for="lunch" class="form-label"><strong>Lunch</strong><span style="color: red; font-weight: bold;">*</span></label>
                                     <select name="lunch" id="lunch" class="form-control" required>
                                         <option value="">Select an option</option>
                                         <option value="1">Available</option>
@@ -211,16 +221,8 @@
                                     </select>
                                 </div>
 
-                                <div id="lunch-options" style="display: none;" class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="lunch_type" class="form-label"><strong>Lunch Type</strong></label>
-                                        <select name="lunch_type" id="lunch_type" class="form-control">
-                                            <option value="">Select a type</option>
-                                            <option value="0">Buffet</option>
-                                            <option value="1">Set Buffet</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
+                                <div class="row"  id="lunch-options" style="display: none;">
+                                    <div class="mb-3 col-md-4">
                                         <label for="lunch_price" class="form-label"><strong>Lunch Price</strong></label>
                                         <input type="number" name="lunch_price" id="lunch_price" class="form-control" placeholder="Enter price">
                                     </div>
@@ -228,7 +230,7 @@
 
                                 <!-- Dinner -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="dinner" class="form-label"><strong>Dinner</strong></label>
+                                    <label for="dinner" class="form-label"><strong>Dinner</strong><span style="color: red; font-weight: bold;">*</span></label>
                                     <select name="dinner" id="dinner" class="form-control" required>
                                         <option value="">Select an option</option>
                                         <option value="1">Available</option>
@@ -236,16 +238,8 @@
                                     </select>
                                 </div>
 
-                                <div id="dinner-options" style="display: none;" class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="dinner_type" class="form-label"><strong>Dinner Type</strong></label>
-                                        <select name="dinner_type" id="dinner_type" class="form-control">
-                                            <option value="">Select a type</option>
-                                            <option value="0">Buffet</option>
-                                            <option value="1">Set Buffet</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
+                                <div class="row" id="dinner-options" style="display: none;">
+                                    <div class="mb-3 col-md-4">
                                         <label for="dinner_price" class="form-label"><strong>Dinner Price</strong></label>
                                         <input type="number" name="dinner_price" id="dinner_price" class="form-control" placeholder="Enter price">
                                     </div>
@@ -253,12 +247,12 @@
 
                                 <!-- Additional Fields (Phone, Email, etc.) -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="infant_age_limit" class="form-label"><strong>Infrant age limit</strong></label>
+                                    <label for="infant_age_limit" class="form-label"><strong>Infrant Upper Age Limit</strong></label>
                                     <input type="number" class="form-control" id="infant_age_limit" name="infant_age_limit" placeholder="Enter Hotel Owner Company Name">
                                 </div>
 
                                 <div class="mb-3 col-md-4">
-                                    <label for="child_age_limit" class="form-label"><strong>Child age limit</strong></label>
+                                    <label for="child_age_limit" class="form-label"><strong>Child Upper Age Limit</strong></label>
                                     <input type="number" class="form-control" id="child_age_limit" name="child_age_limit" placeholder="Enter Hotel Owner Company Name">
                                 </div>
 
@@ -277,36 +271,57 @@
                                 </div>
 
                                 <div class="mb-3 col-md-4">
-                                    <label for="hotel_owner_company_name" class="form-label"><strong>Hotel Owner Company Name</strong></label>
-                                    <input type="text" class="form-control" id="hotel_owner_company_name" name="hotel_owner_company_name" placeholder="Enter Hotel Owner Company Name">
+                                    <label for="hotel_owner_company_name" class="form-label"><strong>Hotel Owner Company Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <input type="text" class="form-control" id="hotel_owner_company_name" name="hotel_owner_company_name" placeholder="Enter Hotel Owner Company Name" required>
+                                    @error('hotel_owner_company_name')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
-                                <div class="mb-3 col-md-6">
-                                    <label for="management_comp_name" class="form-label"><strong>Management Company Name</strong></label>
-                                    <input type="text" class="form-control" id="management_comp_name" name="management_comp_name" placeholder="Enter Management Company Name">
+                                <div class="mb-3 col-md-4">
+                                    <label for="management_comp_name" class="form-label"><strong>Management Company Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <input type="text" class="form-control" id="management_comp_name" name="management_comp_name" placeholder="Enter Management Company Name" required>
+                                    @error('management_comp_name')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <!-- Additional Images -->
-                                <div class="mb-3 col-md-6">
+                                <div class="mb-3 col-md-4">
                                     <label for="images" class="form-label"><strong>Additional Images</strong></label>
                                     <input type="file" class="form-control" id="images" name="images[]" multiple>
                                 </div>
 
+                                <div class="mb-3 col-md-4">
+                                    <label for="booking_available" class="form-label"><strong>12 Hours Booking Available</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <select name="booking_available" id="booking_available" class="form-control" required>
+                                        <option value="">Select an option</option>
+                                        <option value="1">Available</option>
+                                        <option value="0">Not Available</option>
+                                    </select>
+                                </div>
+
                                 <!-- Description -->
                                 <div class="mb-3 col-md-6">
-                                    <label for="description" class="form-label"><strong>Description</strong></label>
-                                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description"></textarea>
+                                    <label for="description" class="form-label"><strong>Description</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description" required></textarea>
+                                    @error('description')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <!-- Policies -->
                                 <div class="mb-3 col-md-6">
-                                    <label for="policies" class="form-label"><strong>Policies</strong></label>
+                                    <label for="policies" class="form-label"><strong>Policies</strong><span style="color: red; font-weight: bold;">*</span></label>
                                     <textarea class="form-control" id="policies" name="policies" rows="4" placeholder="Enter Policies"></textarea>
+                                    @error('policies')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <!-- Facilities -->
                                 <div class="mb-3 col-md-12">
-                                    <label for="facilities" class="form-label"><strong>Facilities</strong></label>
+                                    <label for="facilities" class="form-label"><strong>Facilities</strong><span style="color: red; font-weight: bold;">*</span></label>
                                     <div class="row">
                                         @foreach ($facilities as $facility)
                                         <div class="col-md-3">
@@ -323,10 +338,69 @@
                                 </div>
                             </div>
 
+                            <!-- Conference Room Availability -->
+                            <b>Conference Room Availability</b>
+                            <hr>
+                            <div class="mb-3 col-md-4">
+                                <label for="conference" class="form-label"><strong>Conference Room</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                <select name="conference" id="conference" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option value="0">Not Available</option>
+                                    <option value="1">Available</option>
+                                </select>
+                            </div>
+
+                            <div class="row" id="conference-options" style="display: none;">
+                                <div class="mb-3 col-md-4">
+                                    <label for="conference_head" class="form-label"><strong>Head</strong></label>
+                                    <input type="text" class="form-control" name="conference_head[]" placeholder="Enter Head">
+                                </div>
+                                <div class="mb-3 col-md-4">
+                                    <label for="conference_duration" class="form-label"><strong>Duration</strong></label>
+                                    <input type="text" class="form-control" name="conference_duration[]" placeholder="Enter Duration">
+                                </div>
+                                <div class="mb-3 col-md-4">
+                                    <label for="conference_price" class="form-label"><strong>Price</strong></label>
+                                    <input type="number" class="form-control" name="conference_price[]" placeholder="Enter Price">
+                                </div>
+                                <div id="conference-additional-fields"></div>
+                                <div class="mb-3 col-md-4">
+                                    <button type="button" id="conference-add-more" class="btn btn-primary">Add More</button>
+                                </div>
+                            </div>
+
+                            <!-- Cancellation Details -->
+                            <b>Cancellation Details</b>
+                            <hr>
+                            <div class="mb-3 col-md-4">
+                                <label for="cancellation_type" class="form-label"><strong>Cancellation Type</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                <select name="cancellation_type" id="cancellation_type" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option value="0">Free</option>
+                                    <option value="1">Chargeable</option>
+                                </select>
+                            </div>
+
+                            <div class="row" id="cancellation-options" style="display: none;">
+                                <div class="mb-3 col-md-6">
+                                    <label for="cancellation_duration" class="form-label"><strong>Duration</strong></label>
+                                    <input type="text" class="form-control" name="cancellation_duration[]" placeholder="Enter Duration">
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label for="cancellation_price" class="form-label"><strong>Price</strong></label>
+                                    <input type="number" class="form-control" name="cancellation_price[]" placeholder="Enter Price">
+                                </div>
+                                <div id="cancellation-additional-fields"></div>
+                                <div class="mb-3 col-md-4">
+                                    <button type="button" id="cancellation-add-more" class="btn btn-primary">Add More</button>
+                                </div>
+                            </div>
+
+
                             <div class="form-check form-switch">
-                                <label for="hotel_status" class="form-label"><strong>Status</strong></label>
+                                <label for="hotel_status" class="form-label"><strong>Status</strong><span style="color: red; font-weight: bold;">*</span></label>
                                 <input type="hidden" name="hotel_status" value="0">
-                                <input class="form-check-input" name="hotel_status" type="checkbox" id="hotel_status" value="1">
+                                <input class="form-check-input" name="hotel_status" type="checkbox" id="hotel_status" value="1" required>
                                 <label class="form-check-label"></label>
                             </div>
 
@@ -426,7 +500,6 @@
         });
     });
 </script>
-
 <script>
     // Function to append options for a given meal
     function toggleOptions(meal, optionsId) {
@@ -454,7 +527,7 @@
                     `;
                     optionsContainer.insertAdjacentHTML('beforeend', optionContent); // Append the content
                 }
-                optionsContainer.style.display = 'block'; // Show options
+                optionsContainer.style.display = 'contents'; // Show options
             } else {
                 // Hide options if "Not Available" is selected
                 optionsContainer.style.display = 'none';
@@ -468,9 +541,6 @@
     toggleOptions('lunch', 'lunch-options');
     toggleOptions('dinner', 'dinner-options');
 </script>
-
-
-
 <script>
     $(document).ready(function() {
         $('#weekend_days').select2({
@@ -478,6 +548,66 @@
             allowClear: true
         });
     });
+</script>
+<script>
+    $(document).ready(function () {
+    // Conference Room Logic
+    $('#conference').on('change', function () {
+        if ($(this).val() == '1') {
+            $('#conference-options').show();
+        } else {
+            $('#conference-options').hide();
+            $('#conference-additional-fields').empty();
+        }
+    });
+
+    $('#conference-add-more').on('click', function () {
+        const newConferenceFields = `
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="conference_head" class="form-label"><strong>Head</strong></label>
+                    <input type="text" class="form-control" name="conference_head[]" placeholder="Enter Head">
+                </div>
+                <div class="col-md-4">
+                    <label for="conference_duration" class="form-label"><strong>Duration</strong></label>
+                    <input type="text" class="form-control" name="conference_duration[]" placeholder="Enter Duration">
+                </div>
+                <div class="col-md-4">
+                    <label for="conference_price" class="form-label"><strong>Price</strong></label>
+                    <input type="number" class="form-control" name="conference_price[]" placeholder="Enter Price">
+                </div>
+            </div>
+        `;
+        $('#conference-additional-fields').append(newConferenceFields);
+    });
+
+    // Cancellation Details Logic
+    $('#cancellation_type').on('change', function () {
+        if ($(this).val() == '1') {
+            $('#cancellation-options').show();
+        } else {
+            $('#cancellation-options').hide();
+            $('#cancellation-additional-fields').empty();
+        }
+    });
+
+    $('#cancellation-add-more').on('click', function () {
+        const newCancellationFields = `
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="cancellation_duration" class="form-label"><strong>Duration</strong></label>
+                    <input type="text" class="form-control" name="cancellation_duration[]" placeholder="Enter Duration">
+                </div>
+                <div class="col-md-6">
+                    <label for="cancellation_price" class="form-label"><strong>Price</strong></label>
+                    <input type="number" class="form-control" name="cancellation_price[]" placeholder="Enter Price">
+                </div>
+            </div>
+        `;
+        $('#cancellation-additional-fields').append(newCancellationFields);
+    });
+});
+
 </script>
 
 @endsection
