@@ -212,7 +212,25 @@ class HotelController extends Controller
         // Update the hotel record in the database
         $hotel->update([
             'name' => $request->input('name'),
+            'hotel_unique_id' => $request->input('unique_id'),
             'address' => $request->input('address'),
+            'includes_breakfast' => $request->input('breakfast'),
+            'breakfast_type' => $request->input('breakfast_type'),
+            'breakfast_price' => $request->input('breakfast_price'),
+            'includes_lunch' => $request->input('lunch'),
+            'lunch_type' => $request->input('lunch_type'),
+            'lunch_price' => $request->input('lunch_price'),
+            'includes_dinner' => $request->input('dinner'),
+            'dinner_type' => $request->input('dinner_type'),
+            'dinner_price' => $request->input('dinner_price'),
+            'infant_age_limit' => $request->input('infant_age_limit'),
+            'child_age_limit' => $request->input('child_age_limit'),
+            'weekend_days' => json_encode($request->weekend_days),
+            '12_hour_book' => $request->input('booking_available'),
+            'conference_room' => $request->input('conference'),
+            
+            'cancellation_type' => $request->input('cancellation_type'),
+            
             'city' => $request->input('city'),
             'cat_id' => $request->input('category_type'),
             'state' => $request->input('state'),
@@ -220,7 +238,7 @@ class HotelController extends Controller
             'zipcode' => $request->input('pincode'),
             'latitude' => $request->input('latitude'),
             'longitude' => $request->input('longitude'),
-            'main_image' => $storage_file, // Store the image path directly (as a string)
+            'main_image' => $storage_file['master_value'],
             'check_in_time' => $request->input('check_in_time'),
             'check_out_time' => $request->input('check_out_time'),
             'hotel_owner_company_name' => $request->input('hotel_owner_company_name'),
@@ -230,9 +248,9 @@ class HotelController extends Controller
             'policies' => $request->input('policies'),
             'management_comp_name' => $request->input('management_comp_name'),
             'status' => $request->input('hotel_status'),
-            'images' => json_encode($imagePaths), // Store the updated image paths as a JSON array
-            'is_complete' => 1,
+            'images' => json_encode($imagePaths),
             'facilities' => json_encode($request->facilities),
+            'is_complete' => 1,
         ]);
 
         // After updating the hotel, redirect based on the completion status

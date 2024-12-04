@@ -12,5 +12,10 @@ class RoomType extends Model
     use SoftDeletes;
     protected $table = 'room_type'; 
     protected $guarded = []; 
+
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class, 'hotel_id', 'id');
+    }
 }
 

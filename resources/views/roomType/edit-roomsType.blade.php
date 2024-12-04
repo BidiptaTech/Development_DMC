@@ -27,21 +27,18 @@
                             @method('PUT')
                             <div class="mb-3">
                                 <label for="hotelName" class="form-label"><strong>Hotel Name</strong></label>
-                                <select  id="hotelName" name="hotel_id" class="form-control" required>
-                                    <option value="">Search for a hotel...</option>
-                                    @if ($selectedHotel && $selectedHotelName)
-                                        <option value="{{ $selectedHotel }}" selected>{{ $selectedHotelName }}</option>
-                                    @endif
-                                </select>
+                                <input value="{{$roomType->hotel->name}}" type="text" id="hotel" name="hotel" placeholder="Enter Room Type Name" class="form-control" readonly>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="name" class="form-label"><strong>Room Type Name</strong></label>
+                                <label for="name" class="form-label"><strong>Room Type Name</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
                                 <input value="{{$roomType->name}}" type="text" id="roomType" name="roomType" placeholder="Enter Room Type Name" class="form-control" required>
+                                @error('roomType')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
-
-                            
-                            
                             <!-- Facilities Selection (loaded dynamically) -->
                             <div class="mb-3">
                                 <label for="facilities" class="form-label"><strong>Select Facilities</strong></label>
