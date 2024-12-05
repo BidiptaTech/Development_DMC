@@ -219,9 +219,6 @@ class HotelController extends Controller
             // Fetch related facilities
             $relatedFacilities = Facility::whereIn('id', $facilityIds)->get();
 
-            // Decode images JSON if it's a JSON column
-            // $images = is_string($hotel->images) ? json_decode($hotel->images, true) : $hotel->images;
-
             return [
                 'id' => $hotel->id,
                 'name' => $hotel->name,
@@ -243,6 +240,18 @@ class HotelController extends Controller
             'success' => true,
             'data' => $hotelDetails,
         ],200, [], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function hotelDetails(Request $request){
+        $id = $request->query('id');
+        $hotelDetails = Hotel::select('id', 'name', 'status', 'address', 'city', 'state', 'country')
+            ->where('hotel_id', '=', $id)
+            ->first();
+        if(!$hotelDetails){
+            return response()->json(['message' => 'Hotels details not found'],404);
+        }
+        
+
     }
 }
 
