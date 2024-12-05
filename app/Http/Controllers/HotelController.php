@@ -390,6 +390,7 @@ class HotelController extends Controller
         while (Room::where('room_id', $roomId)->exists()) {
             $roomId = CommonHelper::createId($roomId);
         }
+        
         $room = new Room(); 
         $room->hotel_id = $request->id;
         $room->room_type_id = $request->room_type;

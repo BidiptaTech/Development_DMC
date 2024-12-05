@@ -13,8 +13,8 @@ class Hotel extends Model
     protected $table = 'hotels'; 
     protected $guarded = []; 
 
-    public function categories()
-    {
-        return $this->hasMany(Category::class, 'hotel_id');
-    }
+    public function rooms()
+{
+    return $this->hasMany(Room::class, 'hotel_id'); // Assuming `hotel_id` is the foreign key in the `rooms` table
+}
 }
