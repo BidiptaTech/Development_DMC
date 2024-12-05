@@ -195,8 +195,8 @@
                                         <label for="breakfast_type" class="form-label"><strong>Breakfast Type</strong></label>
                                         <select name="breakfast_type" id="breakfast_type" class="form-control">
                                             <option value="">Select a type</option>
-                                            <option value="0" {{ old('breakfast_type', $hotel->breakfast_type) == 0 ? 'selected' : '' }}>Buffet</option>
-                                            <option value="1" {{ old('breakfast_type', $hotel->breakfast_type) == 1 ? 'selected' : '' }}>Set Buffet</option>
+                                            <option value="0" {{ old('breakfast_type', (string) $hotel->breakfast_type) === '0' ? 'selected' : '' }}>Buffet</option>
+                                            <option value="1" {{ $hotel->breakfast_type === '1' ? 'selected' : '' }}>Set Buffet</option>
                                         </select>
                                     </div>
                                     <div class="mb-3 col-md-4">
@@ -256,32 +256,42 @@
                                     @enderror
                                 </div>
 
+                                <div class="mb-3 col-md-4">
+                                    <label for="management_comp_name" class="form-label"><strong>Management Company Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <input value="{{ old('hotel_owner_company_name', $hotel->hotel_owner_company_name) }}" type="text" class="form-control" id="management_comp_name" name="management_comp_name" placeholder="Enter Management Company Name" required>
+                                    @error('management_comp_name')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <!-- Additional Images -->
                                 <div class="mb-3 col-md-4">
                                     <label for="images" class="form-label"><strong>Additional Images</strong></label>
                                     <input type="file" class="form-control" id="images" name="images[]" multiple>
                                 </div>
 
+                                <!-- 12 hours booking available -->
+                                <div class="mb-3 col-md-4">
+                                    <label for="booking_available" class="form-label"><strong>12 Hours Booking Available</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <select name="booking_available" id="booking_available" class="form-control" required>
+                                        <option value="">Select an option</option>
+                                        <option value="1" {{ $hotel->{'12_hour_book'} == 1 ? 'selected' : '' }}>Available</option>
+                                        <option value="0"  {{ $hotel->{'12_hour_book'} == 0 ? 'selected' : '' }}>Not Available</option>
+                                    </select>
+                                </div>
+
                                 <!-- Description -->
                                 <div class="mb-3 col-md-6">
                                     <label for="description" class="form-label"><strong>Description</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <textarea class="form-control" id="description" name="description" rows="4" value="{{ old('description', $hotel->description) }}" placeholder="Enter Description" required></textarea>
+                                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description" required>{{ old('description', $hotel->description) }}</textarea>
                                 </div>
-
+                                <!-- Policies -->
                                 <div class="mb-3 col-md-6">
                                     <label for="policies" class="form-label"><strong>Policies</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <textarea class="form-control" id="policies" name="policies" rows="4" value="{{ old('policies', $hotel->policies) }}" placeholder="Enter Policies" required></textarea>
+                                    <textarea class="form-control" id="policies" name="policies" rows="4" placeholder="Enter Policies" required>{{ old('description', $hotel->description) }}</textarea>
                                 </div>
 
-                                <!-- Status -->
-                                <div class="form-check form-switch">
-                                    <label for="hotel_status" class="form-label"><strong>Status</strong></label>
-                                    <input type="hidden" name="hotel_status" value="0">
-                                    <input class="form-check-input" name="hotel_status" 
-                                        @if($category->status == 1) checked @endif 
-                                        type="checkbox" id="hotel_status" value="1">
-                                    <label class="form-check-label"></label>
-                                </div>
+                                
                             </div>
                             <!-- Facilities Selection (loaded dynamically) -->
                             <div class="mb-3">
@@ -310,6 +320,64 @@
                                     
                                 </div>
                             </div>
+
+                            <!-- Conference Room Availability -->
+                            <b>Conference Room Availability</b>
+                            <hr>
+                            <div class="mb-3 col-md-4">
+                                <label for="conference" class="form-label"><strong>Conference Room</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                <select name="conference" id="conference" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option  {{ $hotel->conference_room == 0 ? 'selected' : '' }} value="0">Not Available</option>
+                                    <option  {{ $hotel->conference_room == 1 ? 'selected' : '' }} value="1">Available</option>
+                                </select>
+                            </div>
+
+
+                            {{-- <div class="row" id="conference-options" style="display: none;">
+                                @foreach ($hotel->conference_data as $conference) <!-- Assuming a relationship called 'conferences' -->
+                                    <div class="mb-3 col-md-4">
+                                        <label for="conference_head" class="form-label"><strong>Head</strong></label>
+                                        <input type="text" class="form-control" name="conference_head[]" placeholder="Enter Head" value="{{ old('conference_head', $conference->head) }}">
+                                    </div>
+                                    <div class="mb-3 col-md-4">
+                                        <label for="conference_duration" class="form-label"><strong>Duration</strong></label>
+                                        <input type="text" class="form-control" name="conference_duration[]" placeholder="Enter Duration" value="{{ old('conference_duration', $conference->duration) }}">
+                                    </div>
+                                    <div class="mb-3 col-md-4">
+                                        <label for="conference_price" class="form-label"><strong>Price</strong></label>
+                                        <input type="number" class="form-control" name="conference_price[]" placeholder="Enter Price" value="{{ old('conference_price', $conference->price) }}">
+                                    </div>
+                                @endforeach
+                                <div id="conference-additional-fields"></div>
+                                <div class="mb-3 col-md-4">
+                                    <button type="button" id="conference-add-more" class="btn btn-primary">Add More</button>
+                                </div>
+                            </div> --}}
+                            
+
+                            <!-- Cancellation Details -->
+                            <b>Cancellation Details</b>
+                            <hr>
+                            <div class="mb-3 col-md-4">
+                                <label for="cancellation_type" class="form-label"><strong>Cancellation Type</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                <select name="cancellation_type" id="cancellation_type" class="form-control" required>
+                                    <option value="">Select an option</option>
+                                    <option  {{ $hotel->cancellation_type == 0 ? 'selected' : '' }} value="0">Free</option>
+                                    <option {{ $hotel->cancellation_type == 1 ? 'selected' : '' }} value="1">Chargeable</option>
+                                </select>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-check form-switch">
+                                <label for="hotel_status" class="form-label"><strong>Status</strong></label>
+                                <input type="hidden" name="hotel_status" value="0">
+                                <input class="form-check-input" name="hotel_status" 
+                                    @if($category->status == 1) checked @endif 
+                                    type="checkbox" id="hotel_status" value="1">
+                                <label class="form-check-label"></label>
+                            </div>
+
 
                             <!-- Submit and Reset Buttons -->
                             <div class="d-flex align-items-center gap-3">

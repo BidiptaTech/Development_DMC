@@ -32,15 +32,12 @@ class RoomtypeController extends Controller
     public function store(Request $request)
     {
         
-        // dd($request->all());
+        
         $validatedData = $this->validate($request, [
             
             'roomType' => 'required|string',
-            'breakfast' => 'required',
-            'lunch' => 'required',
-            'dinner' => 'required',
-            'extra_bed' => 'required',
-            // 'facilities' => 'required|array',
+            
+            'facilities' => 'required|array',
             'room_status' => 'required',
             'description' => 'required|string',
             
@@ -49,10 +46,7 @@ class RoomtypeController extends Controller
         $userId = Auth::id(); 
         $roomType = RoomType::create([
             'name' => $request->roomType, // Save the room type name
-            'breakfast' => $request->breakfast,
-            'lunch' => $request->lunch,
-            'dinner' => $request->dinner,
-            'extra_bed' => $request->extra_bed,
+            
             'facilities' => json_encode($request->facilities),
             'inserted_by_user' => $userId,
             'description' => $request->description,
@@ -60,21 +54,21 @@ class RoomtypeController extends Controller
             'hotel_id'=> $request->hotel_id,
         ]);
         return redirect()->route('roomType.index')
-            ->with('success', 'Category created successfully');
+            ->with('success', 'Room Type created successfully');
     }
 
     public function edit($id)
     {
-        $roomType = RoomType::where('id',$id)->first();
-        $hotel = Hotel::where('id',$roomType->hotel_id)->first();
+        $roomType = RoomType::with('hotel')->find($id); // Eager load the hotel relationship
 
-        if(!$hotel){
+
+        if(!$roomType->hotel){
             return response()->json(['error'=> 'Hotel not found']) ;
         }
 
         $facilities = []; // Initialize an empty array
 
-        $facilityIds = json_decode($hotel->facilities, true); // Decode JSON string into array
+        $facilityIds = json_decode($roomType->hotel->facilities, true); // Decode JSON string into array
         if($facilityIds){
             foreach ($facilityIds as $facilityId) {
                 $facility = Facility::find($facilityId); // Use find for cleaner code
@@ -83,24 +77,20 @@ class RoomtypeController extends Controller
                 }
             }
         }
-        return view('roomType.edit-roomsType', compact('roomType','hotel','facilities'));
+        return view('roomType.edit-roomsType', compact('roomType','facilities'));
     }
 
     public function update(Request $request, $id){
         $userId = Auth::id();
+        
         $roomType = RoomType::where('id',$id)->first();
-        $request->name!=null?$roomType->name = $request->name:'';
-        $roomType->breakfast = $request->breakfast;
-        $roomType->lunch = $request->lunch;
-        $roomType->dinner = $request->dinner;
-        $roomType->extra_bed = $request->extra_bed;
+        $roomType->name = $request->roomType;
         $roomType->facilities = json_encode($request->facilities);
         $roomType->status = $request->room_status;
-        $roomType->hotel_id = $request->hotel_id;
         $roomType->description = $request->description;
         $roomType->save();
 
-        return redirect()->route('roomType.index')->with('success', 'Categories updated successfully.');
+        return redirect()->route('roomType.index')->with('success', 'Room Type updated successfully.');
     }
 
     public function destroy($id){

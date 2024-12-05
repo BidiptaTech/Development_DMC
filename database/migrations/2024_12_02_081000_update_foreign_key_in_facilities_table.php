@@ -18,8 +18,6 @@ return new class extends Migration
         });
 
         Schema::table('facilities', function (Blueprint $table) {
-        
-                $table->bigInteger('category_id')->unique()->change();
 
                 $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
             });
