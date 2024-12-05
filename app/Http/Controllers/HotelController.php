@@ -44,9 +44,9 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
-        $unique_id = $request->input('unique_id');
+        $uniqueId = uniqid('', true);
+        $unique_id = substr($uniqueId, -16);
         $validatedData = $request->validate([
-            'unique_id' => 'required',
             'name' => 'required|string',
             'category_type' => 'required',
             'phone' => 'required',
@@ -114,7 +114,7 @@ class HotelController extends Controller
 
         $hotel = Hotel::create([
             'name' => $request->input('name'),
-            'hotel_unique_id' => $request->input('unique_id'),
+            'hotel_unique_id' => $unique_id,
             'address' => $request->input('address'),
             'includes_breakfast' => $request->input('breakfast'),
             'breakfast_type' => $request->input('breakfast_type'),
@@ -180,37 +180,68 @@ class HotelController extends Controller
     */
     public function update(Request $request, $id)
     {
-        // Validate the input data
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'city' => 'required|string',
-            'pincode' => 'required|integer',
             'category_type' => 'required',
+            'phone' => 'required',
+            'email' => 'required',
+            'address' => 'required',
+            'city' => 'required|string',
             'state' => 'required',
             'country' => 'required',
+            'pincode' => 'required|integer',
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'check_in_time' => 'required',
+            'check_out_time' => 'required',
+            'breakfast' => 'required',
+            'lunch' => 'required',
+            'dinner' => 'required',
+            'facilities' => 'required|array',
             'hotel_status' => 'required',
-            
         ]);
 
-        // Find the hotel by ID
         $hotel = Hotel::findOrFail($id);
-
-        // Handle the main image upload (if exists)
-        $storage_file = $hotel->main_image; // Default to current image if no new one is uploaded
+        $storage_file = $hotel->main_image;
         if ($request->hasFile('main_image')) {
             $image = $request->file('main_image');
-            $storage_file = CommonHelper::image_path('file_storage', $image); // Assuming this returns the file path as a string
+            $storage_file = CommonHelper::image_path('file_storage', $image);
         }
-
-        // Handle multiple image uploads for additional images (if exists)
-        $imagePaths = json_decode($hotel->images, true); // Existing images
+        $imagePaths = json_decode($hotel->images, true) ?: []; // Existing images, default to empty array
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $imagePaths[] = CommonHelper::image_path('hotel_images', $image); // Assuming this returns the file path as a string
+                $imagePaths[] = CommonHelper::image_path('hotel_images', $image);
             }
         }
-
-        // Update the hotel record in the database
+        if ($request->conference == 1) {
+            $conferenceData = [];
+            if ($request->has('conference_head')) {
+                foreach ($request->conference_head as $index => $head) {
+                    $conferenceData[] = [
+                        'head' => $head,
+                        'duration' => $request->conference_duration[$index] ?? null,
+                        'price' => $request->conference_price[$index] ?? null,
+                    ];
+                }
+            }
+            $conferenceDataJson = json_encode($conferenceData);
+        } else {
+            $conferenceDataJson = null;
+        }
+        if ($request->cancellation_type == 1) {
+            $cancellationData = [];
+            if ($request->has('cancellation_duration')) {
+                foreach ($request->cancellation_duration as $index => $duration) {
+                    $cancellationData[] = [
+                        'duration' => $duration,
+                        'price' => $request->cancellation_price[$index] ?? null,
+                    ];
+                }
+            }
+            $cancellationDataJson = json_encode($cancellationData);
+        } else {
+            $cancellationDataJson = null;
+        }
         $hotel->update([
             'name' => $request->input('name'),
             'hotel_unique_id' => $request->input('unique_id'),
@@ -229,9 +260,9 @@ class HotelController extends Controller
             'weekend_days' => json_encode($request->weekend_days),
             '12_hour_book' => $request->input('booking_available'),
             'conference_room' => $request->input('conference'),
-            
+            'conference_data' => $conferenceDataJson,
             'cancellation_type' => $request->input('cancellation_type'),
-            
+            'cancellation_data' => $cancellationDataJson,
             'city' => $request->input('city'),
             'cat_id' => $request->input('category_type'),
             'state' => $request->input('state'),
@@ -239,7 +270,7 @@ class HotelController extends Controller
             'zipcode' => $request->input('pincode'),
             'latitude' => $request->input('latitude'),
             'longitude' => $request->input('longitude'),
-            'main_image' => $storage_file['master_value'],
+            'main_image' => $storage_file['master_value'] ?? $storage_file,
             'check_in_time' => $request->input('check_in_time'),
             'check_out_time' => $request->input('check_out_time'),
             'hotel_owner_company_name' => $request->input('hotel_owner_company_name'),
@@ -254,13 +285,13 @@ class HotelController extends Controller
             'is_complete' => 1,
         ]);
 
-        // After updating the hotel, redirect based on the completion status
         if ($hotel->is_complete == 1) {
             return redirect()->route('hotels.contact', ['hotel' => $hotel->id])->with('success', 'Hotel updated successfully');
         } else {
             return redirect()->back()->withInput()->with('error', 'Something went wrong, please try again');
         }
     }
+
 
     /*
     * Soft Delete Hotels.
@@ -353,7 +384,8 @@ class HotelController extends Controller
             'extra_bed' => 'required', 
             'child_cot' => 'required', 
         ]);
-        $room_max_id = Room::max('room_id') ?? 1;
+        $lastRoom = Room::withTrashed()->orderBy('id', 'desc')->first();
+        $room_max_id = $lastRoom->room_id;
         $roomId = CommonHelper::createId($room_max_id);
         while (Room::where('room_id', $roomId)->exists()) {
             $roomId = CommonHelper::createId($roomId);
@@ -378,12 +410,15 @@ class HotelController extends Controller
         $room->save();
 
         foreach ($request->event as $index => $eventName) {
-            $rate_id = Rate::max('rate_id') ?? 1;
-            $rateId = CommonHelper::createId($rate_id);
-            while (Rate::where('rate_id', $rateId)->exists()) {
-                $rateId = CommonHelper::createId($rateId);
+            $lastRate = Rate::withTrashed()->orderBy('rate_id', 'desc')->first();
+            if ($lastRate) {
+                $rateId = $lastRate->rate_id + 1;
+            } else {
+                $rateId = 1;
             }
-
+            while (Rate::where('rate_id', $rateId)->exists()) {
+                $rateId++;  
+            }
             Rate::create([
                 'event' => $eventName,
                 'room_id' => $roomId, 
@@ -477,7 +512,8 @@ class HotelController extends Controller
                 ]);
             } else {
                 // Create new rate
-                $rate_id = Rate::max('rate_id') ?? 1;
+                $lastRate = Rate::withTrashed()->orderBy('rate_id', 'desc')->first();
+                $rate_id = $lastRate->rate_id;
                 $rateId = CommonHelper::createId($rate_id);
 
                 while (Rate::where('rate_id', $rateId)->exists()) {
@@ -486,7 +522,7 @@ class HotelController extends Controller
 
                 Rate::create([
                     'event' => $eventName,
-                    'room_id' => $room->id, // Correctly reference the room ID
+                    'room_id' => $room_id->room_id, // Correctly reference the room ID
                     'hotel_id' => $request->id,
                     'rate_id' => $rateId,
                     'event_type' => $request->event_type[$index],
