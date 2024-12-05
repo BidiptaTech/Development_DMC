@@ -32,6 +32,9 @@ class User extends Authenticatable
         'email',         
         'password',      
         'userId',      
+        'markup_price',      
+        'markup_type',      
+        'dmcId',      
     ];
 
     /**

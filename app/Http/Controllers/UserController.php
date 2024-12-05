@@ -89,14 +89,20 @@ class UserController extends Controller
             $usersId = CommonHelper::createId($usersId);
         }
 
+        if($request->input('user_type') == 3){
+            $dmcId = $this->auth_user->user_id;
+        }
         $user = User::create([
             'name' => $request->input('yourname'),
             'role_id' => $request->input('role'), 
+            'markup_type' => $request->input('markup_type'), 
+            'markup_price' => $request->input('markup_price'), 
             'user_type' => $request->input('user_type'),
             'country_code' => $request->input('code'),
             'phone' => $request->input('phone'),
             'email' => $request->input('email'),
             'userId' => $usersId,
+            'dmcId' => $dmcId ?? 0,
             'password' => bcrypt($request->input('password')),
         ]);
         //insert user role
