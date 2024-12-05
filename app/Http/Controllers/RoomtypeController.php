@@ -31,33 +31,19 @@ class RoomtypeController extends Controller
     //Handle Store Function Of New Room Type Details
     public function store(Request $request)
     {
-        
-        // dd($request->all());
         $validatedData = $this->validate($request, [
-            
             'roomType' => 'required|string',
-            'breakfast' => 'required',
-            'lunch' => 'required',
-            'dinner' => 'required',
-            'extra_bed' => 'required',
-            // 'facilities' => 'required|array',
             'room_status' => 'required',
             'description' => 'required|string',
-            
         ]);
         
         $userId = Auth::id(); 
         $roomType = RoomType::create([
-            'name' => $request->roomType, // Save the room type name
-            'breakfast' => $request->breakfast,
-            'lunch' => $request->lunch,
-            'dinner' => $request->dinner,
-            'extra_bed' => $request->extra_bed,
-            'facilities' => json_encode($request->facilities),
+            'name' => $request->roomType,
+            'hotel_id'=> $request->hotel_id,
             'inserted_by_user' => $userId,
             'description' => $request->description,
             'status' => $request->room_status,
-            'hotel_id'=> $request->hotel_id,
         ]);
         return redirect()->route('roomType.index')
             ->with('success', 'Category created successfully');

@@ -54,8 +54,9 @@
                            <label for="bed_type" class="form-label"><strong>Bed Type</strong><span class="text-danger">*</span></label>
                            <select name="bed_type" id="bed_type" class="form-control" required>
                               <option value="">Select One</option>
-                              <option value="1">King Size</option>
-                              <option value="0">Queen Size</option>
+                              @foreach($beds as $bed)
+                              <option value="{{ $bed->bedId }}"> {{ $bed->bed_type }} </option>
+                              @endforeach
                            </select>
                            @error('bed_type')
                            <div class="text-danger mt-1">{{ $message }}</div>
@@ -148,36 +149,36 @@
                         
                      </div>
 
-                     <label for="charge" class="form-label"><b>Fair And Backout Price</b></label>
+                     <label for="charge" class="form-label"><b>Fair And Backout Price</b><span class="text-danger">*</span></label>
                      <hr>
                      <div id="hotelRatesContainer">
                         <div class="hotel-rate-form">
                            <div class="row">
                               <div class="col-md-3 mb-3">
-                                 <label for="event" class="form-label"><strong>Event Name</strong></label>
-                                 <input type="text" class="form-control" name="event[]" placeholder="Enter Event Name">
+                                 <label for="event" class="form-label"><strong>Event Name</strong><span class="text-danger">*</span></label>
+                                 <input type="text" class="form-control" name="event[]" placeholder="Enter Event Name" required>
                               </div>
                               <div class="col-md-3 mb-3">
-                                 <label for="event_type" class="form-label"><strong>Event Type</strong></label>
-                                 <select class="form-control" name="event_type[]">
+                                 <label for="event_type" class="form-label"><strong>Event Type</strong><span class="text-danger">*</span></label>
+                                 <select class="form-control" name="event_type[]" required>
                                     <option value="">Select Event Type</option>
                                     <option value="Fair Date">Fair Date</option>
                                     <option value="Blackout Date">Blackout Date</option>
                                  </select>
                               </div>
                               <div class="col-md-3 mb-3">
-                                 <label for="price" class="form-label"><strong>Price</strong></label>
-                                 <input type="number" class="form-control" name="price[]" placeholder="Enter Price">
+                                 <label for="price" class="form-label"><strong>Price</strong></label><span class="text-danger">*</span>
+                                 <input type="number" class="form-control" name="price[]" placeholder="Enter Price" required>
                               </div>
                               <div class="col-md-3 mb-3">
-                                 <label for="start_date" class="form-label"><strong>Start Date</strong></label>
-                                 <input type="date" class="form-control" name="start_date[]">
+                                 <label for="start_date" class="form-label"><strong>Start Date</strong><span class="text-danger">*</span></label>
+                                 <input type="date" class="form-control" name="start_date[]" required>
                               </div>
 
                               <!-- End Date -->
                               <div class="col-md-3 mb-3">
-                                 <label for="end_date" class="form-label"><strong>End Date</strong></label>
-                                 <input type="date" class="form-control" name="end_date[]">
+                                 <label for="end_date" class="form-label"><strong>End Date</strong><span class="text-danger">*</span></label>
+                                 <input type="date" class="form-control" name="end_date[]" required>
                               </div>
                               <div class="col-md-3 mb-3 d-flex align-items-end">
                                  <button type="button" class="btn btn-danger remove-rate">Delete</button>

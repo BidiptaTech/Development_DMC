@@ -58,15 +58,18 @@
                         </div>
 
                         <div class="col-md-3 mb-3">
-                           <label for="bed_type" class="form-label"><strong>Bed Type</strong><span class="text-danger">*</span></label>
-                           <select name="bed_type" id="bed_type" class="form-control" required>
-                              <option value="">Select One</option>
-                              <option value="1">King Size</option>
-                              <option value="0">Queen Size</option>
-                           </select>
-                           @error('bed_type')
-                           <div class="text-danger mt-1">{{ $message }}</div>
-                           @enderror
+                            <label for="bed_type" class="form-label"><strong>Bed Type</strong><span class="text-danger">*</span></label>
+                            <select name="bed_type" id="bed_type" class="form-control" required>
+                                <option value="">Select One</option>
+                                @foreach($beds as $bed)value="{{ $bed->bedId }}"> {{ $bed->bed_type }}
+                                    <option value="{{ $bed->bedId }}" {{ $room->bed_type == $bed->bedId ? 'selected' : '' }}>
+                                        {{ $bed->bed_type }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('bed_type')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-md-3 mb-3">
@@ -97,8 +100,8 @@
                         <div class="col-md-3 mb-3">
                            <label for="adult" class="form-label"><strong>Adults</strong><span class="text-danger">*</span></label>
                            <select id="adult" class="form-control" name="adult_count" disabled>
-                            @if($room->adult > 0)
-                              <option value="">{{ $room->adult }}</option>
+                            @if($room->adult_count > 0)
+                              <option value="">{{ $room->adult_count }}</option>
                             @else
                               <option value="">Select Adults</option>
                             @endif
@@ -110,7 +113,11 @@
                         <div class="col-md-3 mb-3">
                            <label for="child" class="form-label"><strong>Children</strong><span class="text-danger">*</span></label>
                            <select id="child" class="form-control" name="child_count" disabled>
-                              <option value="">Select Children</option>
+                           @if($room->child_count > 0)
+                              <option value="">{{ $room->child_count }}</option>
+                            @else
+                              <option value="">Select Adults</option>
+                            @endif
                            </select>
                            @error('child_count')
                            <div class="text-danger mt-1">{{ $message }}</div>
@@ -157,9 +164,10 @@
                             @enderror
                         </div>
 
-                        <label for="charge" class="form-label"><b>Fair And Backout Price</b></label>
+                        <label for="charge" class="form-label"><b>Fair And Backout Price</b><span class="text-danger">*</span></label>
                         <hr>
                         <div id="hotelRatesContainer">
+                            
                             @if($room->rates != null)  <!-- Check if there are any rates available -->
                                 @foreach($room->rates as $rate)  <!-- Loop through the rates associated with the room -->
                                     <div class="hotel-rate-form">
