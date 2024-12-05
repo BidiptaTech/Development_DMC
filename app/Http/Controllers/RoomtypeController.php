@@ -34,13 +34,11 @@ class RoomtypeController extends Controller
         
         
         $validatedData = $this->validate($request, [
-            
             'roomType' => 'required|string',
             
             'facilities' => 'required|array',
             'room_status' => 'required',
             'description' => 'required|string',
-            
         ]);
         
         $userId = Auth::id(); 
@@ -51,7 +49,6 @@ class RoomtypeController extends Controller
             'inserted_by_user' => $userId,
             'description' => $request->description,
             'status' => $request->room_status,
-            'hotel_id'=> $request->hotel_id,
         ]);
         return redirect()->route('roomType.index')
             ->with('success', 'Room Type created successfully');

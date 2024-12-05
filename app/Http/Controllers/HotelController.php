@@ -11,6 +11,7 @@ use App\Models\Rate;
 use App\Models\Setting;
 use App\Models\Category;
 use App\Models\RoomType;
+use App\Models\Bed;
 use App\Helpers\CommonHelper;
 use Illuminate\Support\Facades\Storage;
 
@@ -332,7 +333,8 @@ class HotelController extends Controller
         $hotel = Hotel::findOrFail($hotelId);
         $roomtypes = RoomType::where('status', 1)->get();
         $rooms = Room::where('hotel_id', $hotelId)->get();
-        return view('hotel.rooms', compact('hotel','rooms','roomtypes'));
+        $beds = Bed::where('is_active', 1)->get();
+        return view('hotel.rooms', compact('hotel','rooms','roomtypes','beds'));
     }
 
     /*
@@ -351,7 +353,11 @@ class HotelController extends Controller
             'extra_bed' => 'required', 
             'child_cot' => 'required', 
         ]);
-
+        $room_max_id = Room::max('room_id') ?? 1;
+        $roomId = CommonHelper::createId($room_max_id);
+        while (Room::where('room_id', $roomId)->exists()) {
+            $roomId = CommonHelper::createId($roomId);
+        }
         $room = new Room(); 
         $room->hotel_id = $request->id;
         $room->room_type_id = $request->room_type;
@@ -368,10 +374,9 @@ class HotelController extends Controller
         $room->child_cot_price = $request->child_cot_price;
         $room->status = $request->hotel_status;
         $room->is_complete = 1;
-        $room->room_id = 24;
+        $room->room_id = $roomId;
         $room->save();
 
-        $roomId = $room->id;  
         foreach ($request->event as $index => $eventName) {
             $rate_id = Rate::max('rate_id') ?? 1;
             $rateId = CommonHelper::createId($rate_id);
@@ -381,7 +386,7 @@ class HotelController extends Controller
 
             Rate::create([
                 'event' => $eventName,
-                'room_id' => $roomId,  // Use the last inserted room ID here
+                'room_id' => $roomId, 
                 'hotel_id' => $request->id,
                 'rate_id' => $rateId,
                 'event_type' => $request->event_type[$index],
@@ -406,7 +411,8 @@ class HotelController extends Controller
     public function editroom(Request $request, $id){
         $room = Room::with('rates')->findOrFail($id);
         $roomtypes = RoomType::where('status', 1)->get();
-        return view('hotel.editroom', compact('room','roomtypes'));
+        $beds = Bed::where('is_active', 1)->get();
+        return view('hotel.editroom', compact('room','roomtypes','beds'));
     }
 
     /*
@@ -421,24 +427,22 @@ class HotelController extends Controller
             'no_of_room' => 'required',
             'weekday_price' => 'required',
             'weekend_price' => 'required',
-            'hotel_status' => 'required', 
-            'extra_bed' => 'required', 
-            'child_cot' => 'required', 
+            'hotel_status' => 'required',
+            'extra_bed' => 'required',
+            'child_cot' => 'required',
         ]);
-
-        // Get the room by ID
         $id = $request->id;
-        $room = Room::findOrFail($id);
+        $room_id = Room::where('id', $id)->first();
+        $room = Room::where('room_id',$room_id->room_id)->first();
 
         // Update the room details
-        $room->hotel_id = $room->hotel_id; // Assuming hotel_id remains the same
         $room->room_type_id = $request->room_type;
         $room->no_of_room = $request->no_of_room;
         $room->weekday_price = $request->weekday_price;
         $room->weekend_price = $request->weekend_price;
         $room->max_capacity = $request->max_capacity;
-        $room->adult_count = $request->adult_count;
-        $room->child_count = $request->child_count;
+        $room->adult_count = $request->adult_count ?? $room->adult_count;
+        $room->child_count = $request->child_count ?? $room->child_count;
         $room->extra_bed = $request->extra_bed;
         $room->bed_type = $request->bed_type;
         $room->extra_bed_price = $request->extra_bed_price;
@@ -447,29 +451,55 @@ class HotelController extends Controller
         $room->status = $request->hotel_status;
         $room->is_complete = 1;
         $room->save();
-        foreach ($request->event as $index => $eventName) {
-            $rate_id = Rate::max('rate_id') ?? 1;
-            $rateId = CommonHelper::createId($rate_id);
-            while (Rate::where('rate_id', $rateId)->exists()) {
-                $rateId = CommonHelper::createId($rateId);
-            }
 
-            Rate::create([
-                'event' => $eventName,
-                'room_id' => $room->id, 
-                'hotel_id' => $request->id,
-                'rate_id' => $rateId,
-                'event_type' => $request->event_type[$index],
-                'price' => $request->price[$index],
-                'start_date' => $request->start_date[$index],
-                'end_date' => $request->end_date[$index],
-            ]);
+        // Update rates
+        $existingRates = $room->rates; // Fetch existing rates for the room
+        $newRates = $request->event;
+
+        // Remove rates not in the new request
+        foreach ($existingRates as $existingRate) {
+            if (!in_array($existingRate->event, $newRates)) {
+                $existingRate->delete();
+            }
+        }
+
+        // Update or create rates
+        foreach ($newRates as $index => $eventName) {
+            $rate = $room->rates()->where('event', $eventName)->first();
+
+            if ($rate) {
+                // Update existing rate
+                $rate->update([
+                    'event_type' => $request->event_type[$index],
+                    'price' => $request->price[$index],
+                    'start_date' => $request->start_date[$index],
+                    'end_date' => $request->end_date[$index],
+                ]);
+            } else {
+                // Create new rate
+                $rate_id = Rate::max('rate_id') ?? 1;
+                $rateId = CommonHelper::createId($rate_id);
+
+                while (Rate::where('rate_id', $rateId)->exists()) {
+                    $rateId = CommonHelper::createId($rateId);
+                }
+
+                Rate::create([
+                    'event' => $eventName,
+                    'room_id' => $room->id, // Correctly reference the room ID
+                    'hotel_id' => $request->id,
+                    'rate_id' => $rateId,
+                    'event_type' => $request->event_type[$index],
+                    'price' => $request->price[$index],
+                    'start_date' => $request->start_date[$index],
+                    'end_date' => $request->end_date[$index],
+                ]);
+            }
         }
 
         return redirect()->route('hotels.room', ['hotel' => $room->hotel_id])
             ->with('success', 'Room details updated successfully!');
     }
-
 
     /*
     * Delete Room Details .

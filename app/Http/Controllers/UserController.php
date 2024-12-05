@@ -235,8 +235,8 @@ class UserController extends Controller
     */
     public function transaction()
     {
-        $transaction = Transaction::where('userId', $this->auth_user->userId)
-        ->orWhere('credited_from', $this->auth_user->userId)
+        $transaction = Transaction::where('user_id', $this->auth_user->userId)
+        ->orWhere('credited_from', $this->auth_user->user_id)
         ->get();
         return view('users.transaction',compact('transaction'));
     }
