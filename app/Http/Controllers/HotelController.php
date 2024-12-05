@@ -14,7 +14,7 @@ use App\Models\RoomType;
 use App\Models\Bed;
 use App\Helpers\CommonHelper;
 use Illuminate\Support\Facades\Storage;
-
+use Auth; 
 class HotelController extends Controller
 {
     /*
@@ -44,6 +44,7 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
+        
         $uniqueId = uniqid('', true);
         $unique_id = substr($uniqueId, -16);
         $validatedData = $request->validate([
@@ -111,8 +112,10 @@ class HotelController extends Controller
             $cancellationDataJson = null;
         }
     
-
+        $auth_user = $this->auth_user = Auth::user();
         $hotel = Hotel::create([
+            'user_type' => $auth_user->user_type,
+            'userId' => $auth_user->userId,
             'name' => $request->input('name'),
             'hotel_unique_id' => $unique_id,
             'address' => $request->input('address'),

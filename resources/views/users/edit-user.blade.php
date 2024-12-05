@@ -124,6 +124,25 @@
                                 </div>
                             </div>
 
+                            <div class="mb-3 row">
+                                <label for="markup_type" class="col-sm-3 col-form-label">Markup Type</label>
+                                <div class="col-sm-9">
+                                    <select class="form-select" name="markup_type" required>
+                                        <option value="">Select Type</option>
+                                        <option value="0" {{ $users->markup_type == 0 ? 'selected' : '' }}>Flat</option>
+                                        <option value="1" {{ $users->markup_type == 1 ? 'selected' : '' }}>Percentage</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="markup_price" class="col-sm-3 col-form-label">Markup Price</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" id="markup_price" name="markup_price" 
+                                        value="{{ $users->markup_price }}" placeholder="Enter Markup Price" required>
+                                </div>
+                            </div>
+
                             <!-- Checkbox for Agreement -->
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label"></label>
@@ -157,7 +176,6 @@
             </div>
         </div>
     </div>
-</div>
 @endsection  
 
 @section('scripts') 

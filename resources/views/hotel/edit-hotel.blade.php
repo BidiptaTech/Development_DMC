@@ -44,7 +44,7 @@
                                     <label for="input35" class="form-label"><strong>Hotel Unique Id</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="input35" name="unique_id" value="{{ old('name', $hotel->hotel_unique_id) }}" placeholder="Enter Hotel Name" required>
+                                    <input type="text" class="form-control" id="input35" name="unique_id" value="{{ old('name', $hotel->hotel_unique_id) }}" placeholder="Enter Hotel Name" disabled>
                                     @error('unique_id')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
