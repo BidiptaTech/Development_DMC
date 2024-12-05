@@ -183,7 +183,7 @@
 
                                 <div class="mb-3 col-md-4">
                                     <label for="breakfast" class="form-label"><strong>Breakfast</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="breakfast" id="breakfast" class="form-control" required onchange="toggleBreakfastOptions()">
+                                    <select name="breakfast" id="breakfast" class="form-control" required onchange="toggleMealOptions('breakfast')">
                                         <option value="">Select an option</option>
                                         <option value="1" {{ old('breakfast', $hotel->includes_breakfast) == 1 ? 'selected' : '' }}>Available</option>
                                         <option value="0" {{ old('breakfast', $hotel->includes_breakfast) == 0 ? 'selected' : '' }}>Not Available</option>
@@ -196,7 +196,7 @@
                                         <select name="breakfast_type" id="breakfast_type" class="form-control">
                                             <option value="">Select a type</option>
                                             <option value="0" {{ old('breakfast_type', (string) $hotel->breakfast_type) === '0' ? 'selected' : '' }}>Buffet</option>
-                                            <option value="1" {{ $hotel->breakfast_type === '1' ? 'selected' : '' }}>Set Buffet</option>
+                                            <option value="1" {{ old('breakfast_type', (string) $hotel->breakfast_type) === '1' ? 'selected' : '' }}>Set Buffet</option>
                                         </select>
                                     </div>
                                     <div class="mb-3 col-md-4">
@@ -207,20 +207,33 @@
 
                                 <div class="mb-3 col-md-4">
                                     <label for="lunch" class="form-label"><strong>Lunch</strong></label>
-                                    <select name="lunch" class="form-control" required>
+                                    <select name="lunch" id="lunch" class="form-control" required onchange="toggleMealOptions('lunch')">
                                         <option value="">Select an option</option>
-                                        <option value="1" {{ $hotel->lunch == 1 ? 'selected' : '' }}>Available</option>
-                                        <option value="0" {{ $hotel->lunch === 0 ? 'selected' : '' }}>Not Available</option>
+                                        <option value="1" {{ old('lunch', $hotel->includes_lunch) == 1 ? 'selected' : '' }}>Available</option>
+                                        <option value="0" {{ old('lunch', $hotel->includes_lunch) == 0 ? 'selected' : '' }}>Not Available</option>
                                     </select>
                                 </div>
 
+                                <div class="row" id="lunch-options" style="{{ old('lunch', $hotel->lunch) == 1 ? 'display: block;' : 'display: none;' }}">
+                                    <div class="mb-3 col-md-4">
+                                        <label for="lunch_price" class="form-label"><strong>Lunch Price</strong></label>
+                                        <input type="number" name="lunch_price" id="lunch_price" class="form-control" placeholder="Enter price" value="{{ old('lunch_price', $hotel->lunch_price) }}">
+                                    </div>
+                                </div>
                                 <div class="mb-3 col-md-4">
                                     <label for="dinner" class="form-label"><strong>Dinner</strong></label>
-                                    <select name="dinner" class="form-control" required>
+                                    <select name="dinner" id="dinner" class="form-control" required onchange="toggleMealOptions('dinner')">
                                         <option value="">Select an option</option>
-                                        <option value="1" {{ $hotel->dinner == 1 ? 'selected' : '' }}>Available</option>
-                                        <option value="0" {{ $hotel->dinner === 0 ? 'selected' : '' }}>Not Available</option>
+                                        <option value="1" {{ old('dinner', $hotel->includes_dinner) == 1 ? 'selected' : '' }}>Available</option>
+                                        <option value="0" {{ old('dinner', $hotel->includes_dinner) == 0 ? 'selected' : '' }}>Not Available</option>
                                     </select>
+                                </div>
+
+                                <div class="row" id="dinner-options" style="{{ old('dinner', $hotel->dinner) == 1 ? 'display: block;' : 'display: none;' }}">
+                                    <div class="mb-3 col-md-4">
+                                        <label for="dinner_price" class="form-label"><strong>Dinner Price</strong></label>
+                                        <input type="number" name="dinner_price" id="dinner_price" class="form-control" placeholder="Enter price" value="{{ old('dinner_price', $hotel->dinner_price) }}">
+                                    </div>
                                 </div>
 
                                 <div class="mb-3 col-md-4">
@@ -232,17 +245,21 @@
                                     <label for="child_age_limit" class="form-label"><strong>Child Upper Age Limit</strong></label>
                                     <input type="number" class="form-control" id="child_age_limit" name="child_age_limit" value="{{ old('child_age_limit', $hotel->child_age_limit) }}" placeholder="Enter Child Age Limit">
                                 </div>
-
+                                
                                 <div class="mb-3 col-md-4">
                                     <label for="weekend_days" class="form-label"><strong>Weekend Days</strong></label>
                                     <select name="weekend_days[]" id="weekend_days" class="form-control" multiple required>
-                                        <option value="Saturday" {{ in_array('Saturday', explode(',', old('weekend_days', $hotel->weekend_days ?? ''))) ? 'selected' : '' }}>Saturday</option>
-                                        <option value="Sunday" {{ in_array('Sunday', explode(',', old('weekend_days', $hotel->weekend_days ?? ''))) ? 'selected' : '' }}>Sunday</option>
-                                        <option value="Friday" {{ in_array('Friday', explode(',', old('weekend_days', $hotel->weekend_days ?? ''))) ? 'selected' : '' }}>Friday</option>
-                                        <option value="Thursday" {{ in_array('Thursday', explode(',', old('weekend_days', $hotel->weekend_days ?? ''))) ? 'selected' : '' }}>Thursday</option>
-                                        <option value="Wednesday" {{ in_array('Wednesday', explode(',', old('weekend_days', $hotel->weekend_days ?? ''))) ? 'selected' : '' }}>Wednesday</option>
-                                        <option value="Tuesday" {{ in_array('Tuesday', explode(',', old('weekend_days', $hotel->weekend_days ?? ''))) ? 'selected' : '' }}>Tuesday</option>
-                                        <option value="Monday" {{ in_array('Monday', explode(',', old('weekend_days', $hotel->weekend_days ?? ''))) ? 'selected' : '' }}>Monday</option>
+                                        @php
+                                            $selectedDays = json_decode(old('weekend_days', $hotel->weekend_days ?? '[]'), true);
+                                        @endphp
+
+                                        <option value="Saturday" {{ in_array('Saturday', $selectedDays) ? 'selected' : '' }}>Saturday</option>
+                                        <option value="Sunday" {{ in_array('Sunday', $selectedDays) ? 'selected' : '' }}>Sunday</option>
+                                        <option value="Friday" {{ in_array('Friday', $selectedDays) ? 'selected' : '' }}>Friday</option>
+                                        <option value="Thursday" {{ in_array('Thursday', $selectedDays) ? 'selected' : '' }}>Thursday</option>
+                                        <option value="Wednesday" {{ in_array('Wednesday', $selectedDays) ? 'selected' : '' }}>Wednesday</option>
+                                        <option value="Tuesday" {{ in_array('Tuesday', $selectedDays) ? 'selected' : '' }}>Tuesday</option>
+                                        <option value="Monday" {{ in_array('Monday', $selectedDays) ? 'selected' : '' }}>Monday</option>
                                     </select>
                                     <small class="form-text text-muted">Select the weekend days (use Ctrl or Cmd to select multiple days).</small>
                                 </div>
@@ -321,51 +338,92 @@
                                 </div>
                             </div>
 
-                            <!-- Conference Room Availability -->
                             <b>Conference Room Availability</b>
                             <hr>
                             <div class="mb-3 col-md-4">
                                 <label for="conference" class="form-label"><strong>Conference Room</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                <select name="conference" id="conference" class="form-control" required>
+                                <select name="conference" id="conference" class="form-control" required onchange="toggleConferenceOptions()">
                                     <option value="">Select an option</option>
-                                    <option  {{ $hotel->conference_room == 0 ? 'selected' : '' }} value="0">Not Available</option>
-                                    <option  {{ $hotel->conference_room == 1 ? 'selected' : '' }} value="1">Available</option>
+                                    <option {{ $hotel->conference_room == 0 ? 'selected' : '' }} value="0">Not Available</option>
+                                    <option {{ $hotel->conference_room == 1 ? 'selected' : '' }} value="1">Available</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div id="conference-options" style="{{ $hotel->conference_room == 1 ? 'display: block;' : 'display: none;' }}">
+
+                                    <!-- Existing conference fields (Pre-populated) -->
+                                    @foreach (json_decode($hotel->conference_data, true) as $index => $conference)
+                                        <div class="conference-field mb-3 col-md-12" id="conference-field-{{ $index }}">
+                                            <div class="row">
+                                                <div class="mb-3 col-md-4">
+                                                    <label for="conference_head" class="form-label"><strong>Head</strong></label>
+                                                    <input type="text" class="form-control" name="conference_head[]" placeholder="Enter Head" value="{{ old('conference_head', $conference['head'] ?? '') }}">
+                                                </div>
+                                                <div class="mb-3 col-md-4">
+                                                    <label for="conference_duration" class="form-label"><strong>Duration</strong></label>
+                                                    <input type="text" class="form-control" name="conference_duration[]" placeholder="Enter Duration" value="{{ old('conference_duration', $conference['duration'] ?? '') }}">
+                                                </div>
+                                                <div class="mb-3 col-md-4">
+                                                    <label for="conference_price" class="form-label"><strong>Price</strong></label>
+                                                    <input type="number" class="form-control" name="conference_price[]" placeholder="Enter Price" value="{{ old('conference_price', $conference['price'] ?? '') }}">
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <button type="button" class="btn btn-danger" onclick="removeConferenceField({{ $index }})">Delete</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    <!-- Additional fields -->
+                                    <div id="conference-additional-fields"></div>
+
+                                    <!-- Button to add more fields -->
+                                    <div class="mb-3 col-md-4">
+                                        <button type="button" id="conference-add-more" class="btn btn-primary" onclick="addConferenceField()">Add More</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <b>Cancellation Details</b>
+                            <hr>
+                            <!-- Cancellation Type Selection -->
+                            <div class="mb-3 col-md-4">
+                                <label for="cancellation_type" class="form-label"><strong>Cancellation Type</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                <select name="cancellation_type" id="cancellation_type" class="form-control" required onchange="toggleCancellationOptions()">
+                                    <option value="">Select an option</option>
+                                    <option {{ $hotel->cancellation_type == 0 ? 'selected' : '' }} value="0">Free</option>
+                                    <option {{ $hotel->cancellation_type == 1 ? 'selected' : '' }} value="1">Chargeable</option>
                                 </select>
                             </div>
 
+                            <div class="row">
+                                <div id="cancellation-options" style="{{ $hotel->cancellation_type == 1 ? 'display: block;' : 'display: none;' }}">
+                                    @foreach (json_decode($hotel->cancellation_data, true) as $index => $cancellation)
+                                        <div class="cancellation-field mb-3 col-md-12" id="cancellation-field-{{ $index }}">
+                                            <div class="row">
+                                                <div class="mb-3 col-md-4">
+                                                    <label for="cancellation_duration" class="form-label"><strong>Duration</strong></label>
+                                                    <input type="text" class="form-control" name="cancellation_duration[]" placeholder="Enter Duration" value="{{ old('cancellation_duration', $cancellation['duration'] ?? '') }}">
+                                                </div>
+                                                <div class="mb-3 col-md-4">
+                                                    <label for="cancellation_price" class="form-label"><strong>Price</strong></label>
+                                                    <input type="number" class="form-control" name="cancellation_price[]" placeholder="Enter Price" value="{{ old('cancellation_price', $cancellation['price'] ?? '') }}">
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <button type="button" class="btn btn-danger" onclick="removeCancellationField({{ $index }})">Delete</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
 
-                            {{-- <div class="row" id="conference-options" style="display: none;">
-                                @foreach ($hotel->conference_data as $conference) <!-- Assuming a relationship called 'conferences' -->
+                                    <!-- Additional fields container -->
+                                    <div id="cancellation-additional-fields"></div>
+
+                                    <!-- Button to add more cancellation fields -->
                                     <div class="mb-3 col-md-4">
-                                        <label for="conference_head" class="form-label"><strong>Head</strong></label>
-                                        <input type="text" class="form-control" name="conference_head[]" placeholder="Enter Head" value="{{ old('conference_head', $conference->head) }}">
+                                        <button type="button" id="cancellation-add-more" class="btn btn-primary" onclick="addCancellationField()">Add More</button>
                                     </div>
-                                    <div class="mb-3 col-md-4">
-                                        <label for="conference_duration" class="form-label"><strong>Duration</strong></label>
-                                        <input type="text" class="form-control" name="conference_duration[]" placeholder="Enter Duration" value="{{ old('conference_duration', $conference->duration) }}">
-                                    </div>
-                                    <div class="mb-3 col-md-4">
-                                        <label for="conference_price" class="form-label"><strong>Price</strong></label>
-                                        <input type="number" class="form-control" name="conference_price[]" placeholder="Enter Price" value="{{ old('conference_price', $conference->price) }}">
-                                    </div>
-                                @endforeach
-                                <div id="conference-additional-fields"></div>
-                                <div class="mb-3 col-md-4">
-                                    <button type="button" id="conference-add-more" class="btn btn-primary">Add More</button>
                                 </div>
-                            </div> --}}
-                            
-
-                            <!-- Cancellation Details -->
-                            <b>Cancellation Details</b>
-                            <hr>
-                            <div class="mb-3 col-md-4">
-                                <label for="cancellation_type" class="form-label"><strong>Cancellation Type</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                <select name="cancellation_type" id="cancellation_type" class="form-control" required>
-                                    <option value="">Select an option</option>
-                                    <option  {{ $hotel->cancellation_type == 0 ? 'selected' : '' }} value="0">Free</option>
-                                    <option {{ $hotel->cancellation_type == 1 ? 'selected' : '' }} value="1">Chargeable</option>
-                                </select>
                             </div>
 
                             <!-- Status -->
@@ -487,22 +545,135 @@
     });
 </script>
 <script>
-    // This function will show/hide the breakfast options based on the selection
-    function toggleBreakfastOptions() {
-        var breakfastSelect = document.getElementById('breakfast');
-        var breakfastOptions = document.getElementById('breakfast-options');
-        
-        if (breakfastSelect.value == '1') {
-            breakfastOptions.style.display = 'contents';
+    function toggleMealOptions(mealType) {
+    var mealSelect = document.getElementById(mealType);
+    var mealOptions = document.getElementById(mealType + '-options');
+
+    if (mealSelect && mealOptions) {
+        if (mealSelect.value == '1') {
+            mealOptions.style.display = 'contents';
         } else {
-            breakfastOptions.style.display = 'none';
+            mealOptions.style.display = 'none';
+        }
+    }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize all meal options on page load
+        toggleMealOptions('breakfast');
+        toggleMealOptions('lunch');
+        toggleMealOptions('dinner');
+    });
+</script>
+<script>
+    // Toggle conference options visibility based on the selection
+    function toggleConferenceOptions() {
+        var conferenceSelect = document.getElementById('conference');
+        var conferenceOptions = document.getElementById('conference-options');
+
+        if (conferenceSelect.value == '1') {
+            conferenceOptions.style.display = 'block';
+        } else {
+            conferenceOptions.style.display = 'none';
         }
     }
 
-    // Call the function on page load to set the correct state
+    // Initialize conference options visibility on page load
     document.addEventListener('DOMContentLoaded', function() {
-        toggleBreakfastOptions();
+        toggleConferenceOptions();
     });
-</script>
 
+    // Function to add new conference fields
+    let conferenceIndex = {{ count(json_decode($hotel->conference_data, true)) }};
+    function addConferenceField() {
+        var newField = document.createElement('div');
+        newField.classList.add('conference-field');
+        newField.classList.add('mb-3');
+        newField.classList.add('col-md-12');
+        newField.id = 'conference-field-' + conferenceIndex;
+
+        newField.innerHTML = `
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="conference_head" class="form-label"><strong>Head</strong></label>
+                    <input type="text" class="form-control" name="conference_head[]" placeholder="Enter Head">
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="conference_duration" class="form-label"><strong>Duration</strong></label>
+                    <input type="text" class="form-control" name="conference_duration[]" placeholder="Enter Duration">
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="conference_price" class="form-label"><strong>Price</strong></label>
+                    <input type="number" class="form-control" name="conference_price[]" placeholder="Enter Price">
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-danger" onclick="removeConferenceField(${conferenceIndex})">Delete</button>
+                </div>
+            </div>
+        `;
+        
+        // Append the new conference field to the container
+        document.getElementById('conference-additional-fields').appendChild(newField);
+        conferenceIndex++;
+    }
+
+    // Function to remove a conference field
+    function removeConferenceField(index) {
+        var field = document.getElementById('conference-field-' + index);
+        field.remove();
+    }
+</script>
+<script>
+    // Toggle cancellation options visibility based on the cancellation type
+    function toggleCancellationOptions() {
+        var cancellationSelect = document.getElementById('cancellation_type');
+        var cancellationOptions = document.getElementById('cancellation-options');
+
+        if (cancellationSelect.value == '1') {
+            cancellationOptions.style.display = 'contents';
+        } else {
+            cancellationOptions.style.display = 'none';
+        }
+    }
+
+    // Initialize cancellation options visibility on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleCancellationOptions();
+    });
+
+    // Function to add new cancellation fields
+    let cancellationIndex = {{ count(json_decode($hotel->cancellation_data, true)) }};
+    function addCancellationField() {
+        var newField = document.createElement('div');
+        newField.classList.add('cancellation-field');
+        newField.classList.add('mb-3');
+        newField.classList.add('col-md-12');
+        newField.id = 'cancellation-field-' + cancellationIndex;
+
+        newField.innerHTML = `
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="cancellation_duration" class="form-label"><strong>Duration</strong></label>
+                    <input type="text" class="form-control" name="cancellation_duration[]" placeholder="Enter Duration">
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="cancellation_price" class="form-label"><strong>Price</strong></label>
+                    <input type="number" class="form-control" name="cancellation_price[]" placeholder="Enter Price">
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-danger" onclick="removeCancellationField(${cancellationIndex})">Delete</button>
+                </div>
+            </div>
+        `;
+        
+        // Append the new cancellation field to the container
+        document.getElementById('cancellation-additional-fields').appendChild(newField);
+        cancellationIndex++;
+    }
+
+    // Function to remove a cancellation field
+    function removeCancellationField(index) {
+        var field = document.getElementById('cancellation-field-' + index);
+        field.remove();
+    }
+</script>
 @endsection
