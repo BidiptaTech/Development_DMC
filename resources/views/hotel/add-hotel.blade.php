@@ -32,17 +32,6 @@
                                     @enderror
                                 </div>
 
-                                <!-- Hotel Unique Id -->
-                                <div class="mb-3 col-md-4">
-                                    <label for="input35" class="form-label"><strong>Hotel Unique Id</strong>
-                                        <span style="color: red; font-weight: bold;">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="input35" name="unique_id" placeholder="Enter Unique Id" required>
-                                    @error('unique_id')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
                                 <!-- Category Type -->
                                 <div class="mb-3 col-md-4">
                                     <label for="category_type" class="form-label"><strong>Category Type</strong>
@@ -606,7 +595,7 @@
         `;
         $('#cancellation-additional-fields').append(newCancellationFields);
     });
-});
+    });
 
 </script>
 
