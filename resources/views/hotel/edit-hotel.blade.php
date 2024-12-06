@@ -137,6 +137,7 @@
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                
 
                                 <!-- Latitude and Longitude -->
                                 <div class="mb-3 col-md-4">
@@ -295,6 +296,13 @@
                                         <option value="1" {{ $hotel->{'12_hour_book'} == 1 ? 'selected' : '' }}>Available</option>
                                         <option value="0"  {{ $hotel->{'12_hour_book'} == 0 ? 'selected' : '' }}>Not Available</option>
                                     </select>
+                                </div>
+
+                                <div class="row"  id="12_hours_booking_price" style="display: none;">
+                                    <div class="mb-3 col-md-4">
+                                        <label for="12_hours_booking_price" class="form-label"><strong>12 Hours Booking Price</strong></label>
+                                        <input type="number" name="12_hours_booking_price" id="12_hours_booking_price" class="form-control" placeholder="Enter price">
+                                    </div>
                                 </div>
 
                                 <!-- Description -->
@@ -562,6 +570,7 @@
         toggleMealOptions('breakfast');
         toggleMealOptions('lunch');
         toggleMealOptions('dinner');
+        toggleOptions('booking_available', '12_hours_booking_price');
     });
 </script>
 <script>

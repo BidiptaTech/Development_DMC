@@ -278,7 +278,7 @@ class HotelController extends Controller
                     return [
                         'rate_id' => $rate->id,
                         'title' => $rate->title ?? $rate->name,
-                        'price' => $rate->price,
+                        'price' => $price,
                         'taxes' => $rate->taxes,
                         'description' => json_decode($rate->description, true) ?? [],
                         'cancellationPolicy' => $rate->cancellation_policy ?? 'Non-Refundable',
