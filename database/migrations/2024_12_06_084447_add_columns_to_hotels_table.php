@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('hotels', function (Blueprint $table) {
             //
             $table->integer('twelve_hours_charge')->nullable();
-            $table->json('key_landmarks');
+            $table->json('key_landmarks')->nullable();
         });
     }
 
