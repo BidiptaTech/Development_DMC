@@ -97,6 +97,21 @@ class HotelController extends Controller
         } else {
             $conferenceDataJson = null;
         }
+
+
+        
+            $locationsData = [];
+            
+                foreach ($request->location as $index => $location) {
+                    $locationsData[] = [
+                        'location' => $location,
+                        'distance' => $request->distance[$index] ?? null,
+                    ];
+                }
+            
+            $locationDataJson = json_encode($locationsData);
+        
+                
         if ($request->cancellation_type == 1) {
             $cancellationData = [];
             if ($request->has('cancellation_duration')) {
@@ -155,6 +170,8 @@ class HotelController extends Controller
             'status' => $request->input('hotel_status'),
             'images' => json_encode($imagePaths),
             'facilities' => json_encode($request->facilities),
+            'key_landmarks' => $locationDataJson,
+            'twelve_hours_charge' => $request->input('twelve_hours_booking_price'),
             'is_complete' => 1,
         ]);
         
@@ -245,6 +262,18 @@ class HotelController extends Controller
         } else {
             $cancellationDataJson = null;
         }
+
+        $locationsData = [];
+            
+        foreach ($request->location as $index => $location) {
+            $locationsData[] = [
+                'location' => $location,
+                'distance' => $request->distance[$index] ?? null,
+            ];
+        }
+    
+    $locationDataJson = json_encode($locationsData);
+
         $hotel->update([
             'name' => $request->input('name'),
             'hotel_unique_id' => $hotel->hotel_unique_id,
@@ -285,6 +314,8 @@ class HotelController extends Controller
             'status' => $request->input('hotel_status'),
             'images' => json_encode($imagePaths),
             'facilities' => json_encode($request->facilities),
+            'key_landmarks' => $locationDataJson,
+            'twelve_hours_charge' => $request->input('twelve_hours_booking_price'),
             'is_complete' => 1,
         ]);
 
