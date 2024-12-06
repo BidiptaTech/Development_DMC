@@ -128,7 +128,7 @@
                         </div>
 
                         <div class="col-md-3 mb-3">
-                           <label for="child_cot" class="form-label"><strong>Child Cot Available</strong><span class="text-danger">*</span></label>
+                           <label for="child_cot" class="form-label"><strong>Baby Cot Available</strong><span class="text-danger">*</span></label>
                            <select name="child_cot" id="child_cot" class="form-control" required>
                               <option value="">Select One</option>
                               <option value="1">Yes</option>
