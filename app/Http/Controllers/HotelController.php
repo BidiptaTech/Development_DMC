@@ -247,7 +247,7 @@ class HotelController extends Controller
         }
         $hotel->update([
             'name' => $request->input('name'),
-            'hotel_unique_id' => $request->input('unique_id'),
+            'hotel_unique_id' => $hotel->hotel_unique_id,
             'address' => $request->input('address'),
             'includes_breakfast' => $request->input('breakfast'),
             'breakfast_type' => $request->input('breakfast_type'),
