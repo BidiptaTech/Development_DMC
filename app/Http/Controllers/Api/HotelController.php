@@ -244,6 +244,57 @@ class HotelController extends Controller
 
 
 
+    public function roomLists(Request $request)
+    {
+        $hotelId = $request->query('id');
+        
+        
+        $hotel = Hotel::with([
+            'rooms', // Eager load rooms
+            'rooms.rates', // Eager load rates for each room
+            'rooms.RoomType' // Eager load RoomType for each room
+        ])->find($hotelId);
+    
+        if (!$hotel) {
+            return response()->json(['message' => 'Hotel not found'], 404);
+        }
+
+        $roomsData = $hotel->rooms->map(function ($room) use($hotel) {
+            $amenities = json_decode($room->facilities);
+
+            return [
+                'room_id' => $room->id,
+                'room_type' => $room->RoomType->name ?? 'Unknown Room Type',
+                'room_description' => $room->about ?? 'No description available',
+                'rates' => $room->rates->map(function ($rate) use($hotel, $room) {
+                    $today = strtolower(date('l'));
+
+                    $weekend_days = json_decode($hotel->weekend_days, true);
+                    if (in_array($today, $weekend_days)) {
+                       $price = $room->weekend_price;
+                    } else {
+                        $price = $room->weekday_price;
+                    }
+                    return [
+                        'rate_id' => $rate->id,
+                        'title' => $rate->title ?? $rate->name,
+                        'price' => $rate->price,
+                        'taxes' => $rate->taxes,
+                        'description' => json_decode($rate->description, true) ?? [],
+                        'cancellationPolicy' => $rate->cancellation_policy ?? 'Non-Refundable',
+                    ];
+                
+                }),
+                'amenities' => $amenities,
+            ];
+        });
+    
+        // Return the room details in the response
+        return response()->json(['data' => $roomsData], 200);
+    }
+    
+
+
 
     public function hotelDetails(Request $request)
     {
@@ -270,9 +321,12 @@ class HotelController extends Controller
         $roomsData = $hotel->rooms->map(function ($room) use ($user, $blackDates, $fairDates, $start_date, $end_date) {
             // Get weekend days for the room
             $weekendDays = json_decode($room->weekend_days, true) ?? [];
-    
-            // Check if the room has blackout or fair dates
-            $roomBlackDates = $this->generateDateRangeFromRates('blackout', $start_date, $end_date);
+            
+            if($room->rates->event_type === 'Blackout Date'){
+                // Check if the room has blackout or fair dates
+                $roomBlackDates = $this->generateDateRangeFromRates('blackout', $start_date, $end_date);
+            }
+            
             $roomFairDates = $this->generateDateRangeFromRates('fair', $start_date, $end_date);
     
             // Calculate room price
