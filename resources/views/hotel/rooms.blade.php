@@ -214,7 +214,7 @@
 
       <!-- Room List -->
       <div class="card">
-         <div class="card-header text-white bg-primary">
+         <div class="card-header text-white bg-primary style="background-color: #e2b7f1;>
             <h5 class="mb-0">Rooms of {{ $hotel->name }}</h5>
          </div>
          <div class="card-body">
