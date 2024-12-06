@@ -137,7 +137,7 @@
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                
+
 
                                 <!-- Latitude and Longitude -->
                                 <div class="mb-3 col-md-4">
@@ -301,7 +301,7 @@
                                 <div class="row"  id="12_hours_booking_price" style="display: none;">
                                     <div class="mb-3 col-md-4">
                                         <label for="12_hours_booking_price" class="form-label"><strong>12 Hours Booking Price</strong></label>
-                                        <input type="number" name="12_hours_booking_price" id="12_hours_booking_price" class="form-control" placeholder="Enter price">
+                                        <input type="number" name="twelve_hours_booking_price" id="12_hours_booking_price" class="form-control" placeholder="Enter price">
                                     </div>
                                 </div>
 
@@ -346,6 +346,56 @@
                                 </div>
                             </div>
 
+                             <!-- key locations -->
+                            
+                             <b>Key Locations</b>
+                             <hr>
+                             <div class="row">
+                                 <div class="mb-3 col-md-4">
+                                     <label for="conference" class="form-label"><strong>Airport</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                     <select name="location[]" id="airport" class="form-control" required >
+                                         <option value="Airport" selected>Airport</option>
+                                     </select>
+                                     @error('location')
+                                         <div class="text-danger mt-1">{{ $message }}</div>
+                                     @enderror
+                                     
+                                 </div>
+                                 <div class="mb-3 col-md-4">
+                                     <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                     <input name="distance[]" id="airport_distance" class="form-control" required type="text">
+                                     @error('distance')
+                                         <div class="text-danger mt-1">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                             </div>
+ 
+                             <div class="row">
+                                 <div class="mb-3 col-md-4">
+                                     <label for="location" class="form-label"><strong>City Centre</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                     <select name="location[]" id="airport" class="form-control" required >
+                                         <option value="City_centre" selected>City Cetre</option>
+                                     </select>
+                                     @error('location')
+                                         <div class="text-danger mt-1">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                                 <div class="mb-3 col-md-4">
+                                     <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                     <input name="distance[]" id="cityCentre_distance" class="form-control" required type="text">
+                                     @error('distance')
+                                         <div class="text-danger mt-1">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                             </div>
+                             
+                             <div class="row" id="Key_locations">
+                                 <div id="locations-additional-fields"></div>
+                                 <div class="mb-3 col-md-4">
+                                     <button type="button" id="locations-add-more" class="btn btn-primary">Add More</button>
+                                 </div>
+                             </div>
+                            <!-- conference -->
                             <b>Conference Room Availability</b>
                             <hr>
                             <div class="mb-3 col-md-4">
@@ -360,6 +410,7 @@
                                 <div id="conference-options" style="{{ $hotel->conference_room == 1 ? 'display: block;' : 'display: none;' }}">
 
                                     <!-- Existing conference fields (Pre-populated) -->
+                                    @if($hotel->conference_data){
                                     @foreach (json_decode($hotel->conference_data, true) as $index => $conference)
                                         <div class="conference-field mb-3 col-md-12" id="conference-field-{{ $index }}">
                                             <div class="row">
@@ -381,6 +432,8 @@
                                             </div>
                                         </div>
                                     @endforeach
+                                    }
+                                    @endif
 
                                     <!-- Additional fields -->
                                     <div id="conference-additional-fields"></div>
@@ -406,6 +459,7 @@
 
                             <div class="row">
                                 <div id="cancellation-options" style="{{ $hotel->cancellation_type == 1 ? 'display: block;' : 'display: none;' }}">
+                                    @if ($hotel->cancellation_data){
                                     @foreach (json_decode($hotel->cancellation_data, true) as $index => $cancellation)
                                         <div class="cancellation-field mb-3 col-md-12" id="cancellation-field-{{ $index }}">
                                             <div class="row">
@@ -423,6 +477,8 @@
                                             </div>
                                         </div>
                                     @endforeach
+                                    }
+                                    @endif
 
                                     <!-- Additional fields container -->
                                     <div id="cancellation-additional-fields"></div>
@@ -684,5 +740,23 @@
         var field = document.getElementById('cancellation-field-' + index);
         field.remove();
     }
+
+
+        // Key Locations
+        $('#locations-add-more').on('click', function () {
+        const newLocationFields = `
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="location" class="form-label"><strong>Location Name</strong></label>
+                    <input type="text" class="form-control" name="location[]" placeholder="Enter Location">
+                </div>
+                <div class="col-md-4">
+                    <label for="conference_duration" class="form-label"><strong>Distance</strong></label>
+                    <input type="text" class="form-control" name="distance[]" placeholder="Enter Distance">
+                </div>
+            </div>
+        `;
+        $('#locations-additional-fields').append(newLocationFields);
+    });
 </script>
 @endsection
