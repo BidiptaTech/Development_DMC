@@ -295,7 +295,7 @@
                                 <div class="row"  id="12_hours_booking_price" style="display: none;">
                                     <div class="mb-3 col-md-4">
                                         <label for="12_hours_booking_price" class="form-label"><strong>12 Hours Booking Price</strong></label>
-                                        <input type="number" name="12_hours_booking_price" id="12_hours_booking_price" class="form-control" placeholder="Enter price">
+                                        <input type="number" name="twelve_hours_booking_price" id="twelve_hours_booking_price" class="form-control" placeholder="Enter price">
                                     </div>
                                 </div>
 
@@ -340,40 +340,40 @@
                             
                             <b>Key Locations</b>
                             <hr>
-                            <div class="row mb-3 col-md-4">
+                            <div class="row">
                                 <div class="mb-3 col-md-4">
                                     <label for="conference" class="form-label"><strong>Airport</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="airport" id="airport" class="form-control" required >
+                                    <select name="location[]" id="airport" class="form-control" required >
                                         <option value="Airport" selected>Airport</option>
                                     </select>
-                                    @error('airport')
+                                    @error('location')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                     
                                 </div>
                                 <div class="mb-3 col-md-4">
-                                    <label for="conference" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <input name="airport_distance" id="airport_distance" class="form-control" required type="text">
-                                    @error('facilities')
+                                    <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <input name="distance[]" id="airport_distance" class="form-control" required type="text">
+                                    @error('distance')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
-                            <div class="row mb-3 col-md-4">
+                            <div class="row">
                                 <div class="mb-3 col-md-4">
-                                    <label for="conference" class="form-label"><strong>City Centre</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="airport" id="airport" class="form-control" required >
+                                    <label for="location" class="form-label"><strong>City Centre</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <select name="location[]" id="airport" class="form-control" required >
                                         <option value="City_centre" selected>City Cetre</option>
                                     </select>
-                                    @error('facilities')
+                                    @error('location')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="mb-3 col-md-4">
-                                    <label for="conference" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <input name="cityCentre_distance" id="cityCentre_distance" class="form-control" required type="text">
-                                    @error('cityCentre_distance')
+                                    <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <input name="distance[]" id="cityCentre_distance" class="form-control" required type="text">
+                                    @error('distance')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -658,20 +658,17 @@
     });
 
         // Key Locations
-        $('#Key_locations').on('change', function () {
-       
-    });
 
     $('#locations-add-more').on('click', function () {
         const newLocationFields = `
             <div class="row mb-3">
                 <div class="col-md-4">
                     <label for="location" class="form-label"><strong>Location Name</strong></label>
-                    <input type="text" class="form-control" name="locations[]" placeholder="Enter Location">
+                    <input type="text" class="form-control" name="location[]" placeholder="Enter Location">
                 </div>
                 <div class="col-md-4">
                     <label for="conference_duration" class="form-label"><strong>Distance</strong></label>
-                    <input type="text" class="form-control" name="distances[]" placeholder="Enter Distance">
+                    <input type="text" class="form-control" name="distance[]" placeholder="Enter Distance">
                 </div>
             </div>
         `;
