@@ -112,7 +112,7 @@ class HotelController extends Controller
             $cancellationDataJson = null;
         }
     
-        $auth_user = $this->auth_user = Auth::user();
+        $auth_user = Auth::user();
         $hotel = Hotel::create([
             'user_type' => $auth_user->user_type,
             'userId' => $auth_user->userId,
