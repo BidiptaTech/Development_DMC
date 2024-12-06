@@ -83,6 +83,24 @@
                                 </div>
                             </div>
 
+                            <div class="mb-3 row">
+                                <label for="markup_type" class="col-sm-3 col-form-label">Markup Type</label>
+                                <div class="col-sm-9">
+                                    <select class="form-select" name="markup_type" >
+                                        <option value="">Select Type</option>
+                                        <option value="0">Flat</option>
+                                        <option value="1">Percentage</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="markup_price" class="col-sm-3 col-form-label">Markup Price</label>
+                                <div class="col-sm-9">
+                                    <input type="markup_price" class="form-control" id="markup_price" name="markup_price" placeholder="Choose Password" required>
+                                </div>
+                            </div>
+
                             <!-- Agree Checkbox -->
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label"></label>
@@ -110,7 +128,6 @@
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('scripts') 
