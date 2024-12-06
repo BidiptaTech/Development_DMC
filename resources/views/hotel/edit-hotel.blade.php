@@ -410,7 +410,7 @@
                                 <div id="conference-options" style="{{ $hotel->conference_room == 1 ? 'display: block;' : 'display: none;' }}">
 
                                     <!-- Existing conference fields (Pre-populated) -->
-                                    @if($hotel->conference_data){
+                                    @if($hotel->conference_data)
                                     @foreach (json_decode($hotel->conference_data, true) as $index => $conference)
                                         <div class="conference-field mb-3 col-md-12" id="conference-field-{{ $index }}">
                                             <div class="row">
@@ -432,7 +432,7 @@
                                             </div>
                                         </div>
                                     @endforeach
-                                    }
+                                    
                                     @endif
 
                                     <!-- Additional fields -->
@@ -459,7 +459,7 @@
 
                             <div class="row">
                                 <div id="cancellation-options" style="{{ $hotel->cancellation_type == 1 ? 'display: block;' : 'display: none;' }}">
-                                    @if ($hotel->cancellation_data){
+                                    @if ($hotel->cancellation_data)
                                     @foreach (json_decode($hotel->cancellation_data, true) as $index => $cancellation)
                                         <div class="cancellation-field mb-3 col-md-12" id="cancellation-field-{{ $index }}">
                                             <div class="row">
@@ -477,7 +477,7 @@
                                             </div>
                                         </div>
                                     @endforeach
-                                    }
+                                    
                                     @endif
 
                                     <!-- Additional fields container -->
