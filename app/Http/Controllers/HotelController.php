@@ -44,7 +44,6 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
-        
         $uniqueId = uniqid('', true);
         $unique_id = substr($uniqueId, -16);
         $validatedData = $request->validate([
@@ -61,9 +60,6 @@ class HotelController extends Controller
             'longitude' => 'required',
             'check_in_time' => 'required',
             'check_out_time' => 'required',
-            'breakfast' => 'required',
-            'lunch' => 'required',
-            'dinner' => 'required',
             'facilities' => 'required|array', 
             'hotel_status' => 'required',
         ]);
@@ -76,11 +72,14 @@ class HotelController extends Controller
 
         // Handling multiple image uploads
         $imagePaths = [];
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $imagePaths[] = CommonHelper::image_path('hotel_images', $image);
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $pathData = CommonHelper::image_path('file_storage', $image);
+                if (!empty($pathData['master_value'])) {
+                    $imagePaths[] = $pathData['master_value']; 
                 }
             }
+        }
 
         if ($request->conference == 1) {
             $conferenceData = [];
@@ -97,21 +96,7 @@ class HotelController extends Controller
         } else {
             $conferenceDataJson = null;
         }
-
-
         
-            $locationsData = [];
-            
-                foreach ($request->location as $index => $location) {
-                    $locationsData[] = [
-                        'location' => $location,
-                        'distance' => $request->distance[$index] ?? null,
-                    ];
-                }
-            
-            $locationDataJson = json_encode($locationsData);
-        
-                
         if ($request->cancellation_type == 1) {
             $cancellationData = [];
             if ($request->has('cancellation_duration')) {
@@ -126,29 +111,64 @@ class HotelController extends Controller
         } else {
             $cancellationDataJson = null;
         }
-    
+        $entryPortNames = $request->input('port_name', []);
+        $entryLatitudes = $request->input('latitudentry', []);
+        $entryLongitudes = $request->input('longitudeentry', []);
+        $entryDistances = $request->input('distanceentry', []);
+        $portOfEntryData = [];
+        if (is_array($entryPortNames) && count($entryPortNames) > 0) {
+            foreach ($entryPortNames as $index => $portName) {
+                $latitude = isset($entryLatitudes[$index]) ? $entryLatitudes[$index] : null;
+                $longitude = isset($entryLongitudes[$index]) ? $entryLongitudes[$index] : null;
+                $distance = isset($entryDistances[$index]) ? $entryDistances[$index] : null;
+                if ($latitude && $longitude && $distance) {
+                    $portOfEntryData[] = [
+                        'port_name' => $portName,
+                        'latitude' => $latitude,
+                        'longitude' => $longitude,
+                        'distance' => $distance
+                    ];
+                }
+            }
+        }
+        $portOfEntryJson = json_encode($portOfEntryData);
+        
+        $exitPortNames = $request->input('exit_port_name', []);
+        $exitLatitudes = $request->input('exit_latitude', []);
+        $exitLongitudes = $request->input('exit_longitude', []);
+        $exitDistances = $request->input('exit_distance', []);
+        $portOfExitData = [];
+        if (is_array($exitPortNames) && count($exitPortNames) > 0) {
+            foreach ($exitPortNames as $index => $portName) {
+                $latitude = isset($exitLatitudes[$index]) ? $exitLatitudes[$index] : null;
+                $longitude = isset($exitLongitudes[$index]) ? $exitLongitudes[$index] : null;
+                $distance = isset($exitDistances[$index]) ? $exitDistances[$index] : null;
+                if ($latitude && $longitude && $distance) {
+                    $portOfExitData[] = [
+                        'port_name' => $portName,
+                        'latitude' => $latitude,
+                        'longitude' => $longitude,
+                        'distance' => $distance
+                    ];
+                }
+            }
+        }
+        $portOfExitJson = json_encode($portOfExitData);
+
         $auth_user = Auth::user();
         $hotel = Hotel::create([
+            'images' => json_encode($imagePaths),
             'user_type' => $auth_user->user_type,
             'userId' => $auth_user->userId,
             'name' => $request->input('name'),
             'hotel_unique_id' => $unique_id,
             'address' => $request->input('address'),
-            'includes_breakfast' => $request->input('breakfast'),
-            'breakfast_type' => $request->input('breakfast_type'),
-            'breakfast_price' => $request->input('breakfast_price'),
-            'includes_lunch' => $request->input('lunch'),
-            'lunch_type' => $request->input('lunch_type'),
-            'lunch_price' => $request->input('lunch_price'),
-            'includes_dinner' => $request->input('dinner'),
-            'dinner_type' => $request->input('dinner_type'),
-            'dinner_price' => $request->input('dinner_price'),
             'infant_age_limit' => $request->input('infant_age_limit'),
             'child_age_limit' => $request->input('child_age_limit'),
             'weekend_days' => json_encode($request->weekend_days),
             '12_hour_book' => $request->input('booking_available'),
             'conference_room' => $request->input('conference'),
-            'conference_data' => $conferenceDataJson,
+            'conference_data' => $conferenceDataJson ?? '',
             'cancellation_type' => $request->input('cancellation_type'),
             'cancellation_data' => $cancellationDataJson,
             'city' => $request->input('city'),
@@ -168,9 +188,9 @@ class HotelController extends Controller
             'policies' => $request->input('policies'),
             'management_comp_name' => $request->input('management_comp_name'),
             'status' => $request->input('hotel_status'),
-            'images' => json_encode($imagePaths),
             'facilities' => json_encode($request->facilities),
-            'key_landmarks' => $locationDataJson,
+            'port_of_entry' => $portOfEntryJson,
+            'port_of_exit' => $portOfExitJson,
             'twelve_hours_charge' => $request->input('twelve_hours_booking_price'),
             'is_complete' => 1,
         ]);
@@ -227,12 +247,17 @@ class HotelController extends Controller
             $image = $request->file('main_image');
             $storage_file = CommonHelper::image_path('file_storage', $image);
         }
+
         $imagePaths = json_decode($hotel->images, true) ?: []; // Existing images, default to empty array
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $imagePaths[] = CommonHelper::image_path('hotel_images', $image);
+                $pathData = CommonHelper::image_path('file_storage', $image);
+                if (!empty($pathData['master_value'])) {
+                    $imagePaths[] = $pathData['master_value']; 
+                }
             }
         }
+
         if ($request->conference == 1) {
             $conferenceData = [];
             if ($request->has('conference_head')) {
@@ -272,7 +297,7 @@ class HotelController extends Controller
             ];
         }
     
-    $locationDataJson = json_encode($locationsData);
+        $locationDataJson = json_encode($locationsData);
 
         $hotel->update([
             'name' => $request->input('name'),
@@ -292,7 +317,7 @@ class HotelController extends Controller
             'weekend_days' => json_encode($request->weekend_days),
             '12_hour_book' => $request->input('booking_available'),
             'conference_room' => $request->input('conference'),
-            'conference_data' => $conferenceDataJson,
+            'conference_data' => $conferenceDataJson ?? '',
             'cancellation_type' => $request->input('cancellation_type'),
             'cancellation_data' => $cancellationDataJson,
             'city' => $request->input('city'),
@@ -433,7 +458,7 @@ class HotelController extends Controller
         $room->weekend_price = $request->weekend_price;
         $room->max_capacity = $request->max_capacity;
         $room->adult_count = $request->adult_count;
-        $room->child_count = $request->child_count;
+        $room->child_count = $request->child_count ?? 0;
         $room->extra_bed = $request->extra_bed;
         $room->bed_type = $request->bed_type;
         $room->extra_bed_price = $request->extra_bed_price;

@@ -92,7 +92,7 @@
 
                                 <!-- State -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="state" class="form-label"><strong>State</strong>
+                                    <label for="state" class="form-label"><strong>State/Provision</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
                                     <input type="text" class="form-control" id="state" name="state" placeholder="Enter State" required>
@@ -114,10 +114,10 @@
 
                                 <!-- Zip code -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="pincode" class="form-label"><strong>Zip Code</strong>
+                                    <label for="pincode" class="form-label"><strong>Postal Code</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="number" class="form-control" id="pincode" name="pincode" placeholder="Enter Zip Code" required>
+                                    <input type="number" class="form-control" id="pincode" name="pincode" placeholder="Enter Postal Code" required>
                                     @error('pincode')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -175,65 +175,6 @@
                                     @enderror
                                 </div>
 
-                                <!-- Breakfast -->
-                                <div class="mb-3 col-md-4">
-                                    <label for="breakfast" class="form-label"><strong>Breakfast</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="breakfast" id="breakfast" class="form-control" required>
-                                        <option value="">Select an option</option>
-                                        <option value="1">Available</option>
-                                        <option value="0">Not Available</option>
-                                    </select>
-                                </div>
-
-                                <div class="row" id="breakfast-options" style="display: none;">
-                                    <div class="mb-3 col-md-4">
-                                        <label for="breakfast_type" class="form-label"><strong>Breakfast Type</strong></label>
-                                        <select name="breakfast_type" id="breakfast_type" class="form-control">
-                                            <option value="">Select a type</option>
-                                            <option value="0">Buffet</option>
-                                            <option value="1">Set Buffet</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3 col-md-4">
-                                        <label for="breakfast_price" class="form-label"><strong>Breakfast Price</strong></label>
-                                        <input type="number" name="breakfast_price" id="breakfast_price" class="form-control" placeholder="Enter price">
-                                    </div>
-                                </div>
-
-                                <!-- Lunch -->
-                                <div class="mb-3 col-md-4">
-                                    <label for="lunch" class="form-label"><strong>Lunch</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="lunch" id="lunch" class="form-control" required>
-                                        <option value="">Select an option</option>
-                                        <option value="1">Available</option>
-                                        <option value="0">Not Available</option>
-                                    </select>
-                                </div>
-
-                                <div class="row"  id="lunch-options" style="display: none;">
-                                    <div class="mb-3 col-md-4">
-                                        <label for="lunch_price" class="form-label"><strong>Lunch Price</strong></label>
-                                        <input type="number" name="lunch_price" id="lunch_price" class="form-control" placeholder="Enter price">
-                                    </div>
-                                </div>
-
-                                <!-- Dinner -->
-                                <div class="mb-3 col-md-4">
-                                    <label for="dinner" class="form-label"><strong>Dinner</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="dinner" id="dinner" class="form-control" required>
-                                        <option value="">Select an option</option>
-                                        <option value="1">Available</option>
-                                        <option value="0">Not Available</option>
-                                    </select>
-                                </div>
-
-                                <div class="row" id="dinner-options" style="display: none;">
-                                    <div class="mb-3 col-md-4">
-                                        <label for="dinner_price" class="form-label"><strong>Dinner Price</strong></label>
-                                        <input type="number" name="dinner_price" id="dinner_price" class="form-control" placeholder="Enter price">
-                                    </div>
-                                </div>
-
                                 <!-- Additional Fields (Phone, Email, etc.) -->
                                 <div class="mb-3 col-md-4">
                                     <label for="infant_age_limit" class="form-label"><strong>Infrant Upper Age Limit</strong></label>
@@ -282,14 +223,14 @@
                                 </div>
 
                                 <!-- 12 hours booking -->
-
                                 <div class="mb-3 col-md-4">
-                                    <label for="booking_available" class="form-label"><strong>12 Hours Booking Available</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="booking_available" id="booking_available" class="form-control" required>
-                                        <option value="">Select an option</option>
-                                        <option value="1">Available</option>
-                                        <option value="0">Not Available</option>
-                                    </select>
+                                    <label for="day_use_time" class="form-label"><strong>Day Use Time</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <div class="input-group date" id="dayUseTimePicker" data-target-input="nearest">
+                                        <input type="text" id="day_use_time" name="day_use_time" class="form-control datetimepicker-input" data-target="#dayUseTimePicker" required />
+                                        <div class="input-group-append" data-target="#dayUseTimePicker" data-toggle="datetimepicker">
+                                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="row"  id="12_hours_booking_price" style="display: none;">
@@ -338,54 +279,111 @@
 
                             <!-- key locations -->
                             
-                            <b>Key Locations</b>
+                            <b>Port of Entry & Port of Exit</b>
                             <hr>
+                            <!-- Port of Entry Section -->
                             <div class="row">
                                 <div class="mb-3 col-md-4">
-                                    <label for="conference" class="form-label"><strong>Airport</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="location[]" id="airport" class="form-control" required >
-                                        <option value="Airport" selected>Airport</option>
-                                    </select>
-                                    @error('location')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror
-                                    
-                                </div>
-                                <div class="mb-3 col-md-4">
-                                    <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <input name="distance[]" id="airport_distance" class="form-control" required type="text">
-                                    @error('distance')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror
+                                    <div class="form-check">
+                                        <input type="checkbox" id="port_of_entry" class="form-check-input">
+                                        <label class="form-check-label" for="port_of_entry"><strong>Enable Port of Entry</strong></label>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="mb-3 col-md-4">
-                                    <label for="location" class="form-label"><strong>City Centre</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="location[]" id="airport" class="form-control" required >
-                                        <option value="City_centre" selected>City Cetre</option>
-                                    </select>
-                                    @error('location')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror
+                            <!-- Port of Entry Conditional Fields (Initially Hidden) -->
+                            <div id="entry_fields_container" style="display: none;">
+                                <div class="row">
+                                    <!-- Port Name Select Box -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <select id="port_name" name="port_name[]" class="form-control">
+                                            <option value="">Select a Port</option>
+                                            <option value="Airport">Airport</option>
+                                            <option value="Seaport">Seaport</option>
+                                            <option value="Land Port">Land Port</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Latitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="latitudentry[]" class="form-control" placeholder="Enter Latitude">
+                                    </div>
+
+                                    <!-- Longitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="longitude" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="longitudeentry[]" class="form-control" placeholder="Enter Longitude">
+                                    </div>
+
+                                    <!-- Distance Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="distanceentry[]" class="form-control" placeholder="Enter Distance">
+                                    </div>
                                 </div>
-                                <div class="mb-3 col-md-4">
-                                    <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <input name="distance[]" id="cityCentre_distance" class="form-control" required type="text">
-                                    @error('distance')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            
-                            <div class="row" id="Key_locations">
-                                <div id="locations-additional-fields"></div>
-                                <div class="mb-3 col-md-4">
-                                    <button type="button" id="locations-add-more" class="btn btn-primary">Add More</button>
+
+                                <!-- Add More Button for Port of Entry -->
+                                <div id="entry_key_locations">
+                                    <div id="entry_locations-additional-fields"></div>
+                                    <div class="mb-3 col-md-3">
+                                        <button type="button" id="entry-locations-add-more" class="btn btn-primary">Add More</button>
+                                    </div>
                                 </div>
                             </div>
 
+                            <!-- Port of Exit Section -->
+                            <div class="row">
+                                <div class="mb-3 col-md-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="port_of_exit" class="form-check-input">
+                                        <label class="form-check-label" for="port_of_exit"><strong>Enable Port of Exit</strong></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Port of Exit Conditional Fields (Initially Hidden) -->
+                            <div id="exit_fields_container" style="display: none;">
+                                <div class="row">
+                                    <!-- Port Name Select Box -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="exit_port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <select id="exit_port_name" name="exit_port_name[]" class="form-control">
+                                            <option value="">Select a Port</option>
+                                            <option value="Airport">Airport</option>
+                                            <option value="Seaport">Seaport</option>
+                                            <option value="Land Port">Land Port</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Latitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="exit_latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="exit_latitude[]" class="form-control" placeholder="Enter Latitude">
+                                    </div>
+
+                                    <!-- Longitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="exit_longitude" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="exit_longitude[]" class="form-control" placeholder="Enter Longitude">
+                                    </div>
+
+                                    <!-- Distance Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="exit_distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance">
+                                    </div>
+                                </div>
+
+                                <!-- Add More Button for Port of Exit -->
+                                <div id="exit_key_locations">
+                                    <div id="exit_locations-additional-fields"></div>
+                                    <div class="mb-3 col-md-4">
+                                        <button type="button" id="exit-locations-add-more" class="btn btn-primary">Add More</button>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- Conference Room Availability -->
                             <b>Conference Room Availability</b>
                             <hr>
@@ -398,7 +396,7 @@
                                 </select>
                             </div>
 
-                            <div class="row" id="conference-options" style="display: none;">
+                            <!-- <div class="row" id="conference-options" style="display: none;">
                                 <div class="mb-3 col-md-4">
                                     <label for="conference_head" class="form-label"><strong>Head</strong></label>
                                     <input type="text" class="form-control" name="conference_head[]" placeholder="Enter Head">
@@ -415,7 +413,7 @@
                                 <div class="mb-3 col-md-4">
                                     <button type="button" id="conference-add-more" class="btn btn-primary">Add More</button>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <!-- Cancellation Details -->
                             <b>Cancellation Details</b>
@@ -548,48 +546,7 @@
         });
     });
 </script>
-<script>
-    // Function to append options for a given meal
-    function toggleOptions(meal, optionsId) {
-        const select = document.getElementById(meal);
-        const optionsContainer = document.getElementById(optionsId);
 
-        select.addEventListener('change', function () {
-            if (this.value === '1') {
-                // Show options if "Available" is selected
-                if (optionsContainer.children.length === 0) {
-                    // Append the options dynamically using insertAdjacentHTML
-                    const optionContent = `
-                        <div class="mb-3 col-md-4">
-                            <label for="${meal}_type" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Type</strong></label>
-                            <select name="${meal}_type" id="${meal}_type" class="form-control">
-                                <option value="">Select a type</option>
-                                <option value="0">Buffet</option>
-                                <option value="1">Set Buffet</option>
-                            </select>
-                        </div>
-                        <div class="mb-3 col-md-4">
-                            <label for="${meal}_price" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Price</strong></label>
-                            <input type="number" name="${meal}_price" id="${meal}_price" class="form-control" placeholder="Enter price">
-                        </div>
-                    `;
-                    optionsContainer.insertAdjacentHTML('beforeend', optionContent); // Append the content
-                }
-                optionsContainer.style.display = 'contents'; // Show options
-            } else {
-                // Hide options if "Not Available" is selected
-                optionsContainer.style.display = 'none';
-                optionsContainer.innerHTML = ''; // Clear the options
-            }
-        });
-    }
-
-    // Initialize for breakfast, lunch, and dinner
-    toggleOptions('breakfast', 'breakfast-options');
-    toggleOptions('lunch', 'lunch-options');
-    toggleOptions('dinner', 'dinner-options');
-    toggleOptions('booking_available', '12_hours_booking_price');
-</script>
 <script>
     $(document).ready(function() {
         $('#weekend_days').select2({
@@ -629,7 +586,6 @@
         `;
         $('#conference-additional-fields').append(newConferenceFields);
     });
-
     // Cancellation Details Logic
     $('#cancellation_type').on('change', function () {
         if ($(this).val() == '1') {
@@ -656,27 +612,125 @@
         $('#cancellation-additional-fields').append(newCancellationFields);
     });
     });
-
-        // Key Locations
-
-    $('#locations-add-more').on('click', function () {
-        const newLocationFields = `
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="location" class="form-label"><strong>Location Name</strong></label>
-                    <input type="text" class="form-control" name="location[]" placeholder="Enter Location">
-                </div>
-                <div class="col-md-4">
-                    <label for="conference_duration" class="form-label"><strong>Distance</strong></label>
-                    <input type="text" class="form-control" name="distance[]" placeholder="Enter Distance">
-                </div>
-            </div>
-        `;
-        $('#locations-additional-fields').append(newLocationFields);
-    });
-
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const portOfEntryCheckbox = document.getElementById('port_of_entry');
+        const entryFields = document.getElementById('entry_fields');
 
+        // Toggle fields on checkbox change
+        portOfEntryCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+                entryFields.style.display = 'flex'; // Show fields
+            } else {
+                entryFields.style.display = 'none'; // Hide fields
+            }
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const portOfEntryCheckbox = document.getElementById('port_of_entry');
+        const entryFieldsContainer = document.getElementById('entry_fields_container');
+        const entryAddMoreButton = document.getElementById('entry-locations-add-more');
+        const entryAdditionalFieldsContainer = document.getElementById('entry_locations-additional-fields');
 
+        const portOfExitCheckbox = document.getElementById('port_of_exit');
+        const exitFieldsContainer = document.getElementById('exit_fields_container');
+        const exitAddMoreButton = document.getElementById('exit-locations-add-more');
+        const exitAdditionalFieldsContainer = document.getElementById('exit_locations-additional-fields');
 
+        // Toggle Entry Fields
+        portOfEntryCheckbox.addEventListener('change', function () {
+            entryFieldsContainer.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) {
+                entryAdditionalFieldsContainer.innerHTML = ''; // Clear fields when unchecked
+            }
+        });
+
+        // Toggle Exit Fields
+        portOfExitCheckbox.addEventListener('change', function () {
+            exitFieldsContainer.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) {
+                exitAdditionalFieldsContainer.innerHTML = ''; // Clear fields when unchecked
+            }
+        });
+
+        // Add More Button for Port of Entry
+        entryAddMoreButton.addEventListener('click', function () {
+            const newEntryRow = document.createElement('div');
+            newEntryRow.classList.add('row', 'mt-3');
+            newEntryRow.innerHTML = `
+                <div class="mb-3 col-md-3">
+                    <label for="port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <select name="port_name[]" class="form-control">
+                        <option value="">Select a Port</option>
+                        <option value="Airport">Airport</option>
+                        <option value="Seaport">Seaport</option>
+                        <option value="Land Port">Land Port</option>
+                    </select>
+                </div>
+                <div class="mb-3 col-md-3">
+                    <label for="latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="latitude[]" class="form-control" placeholder="Enter Latitude">
+                </div>
+                <div class="mb-3 col-md-3">
+                    <label for="longitude" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="longitude[]" class="form-control" placeholder="Enter Longitude">
+                </div>
+                <div class="mb-3 col-md-3">
+                    <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="distance[]" class="form-control" placeholder="Enter Distance">
+                </div>
+                <div class="mb-3 col-md-3">
+                    <button type="button" class="btn btn-danger delete-row">Delete</button>
+                </div>
+            `;
+            entryAdditionalFieldsContainer.appendChild(newEntryRow);
+
+            // Delete Row Event for Entry
+            newEntryRow.querySelector('.delete-row').addEventListener('click', function () {
+                newEntryRow.remove();
+            });
+        });
+
+        // Add More Button for Port of Exit
+        exitAddMoreButton.addEventListener('click', function () {
+            const newExitRow = document.createElement('div');
+            newExitRow.classList.add('row', 'mt-3');
+            newExitRow.innerHTML = `
+                <div class="mb-3 col-md-3">
+                    <label for="exit_port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <select name="exit_port_name[]" class="form-control">
+                        <option value="">Select a Port</option>
+                        <option value="Airport">Airport</option>
+                        <option value="Seaport">Seaport</option>
+                        <option value="Land Port">Land Port</option>
+                    </select>
+                </div>
+                <div class="mb-3 col-md-3">
+                    <label for="exit_latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="exit_latitude[]" class="form-control" placeholder="Enter Latitude">
+                </div>
+                <div class="mb-3 col-md-3">
+                    <label for="exit_longitude" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="exit_longitude[]" class="form-control" placeholder="Enter Longitude">
+                </div>
+                <div class="mb-3 col-md-3">
+                    <label for="exit_distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance">
+                </div>
+                <div class="mb-3 col-md-3">
+                    <button type="button" class="btn btn-danger delete-row">Delete</button>
+                </div>
+            `;
+            exitAdditionalFieldsContainer.appendChild(newExitRow);
+
+            // Delete Row Event for Exit
+            newExitRow.querySelector('.delete-row').addEventListener('click', function () {
+                newExitRow.remove();
+            });
+        });
+    });
+</script>
 @endsection

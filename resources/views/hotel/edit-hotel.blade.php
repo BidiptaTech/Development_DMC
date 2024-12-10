@@ -217,6 +217,14 @@
 
                                 <div class="row" id="lunch-options" style="{{ old('lunch', $hotel->lunch) == 1 ? 'display: block;' : 'display: none;' }}">
                                     <div class="mb-3 col-md-4">
+                                        <label for="lunch_type" class="form-label"><strong>Lunch Type</strong></label>
+                                        <select name="lunch_type" id="lunch_type" class="form-control">
+                                            <option value="">Select a type</option>
+                                            <option value="1" {{ old('lunch', $hotel->lunch_type) == 1 ? 'selected' : '' }}>Buffet</option>
+                                            <option value="0" {{ old('lunch', $hotel->lunch_type) == 0 ? 'selected' : '' }}>Set Buffet</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-4">
                                         <label for="lunch_price" class="form-label"><strong>Lunch Price</strong></label>
                                         <input type="number" name="lunch_price" id="lunch_price" class="form-control" placeholder="Enter price" value="{{ old('lunch_price', $hotel->lunch_price) }}">
                                     </div>
@@ -231,6 +239,14 @@
                                 </div>
 
                                 <div class="row" id="dinner-options" style="{{ old('dinner', $hotel->dinner) == 1 ? 'display: block;' : 'display: none;' }}">
+                                    <div class="mb-3 col-md-4">
+                                        <label for="dinner_type" class="form-label"><strong>Dinner Type</strong></label>
+                                        <select name="dinner_type" id="dinner_type" class="form-control">
+                                            <option value="">Select a type</option>
+                                            <option value="1" {{ old('lunch', $hotel->dinner_type) == 1 ? 'selected' : '' }}>Buffet</option>
+                                            <option value="0" {{ old('lunch', $hotel->dinner_type) == 0 ? 'selected' : '' }}>Set Buffet</option>
+                                        </select>
+                                    </div>
                                     <div class="mb-3 col-md-4">
                                         <label for="dinner_price" class="form-label"><strong>Dinner Price</strong></label>
                                         <input type="number" name="dinner_price" id="dinner_price" class="form-control" placeholder="Enter price" value="{{ old('dinner_price', $hotel->dinner_price) }}">
@@ -286,11 +302,32 @@
                                 <div class="mb-3 col-md-4">
                                     <label for="images" class="form-label"><strong>Additional Images</strong></label>
                                     <input type="file" class="form-control" id="images" name="images[]" multiple>
+
+                                    <!-- Display existing images -->
+                                    <div class="mt-3">
+                                        <div class="image-slider-container" style="position: relative; overflow: hidden;">
+                                            <div class="image-slider d-flex" style="transition: transform 0.5s ease;">
+                                                @if(!empty($hotel->images))
+                                                    @foreach(json_decode($hotel->images, true) as $image)
+                                                        <div class="col-md-4 mb-3" style="flex-shrink: 0; width: 33.33%;"> <!-- 3 images per row -->
+                                                            <a href="{{ $image }}" target="_blank" data-lightbox="hotel-images" data-title="Hotel Image">
+                                                                <img src="{{ $image }}" alt="Hotel Image" class="img-thumbnail" style="width: 100%; height: auto;">
+                                                            </a>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <p>No images uploaded yet.</p>
+                                                @endif
+                                            </div>
+                                            <button class="slider-arrow left" onclick="moveSlide(-1)" type="button" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px 15px; font-size: 18px; cursor: pointer; border-radius: 50%;">&lt;</button>
+                                            <button class="slider-arrow right" onclick="moveSlide(1)" type="button" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px 15px; font-size: 18px; cursor: pointer; border-radius: 50%;">&gt;</button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- 12 hours booking available -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="booking_available" class="form-label"><strong>12 Hours Booking Available</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <label for="booking_available" class="form-label"><strong>Day Use Available</strong><span style="color: red; font-weight: bold;">*</span></label>
                                     <select name="booking_available" id="booking_available" class="form-control" required>
                                         <option value="">Select an option</option>
                                         <option value="1" {{ $hotel->{'12_hour_book'} == 1 ? 'selected' : '' }}>Available</option>
@@ -300,7 +337,7 @@
 
                                 <div class="row"  id="12_hours_booking_price" style="display: none;">
                                     <div class="mb-3 col-md-4">
-                                        <label for="12_hours_booking_price" class="form-label"><strong>12 Hours Booking Price</strong></label>
+                                        <label for="12_hours_booking_price" class="form-label"><strong>Day Use Price</strong></label>
                                         <input type="number" name="twelve_hours_booking_price" id="12_hours_booking_price" class="form-control" placeholder="Enter price">
                                     </div>
                                 </div>
@@ -363,7 +400,7 @@
                                  </div>
                                  <div class="mb-3 col-md-4">
                                      <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                     <input name="distance[]" id="airport_distance" class="form-control" required type="text">
+                                     <input name="distance[]" id="airport_distance" class="form-control"  type="text">
                                      @error('distance')
                                          <div class="text-danger mt-1">{{ $message }}</div>
                                      @enderror
@@ -382,7 +419,7 @@
                                  </div>
                                  <div class="mb-3 col-md-4">
                                      <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                     <input name="distance[]" id="cityCentre_distance" class="form-control" required type="text">
+                                     <input name="distance[]" id="cityCentre_distance" class="form-control"  type="text">
                                      @error('distance')
                                          <div class="text-danger mt-1">{{ $message }}</div>
                                      @enderror
@@ -406,10 +443,9 @@
                                     <option {{ $hotel->conference_room == 1 ? 'selected' : '' }} value="1">Available</option>
                                 </select>
                             </div>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <div id="conference-options" style="{{ $hotel->conference_room == 1 ? 'display: block;' : 'display: none;' }}">
 
-                                    <!-- Existing conference fields (Pre-populated) -->
                                     @if($hotel->conference_data){
                                     @foreach (json_decode($hotel->conference_data, true) as $index => $conference)
                                         <div class="conference-field mb-3 col-md-12" id="conference-field-{{ $index }}">
@@ -435,15 +471,12 @@
                                     }
                                     @endif
 
-                                    <!-- Additional fields -->
                                     <div id="conference-additional-fields"></div>
-
-                                    <!-- Button to add more fields -->
                                     <div class="mb-3 col-md-4">
                                         <button type="button" id="conference-add-more" class="btn btn-primary" onclick="addConferenceField()">Add More</button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <b>Cancellation Details</b>
                             <hr>
@@ -546,7 +579,6 @@
         });
     });
 </script>
-
 <!-- Script For Fetching Facilities  -->
 <script>
     $(document).ready(function () {
@@ -648,6 +680,8 @@
     });
 
     // Function to add new conference fields
+
+    @if(!empty($hotel->conference_data) && is_array(json_decode($hotel->conference_data, true)))
     let conferenceIndex = {{ count(json_decode($hotel->conference_data, true)) }};
     function addConferenceField() {
         var newField = document.createElement('div');
@@ -679,8 +713,10 @@
         // Append the new conference field to the container
         document.getElementById('conference-additional-fields').appendChild(newField);
         conferenceIndex++;
-    }
-
+        }
+    @else
+        let conferenceIndex = 0;
+    @endif
     // Function to remove a conference field
     function removeConferenceField(index) {
         var field = document.getElementById('conference-field-' + index);
@@ -706,6 +742,7 @@
     });
 
     // Function to add new cancellation fields
+    @if(!empty($hotel->cancellation_data) && is_array(json_decode($hotel->cancellation_data, true)))
     let cancellationIndex = {{ count(json_decode($hotel->cancellation_data, true)) }};
     function addCancellationField() {
         var newField = document.createElement('div');
@@ -734,6 +771,9 @@
         document.getElementById('cancellation-additional-fields').appendChild(newField);
         cancellationIndex++;
     }
+    @else
+        let cancellationIndex = 0;
+    @endif
 
     // Function to remove a cancellation field
     function removeCancellationField(index) {
@@ -758,5 +798,22 @@
         `;
         $('#locations-additional-fields').append(newLocationFields);
     });
+</script>
+<script>
+    let currentIndex = 0;
+    function moveSlide(direction) {
+        const images = document.querySelector('.image-slider');
+        const totalImages = document.querySelectorAll('.image-slider .col-md-4').length;
+        const imagesToShow = 3; 
+        currentIndex += direction;
+        if (currentIndex < 0) {
+            currentIndex = Math.ceil(totalImages / imagesToShow) - 1;
+        } else if (currentIndex >= Math.ceil(totalImages / imagesToShow)) {
+            currentIndex = 0;
+        }
+        const offset = -(currentIndex * (imagesToShow * 100 / totalImages)) + "%";
+        images.style.transform = `translateX(${offset})`;
+    }
+
 </script>
 @endsection
