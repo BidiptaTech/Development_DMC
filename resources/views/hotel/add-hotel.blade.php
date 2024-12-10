@@ -1,9 +1,10 @@
 @extends('layouts.layout')
 @section('script')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @endsection
-
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 <div class="page-content">
     <div class="page-container">
         <div class="row justify-content-center">
@@ -224,10 +225,10 @@
 
                                 <!-- 12 hours booking -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="day_use_time" class="form-label"><strong>Day Use Time</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <div class="input-group date" id="dayUseTimePicker" data-target-input="nearest">
-                                        <input type="text" id="day_use_time" name="day_use_time" class="form-control datetimepicker-input" data-target="#dayUseTimePicker" required />
-                                        <div class="input-group-append" data-target="#dayUseTimePicker" data-toggle="datetimepicker">
+                                    <label for="date_range" class="form-label"><strong>Day Use Range</strong></label>
+                                    <div class="input-group">
+                                        <input type="text" id="date_range" name="date_range" class="form-control" placeholder="Select date range">
+                                        <div class="input-group-append">
                                             <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                         </div>
                                     </div>
@@ -467,30 +468,30 @@
 <script>
     $(document).ready(function () {
         $('#hotelName').select2({
-            placeholder: 'Search for a hotel...', // Adds the placeholder
+            placeholder: 'Search for a hotel...', 
             ajax: {
-                url: '{{ route("hotels.search") }}', // Backend route for fetching hotel data
+                url: '{{ route("hotels.search") }}', 
                 type: 'GET',
                 dataType: 'json',
-                delay: 20, // Debounce to reduce server load
+                delay: 20, 
                 data: function (params) {
                     return {
-                        query: params.term // Send the user's input as 'query'
+                        query: params.term 
                     };
                 },
                 processResults: function (data) {
                     return {
                         results: data.map(function (hotel) {
                             return {
-                                id: hotel.id, // Value submitted with the form
-                                text: `${hotel.name} - ${hotel.city || 'No Location'}` // Text displayed
+                                id: hotel.id, 
+                                text: `${hotel.name} - ${hotel.city || 'No Location'}` 
                             };
                         })
                     };
                 },
                 cache: true
             },
-            minimumInputLength: 1 // Allow search from 1 character
+            minimumInputLength: 1 
         });
     });
 </script>
@@ -555,6 +556,7 @@
         });
     });
 </script>
+
 <script>
     $(document).ready(function () {
     // Conference Room Logic
@@ -613,6 +615,7 @@
     });
     });
 </script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const portOfEntryCheckbox = document.getElementById('port_of_entry');
@@ -628,6 +631,7 @@
         });
     });
 </script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const portOfEntryCheckbox = document.getElementById('port_of_entry');
@@ -730,6 +734,26 @@
             newExitRow.querySelector('.delete-row').addEventListener('click', function () {
                 newExitRow.remove();
             });
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#date_range').daterangepicker({
+            opens: 'right', // Opens to the right of the input
+            autoApply: true, // Automatically apply the selected range
+            locale: {
+                format: 'MM/DD/YYYY', // Format of the dates
+                separator: ' - ', // Separator between start and end dates
+                applyLabel: "Apply",
+                cancelLabel: "Clear"
+            }
+        });
+        $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
         });
     });
 </script>
