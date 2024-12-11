@@ -298,11 +298,12 @@
                                     <!-- Port Name Select Box -->
                                     <div class="mb-3 col-md-3">
                                         <label for="port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                        <select id="port_name" name="port_name[]" class="form-control">
+                                        <select id="port_name" name="port_name[]" class="form-control port-name-select">
                                             <option value="">Select a Port</option>
                                             <option value="Airport">Airport</option>
                                             <option value="Seaport">Seaport</option>
                                             <option value="Land Port">Land Port</option>
+                                            <option value="Others">Others</option>
                                         </select>
                                     </div>
 
@@ -322,6 +323,11 @@
                                     <div class="mb-3 col-md-3">
                                         <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
                                         <input type="text" name="distanceentry[]" class="form-control" placeholder="Enter Distance">
+                                    </div>
+
+                                    <div class="mb-3 col-md-3 others-input-container" style="display: none;">
+                                        <label for="port_name_others" class="form-label"><strong>Specify Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" id="port_name_others" name="entry_name_others[]" class="form-control" placeholder="Enter Port Name">
                                     </div>
                                 </div>
 
@@ -349,15 +355,16 @@
                                 <div class="row">
                                     <!-- Port Name Select Box -->
                                     <div class="mb-3 col-md-3">
-                                        <label for="exit_port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                        <select id="exit_port_name" name="exit_port_name[]" class="form-control">
+                                        <label for="port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <select id="port_name" name="exit_port_name[]" class="form-control port-name-select">
                                             <option value="">Select a Port</option>
                                             <option value="Airport">Airport</option>
                                             <option value="Seaport">Seaport</option>
                                             <option value="Land Port">Land Port</option>
+                                            <option value="Others">Others</option>
                                         </select>
                                     </div>
-
+                                    
                                     <!-- Latitude Field -->
                                     <div class="mb-3 col-md-3">
                                         <label for="exit_latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
@@ -375,6 +382,11 @@
                                         <label for="exit_distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
                                         <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance">
                                     </div>
+
+                                    <div class="mb-3 col-md-3 others-input-container" style="display: none;">
+                                        <label for="port_name_others" class="form-label"><strong>Specify Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" id="port_name_others" name="exit_name_others[]" class="form-control" placeholder="Enter Port Name">
+                                    </div>
                                 </div>
 
                                 <!-- Add More Button for Port of Exit -->
@@ -385,6 +397,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             <!-- Conference Room Availability -->
                             <b>Conference Room Availability</b>
                             <hr>
@@ -634,109 +647,178 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Handle Port of Entry Toggle
         const portOfEntryCheckbox = document.getElementById('port_of_entry');
         const entryFieldsContainer = document.getElementById('entry_fields_container');
+
+        portOfEntryCheckbox.addEventListener('change', function () {
+            entryFieldsContainer.style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Handle Add More for Port of Entry
         const entryAddMoreButton = document.getElementById('entry-locations-add-more');
         const entryAdditionalFieldsContainer = document.getElementById('entry_locations-additional-fields');
 
+        const addEntryField = () => {
+            const newEntryContainer = document.createElement('div');
+            newEntryContainer.classList.add('mt-3', 'border', 'p-3');
+            const uniqueId = `entry_checkbox_${Date.now()}`;
+            newEntryContainer.innerHTML = `
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input entry-checkbox" id="${uniqueId}">
+                    <label class="form-check-label" for="${uniqueId}">Enable Additional Input</label>
+                </div>
+                <div class="entry-input-fields mt-3" style="display: none;">
+                    <div class="row">
+                        <div class="mb-3 col-md-3">
+                            <label class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                            <select name="port_name[]" class="form-control port-name-select">
+                                <option value="">Select a Port</option>
+                                <option value="Airport">Airport</option>
+                                <option value="Seaport">Seaport</option>
+                                <option value="Land Port">Land Port</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-md-3">
+                            <label class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                            <input type="text" name="latitudentry[]" class="form-control" placeholder="Enter Latitude">
+                        </div>
+                        <div class="mb-3 col-md-3">
+                            <label class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                            <input type="text" name="longitudeentry[]" class="form-control" placeholder="Enter Longitude">
+                        </div>
+                        <div class="mb-3 col-md-3">
+                            <label class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                            <input type="text" name="distanceentry[]" class="form-control" placeholder="Enter Distance">
+                        </div>
+                        <div class="mb-3 col-md-3 others-input-container" style="display: none;">
+                            <label class="form-label"><strong>Specify Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                            <input type="text" name="entry_name_others[]" class="form-control" placeholder="Enter Port Name">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-danger delete-entry">Delete</button>
+                </div>
+            `;
+            entryAdditionalFieldsContainer.appendChild(newEntryContainer);
+
+            // Handle "Others" Field Visibility
+            const portNameSelect = newEntryContainer.querySelector('.port-name-select');
+            const othersInputContainer = newEntryContainer.querySelector('.others-input-container');
+            portNameSelect.addEventListener('change', function () {
+                othersInputContainer.style.display = this.value === 'Others' ? 'block' : 'none';
+            });
+
+            // Handle Checkbox Toggle
+            const newCheckbox = newEntryContainer.querySelector('.entry-checkbox');
+            const inputFields = newEntryContainer.querySelector('.entry-input-fields');
+            newCheckbox.addEventListener('change', function () {
+                inputFields.style.display = this.checked ? 'block' : 'none';
+            });
+
+            // Handle Delete Button
+            const deleteButton = newEntryContainer.querySelector('.delete-entry');
+            deleteButton.addEventListener('click', function () {
+                newEntryContainer.remove();
+            });
+        };
+
+        entryAddMoreButton.addEventListener('click', addEntryField);
+
+        // Repeat similar logic for Port of Exit
         const portOfExitCheckbox = document.getElementById('port_of_exit');
         const exitFieldsContainer = document.getElementById('exit_fields_container');
+
+        portOfExitCheckbox.addEventListener('change', function () {
+            exitFieldsContainer.style.display = this.checked ? 'block' : 'none';
+        });
+
         const exitAddMoreButton = document.getElementById('exit-locations-add-more');
         const exitAdditionalFieldsContainer = document.getElementById('exit_locations-additional-fields');
 
-        // Toggle Entry Fields
-        portOfEntryCheckbox.addEventListener('change', function () {
-            entryFieldsContainer.style.display = this.checked ? 'block' : 'none';
-            if (!this.checked) {
-                entryAdditionalFieldsContainer.innerHTML = ''; // Clear fields when unchecked
-            }
-        });
-
-        // Toggle Exit Fields
-        portOfExitCheckbox.addEventListener('change', function () {
-            exitFieldsContainer.style.display = this.checked ? 'block' : 'none';
-            if (!this.checked) {
-                exitAdditionalFieldsContainer.innerHTML = ''; // Clear fields when unchecked
-            }
-        });
-
-        // Add More Button for Port of Entry
-        entryAddMoreButton.addEventListener('click', function () {
-            const newEntryRow = document.createElement('div');
-            newEntryRow.classList.add('row', 'mt-3');
-            newEntryRow.innerHTML = `
-                <div class="mb-3 col-md-3">
-                    <label for="port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <select name="port_name[]" class="form-control">
-                        <option value="">Select a Port</option>
-                        <option value="Airport">Airport</option>
-                        <option value="Seaport">Seaport</option>
-                        <option value="Land Port">Land Port</option>
-                    </select>
+        const addExitField = () => {
+            const newExitContainer = document.createElement('div');
+            newExitContainer.classList.add('mt-3', 'border', 'p-3');
+            const uniqueId = `exit_checkbox_${Date.now()}`;
+            newExitContainer.innerHTML = `
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input exit-checkbox" id="${uniqueId}">
+                    <label class="form-check-label" for="${uniqueId}">Enable Additional Input</label>
                 </div>
-                <div class="mb-3 col-md-3">
-                    <label for="latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="latitude[]" class="form-control" placeholder="Enter Latitude">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="longitude" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="longitude[]" class="form-control" placeholder="Enter Longitude">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="distance[]" class="form-control" placeholder="Enter Distance">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <button type="button" class="btn btn-danger delete-row">Delete</button>
+                <div class="exit-input-fields mt-3" style="display: none;">
+                    <div class="row">
+                        <div class="mb-3 col-md-3">
+                            <label class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                            <select name="exit_port_name[]" class="form-control port-name-select">
+                                <option value="">Select a Port</option>
+                                <option value="Airport">Airport</option>
+                                <option value="Seaport">Seaport</option>
+                                <option value="Land Port">Land Port</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-md-3">
+                            <label class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                            <input type="text" name="exit_latitude[]" class="form-control" placeholder="Enter Latitude">
+                        </div>
+                        <div class="mb-3 col-md-3">
+                            <label class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                            <input type="text" name="exit_longitude[]" class="form-control" placeholder="Enter Longitude">
+                        </div>
+                        <div class="mb-3 col-md-3">
+                            <label class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                            <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance">
+                        </div>
+                        <div class="mb-3 col-md-3 others-input-container" style="display: none;">
+                            <label class="form-label"><strong>Specify Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                            <input type="text" name="exit_name_others[]" class="form-control" placeholder="Enter Port Name">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-danger delete-exit">Delete</button>
                 </div>
             `;
-            entryAdditionalFieldsContainer.appendChild(newEntryRow);
+            exitAdditionalFieldsContainer.appendChild(newExitContainer);
 
-            // Delete Row Event for Entry
-            newEntryRow.querySelector('.delete-row').addEventListener('click', function () {
-                newEntryRow.remove();
+            // Handle "Others" Field Visibility
+            const portNameSelect = newExitContainer.querySelector('.port-name-select');
+            const othersInputContainer = newExitContainer.querySelector('.others-input-container');
+            portNameSelect.addEventListener('change', function () {
+                othersInputContainer.style.display = this.value === 'Others' ? 'block' : 'none';
             });
-        });
 
-        // Add More Button for Port of Exit
-        exitAddMoreButton.addEventListener('click', function () {
-            const newExitRow = document.createElement('div');
-            newExitRow.classList.add('row', 'mt-3');
-            newExitRow.innerHTML = `
-                <div class="mb-3 col-md-3">
-                    <label for="exit_port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <select name="exit_port_name[]" class="form-control">
-                        <option value="">Select a Port</option>
-                        <option value="Airport">Airport</option>
-                        <option value="Seaport">Seaport</option>
-                        <option value="Land Port">Land Port</option>
-                    </select>
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="exit_latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="exit_latitude[]" class="form-control" placeholder="Enter Latitude">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="exit_longitude" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="exit_longitude[]" class="form-control" placeholder="Enter Longitude">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="exit_distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <button type="button" class="btn btn-danger delete-row">Delete</button>
-                </div>
-            `;
-            exitAdditionalFieldsContainer.appendChild(newExitRow);
+            // Handle Checkbox Toggle
+            const newCheckbox = newExitContainer.querySelector('.exit-checkbox');
+            const inputFields = newExitContainer.querySelector('.exit-input-fields');
+            newCheckbox.addEventListener('change', function () {
+                inputFields.style.display = this.checked ? 'block' : 'none';
+            });
 
-            // Delete Row Event for Exit
-            newExitRow.querySelector('.delete-row').addEventListener('click', function () {
-                newExitRow.remove();
+            // Handle Delete Button
+            const deleteButton = newExitContainer.querySelector('.delete-exit');
+            deleteButton.addEventListener('click', function () {
+                newExitContainer.remove();
+            });
+        };
+
+        exitAddMoreButton.addEventListener('click', addExitField);
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.port-name-select').forEach(function (dropdown) {
+            dropdown.addEventListener('change', function () {
+                const container = this.closest('.row'); // Get the parent row
+                const othersInput = container.querySelector('.others-input-container'); // Get the "Others" input container
+                if (this.value === 'Others') {
+                    othersInput.style.display = 'block';
+                } else {
+                    othersInput.style.display = 'none';
+                }
             });
         });
     });
 </script>
+
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
