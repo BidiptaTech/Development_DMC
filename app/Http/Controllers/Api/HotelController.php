@@ -373,49 +373,49 @@ class HotelController extends Controller
     }
     
 
-/**
- * Generate a collection of dates from the rates table based on the event name.
- */
-private function generateDateRangeFromRates(string $eventName, $start_date, $end_date)
-{
-    $rates = DB::table('rates')
-        ->where('event_type', $eventName)
-        ->whereBetween('start_date', [$start_date, $end_date])
-        ->orWhereBetween('end_date', [$start_date, $end_date])
-        ->get(['start_date', 'end_date']);
+    /**
+     * Generate a collection of dates from the rates table based on the event name.
+     */
+    private function generateDateRangeFromRates(string $eventName, $start_date, $end_date)
+    {
+        $rates = DB::table('rates')
+            ->where('event_type', $eventName)
+            ->whereBetween('start_date', [$start_date, $end_date])
+            ->orWhereBetween('end_date', [$start_date, $end_date])
+            ->get(['start_date', 'end_date']);
 
-    $dates = collect();
-    foreach ($rates as $rate) {
-        $rangeStart = Carbon::parse($rate->start_date);
-        $rangeEnd = Carbon::parse($rate->end_date);
-        for ($date = $rangeStart; $date->lte($rangeEnd); $date->addDay()) {
-            $dates->push($date->toDateString());
+        $dates = collect();
+        foreach ($rates as $rate) {
+            $rangeStart = Carbon::parse($rate->start_date);
+            $rangeEnd = Carbon::parse($rate->end_date);
+            for ($date = $rangeStart; $date->lte($rangeEnd); $date->addDay()) {
+                $dates->push($date->toDateString());
+            }
+        }
+
+        return $dates;
+    }
+
+    /**
+     * Calculate room price based on user type and weekend days.
+     */
+    private function calculateRoomPrice($room, array $weekendDays, $user)
+    {
+        $currentDay = now()->format('l');
+
+        switch ($user->user_type) {
+            case 2: // Logic for user_type 2
+                if (in_array($currentDay, $weekendDays)) {
+                    return $room->weekend_price;
+                }
+                return $room->weekday_price;
+
+            case 1: // Logic for user_type 1
+            case 3: // Logic for user_type 3
+            default:
+                return $room->weekday_price; // Default to weekday price for other user types
         }
     }
-
-    return $dates;
-}
-
-/**
- * Calculate room price based on user type and weekend days.
- */
-private function calculateRoomPrice($room, array $weekendDays, $user)
-{
-    $currentDay = now()->format('l');
-
-    switch ($user->user_type) {
-        case 2: // Logic for user_type 2
-            if (in_array($currentDay, $weekendDays)) {
-                return $room->weekend_price;
-            }
-            return $room->weekday_price;
-
-        case 1: // Logic for user_type 1
-        case 3: // Logic for user_type 3
-        default:
-            return $room->weekday_price; // Default to weekday price for other user types
-    }
-}
 
     
 }

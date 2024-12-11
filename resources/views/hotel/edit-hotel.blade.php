@@ -326,6 +326,7 @@
                                             <option value="Airport" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Airport' ? 'selected' : '' }}>Airport</option>
                                             <option value="Seaport" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Seaport' ? 'selected' : '' }}>Seaport</option>
                                             <option value="Land Port" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Land Port' ? 'selected' : '' }}>Land Port</option>
+                                            <option value="Others" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Others' ? 'selected' : '' }}>Others</option>
                                         </select>
                                     </div>
                                     <!-- Latitude Field -->
@@ -343,6 +344,19 @@
                                         <label for="distance_{{ $index }}" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
                                         <input type="text" name="distance[]" class="form-control" placeholder="Enter Distance" value="{{ old('distance.' . $index, $entry['distance'] ?? '') }}">
                                     </div>
+                                    <div class="mb-3 col-md-3 others-input-container" 
+                                        style="{{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Others' ? '' : 'display: none;' }}">
+                                        <label class="form-label">
+                                            <strong>Specify Port Name</strong>
+                                            <span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <input type="text" 
+                                            name="entry_name_others[]" 
+                                            class="form-control" 
+                                            placeholder="Enter Port Name" 
+                                            value="{{ old('entry_name_others.' . $index, $entry['other_name'] ?? '') }}">
+                                    </div>
+
                                     <!-- Delete Button -->
                                     <div class="mb-3 col-md-1">
                                         <button type="button" class="btn btn-danger remove-entry-field" style="margin-top: 30px;">Delete</button>
@@ -380,6 +394,7 @@
                                             <option value="Airport" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Airport' ? 'selected' : '' }}>Airport</option>
                                             <option value="Seaport" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Seaport' ? 'selected' : '' }}>Seaport</option>
                                             <option value="Land Port" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Land Port' ? 'selected' : '' }}>Land Port</option>
+                                            <option value="Others" {{ old('exit_port_name.' . $index, $entry['port_name'] ?? '') == 'Others' ? 'selected' : '' }}>Others</option>
                                         </select>
                                     </div>
                                     <!-- Latitude Field -->
@@ -396,6 +411,18 @@
                                     <div class="mb-3 col-md-3">
                                         <label for="exit_distance_{{ $index }}" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
                                         <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance" value="{{ old('exit_distance.' . $index, $exit['distance'] ?? '') }}">
+                                    </div>
+                                    <div class="mb-3 col-md-3 others-input-container" 
+                                        style="{{ old('exit_port_name_.' . $index, $exit['port_name'] ?? '') == 'Others' ? '' : 'display: none;' }}">
+                                        <label class="form-label">
+                                            <strong>Specify Port Name</strong>
+                                            <span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <input type="text" 
+                                            name="exit_name_others[]" 
+                                            class="form-control" 
+                                            placeholder="Enter Port Name" 
+                                            value="{{ old('exit_name_others.' . $index, $exit['other_name'] ?? '') }}">
                                     </div>
                                     <!-- Delete Button -->
                                     <div class="mb-3 col-md-1">
@@ -797,108 +824,159 @@
     });
 </script>
 <script>
+   document.addEventListener('DOMContentLoaded', function () {
+    // Handle Port of Entry Toggle
+    const portOfEntryCheckbox = document.getElementById('port_of_entry');
+    const entryFieldsContainer = document.getElementById('entry_fields_container');
+
+    portOfEntryCheckbox.addEventListener('change', function () {
+        entryFieldsContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Handle Add More for Port of Entry
+    const entryAddMoreButton = document.getElementById('entry-locations-add-more');
+    const entryAdditionalFieldsContainer = document.getElementById('entry_locations-additional-fields');
+
+    entryAddMoreButton.addEventListener('click', function () {
+        const newEntryContainer = document.createElement('div');
+        newEntryContainer.classList.add('mt-3', 'border', 'p-3');
+        newEntryContainer.innerHTML = `
+            
+            <div class="entry-input-fields mt-3">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="port_type">Port Name</label>
+                        <select name="port_name[]" class="form-select port-type-select">
+                            <option value="">Select a Port</option>
+                            <option value="Airport">Airport</option>
+                            <option value="Seaport">Seaport</option>
+                            <option value="Landport">Landport</option>
+                            <option value="Others">Others</option>
+                        </select>
+                        <input type="text" name="entry_name_others[]" class="form-control mt-2 other-port-input" placeholder="Specify Other Port" style="display: none;">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="latitude">Latitude</label>
+                        <input type="text" name="latitudentry[]" class="form-control" placeholder="Enter Latitude">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="longitude">Longitude</label>
+                        <input type="text" name="longitudentry[]" class="form-control" placeholder="Enter Longitude">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="distance">Distance</label>
+                        <input type="text" name="distancentry[]" class="form-control" placeholder="Enter Distance">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger delete-entry">Delete</button>
+            </div>
+        `;
+        entryAdditionalFieldsContainer.appendChild(newEntryContainer);
+
+        const portTypeSelect = newEntryContainer.querySelector('.port-type-select');
+        const otherPortInput = newEntryContainer.querySelector('.other-port-input');
+
+        portTypeSelect.addEventListener('change', function () {
+            otherPortInput.style.display = this.value === 'Others' ? 'block' : 'none';
+        });
+
+        const deleteButton = newEntryContainer.querySelector('.delete-entry');
+        deleteButton.addEventListener('click', function () {
+            newEntryContainer.remove();
+        });
+    });
+
+    // Handle Port of Exit Toggle
+    const portOfExitCheckbox = document.getElementById('port_of_exit');
+    const exitFieldsContainer = document.getElementById('exit_fields_container');
+
+    portOfExitCheckbox.addEventListener('change', function () {
+        exitFieldsContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Handle Add More for Port of Exit
+    const exitAddMoreButton = document.getElementById('exit-locations-add-more');
+    const exitAdditionalFieldsContainer = document.getElementById('exit_locations-additional-fields');
+
+    exitAddMoreButton.addEventListener('click', function () {
+        const newExitContainer = document.createElement('div');
+        newExitContainer.classList.add('mt-3', 'border', 'p-3');
+        newExitContainer.innerHTML = `
+                <div class="row">
+                    <div  class="col-md-3">
+                        <label for="exit_port_type">Port Name</label>
+                        <select name="exit_port_name[]" class="form-select port-type-select">
+                            <option value="">Select a Port</option>
+                            <option value="Airport">Airport</option>
+                            <option value="Seaport">Seaport</option>
+                            <option value="Landport">Landport</option>
+                            <option value="Others">Others</option>
+                        </select>
+                        <input type="text" name="exit_name_others[]" class="form-control mt-2 other-port-input" placeholder="Specify Other Port" style="display: none;">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="exit_latitude">Latitude</label>
+                        <input type="text" name="exit_latitude[]" class="form-control" placeholder="Enter Latitude">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="exit_longitude">Longitude</label>
+                        <input type="text" name="exit_longitude[]" class="form-control" placeholder="Enter Longitude">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="exit_distance">Distance</label>
+                        <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger delete-exit">Delete</button>
+            </div>
+        `;
+        exitAdditionalFieldsContainer.appendChild(newExitContainer);
+
+        const portTypeSelect = newExitContainer.querySelector('.port-type-select');
+        const otherPortInput = newExitContainer.querySelector('.other-port-input');
+
+        portTypeSelect.addEventListener('change', function () {
+            otherPortInput.style.display = this.value === 'Others' ? 'block' : 'none';
+        });
+
+        const deleteButton = newExitContainer.querySelector('.delete-exit');
+        deleteButton.addEventListener('click', function () {
+            newExitContainer.remove();
+        });
+    });
+});
+</script>
+
+<script>
     document.addEventListener('DOMContentLoaded', function () {
-        const portOfEntryCheckbox = document.getElementById('port_of_entry');
-        const entryFieldsContainer = document.getElementById('entry_fields_container');
-        const entryAddMoreButton = document.getElementById('entry-locations-add-more');
-        const entryAdditionalFieldsContainer = document.getElementById('entry_locations-additional-fields');
-
-        const portOfExitCheckbox = document.getElementById('port_of_exit');
-        const exitFieldsContainer = document.getElementById('exit_fields_container');
-        const exitAddMoreButton = document.getElementById('exit-locations-add-more');
-        const exitAdditionalFieldsContainer = document.getElementById('exit_locations-additional-fields');
-
-        // Toggle Entry Fields
-        portOfEntryCheckbox.addEventListener('change', function () {
-            entryFieldsContainer.style.display = this.checked ? 'block' : 'none';
-            if (!this.checked) {
-                entryAdditionalFieldsContainer.innerHTML = ''; // Clear fields when unchecked
-            }
-        });
-
-        // Toggle Exit Fields
-        portOfExitCheckbox.addEventListener('change', function () {
-            exitFieldsContainer.style.display = this.checked ? 'block' : 'none';
-            if (!this.checked) {
-                exitAdditionalFieldsContainer.innerHTML = ''; // Clear fields when unchecked
-            }
-        });
-
-        // Add More Button for Port of Entry
-        entryAddMoreButton.addEventListener('click', function () {
-            const newEntryRow = document.createElement('div');
-            newEntryRow.classList.add('row', 'mt-3');
-            newEntryRow.innerHTML = `
-                <div class="mb-3 col-md-3">
-                    <label for="port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <select name="port_name[]" class="form-control">
-                        <option value="">Select a Port</option>
-                        <option value="Airport">Airport</option>
-                        <option value="Seaport">Seaport</option>
-                        <option value="Land Port">Land Port</option>
-                    </select>
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="latitude[]" class="form-control" placeholder="Enter Latitude">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="longitude" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="longitude[]" class="form-control" placeholder="Enter Longitude">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="distance[]" class="form-control" placeholder="Enter Distance">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <button type="button" class="btn btn-danger delete-row">Delete</button>
-                </div>
-            `;
-            entryAdditionalFieldsContainer.appendChild(newEntryRow);
-
-            // Delete Row Event for Entry
-            newEntryRow.querySelector('.delete-row').addEventListener('click', function () {
-                newEntryRow.remove();
-            });
-        });
-
-        // Add More Button for Port of Exit
-        exitAddMoreButton.addEventListener('click', function () {
-            const newExitRow = document.createElement('div');
-            newExitRow.classList.add('row', 'mt-3');
-            newExitRow.innerHTML = `
-                <div class="mb-3 col-md-3">
-                    <label for="exit_port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <select name="exit_port_name[]" class="form-control">
-                        <option value="">Select a Port</option>
-                        <option value="Airport">Airport</option>
-                        <option value="Seaport">Seaport</option>
-                        <option value="Land Port">Land Port</option>
-                    </select>
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="exit_latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="exit_latitude[]" class="form-control" placeholder="Enter Latitude">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="exit_longitude" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="exit_longitude[]" class="form-control" placeholder="Enter Longitude">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="exit_distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <button type="button" class="btn btn-danger delete-row">Delete</button>
-                </div>
-            `;
-            exitAdditionalFieldsContainer.appendChild(newExitRow);
-
-            // Delete Row Event for Exit
-            newExitRow.querySelector('.delete-row').addEventListener('click', function () {
-                newExitRow.remove();
+        document.querySelectorAll('.port-name-select').forEach(function (dropdown) {
+            dropdown.addEventListener('change', function () {
+                const container = this.closest('.row'); // Get the parent row
+                const othersInput = container.querySelector('.others-input-container'); // Get the "Others" input container
+                if (this.value === 'Others') {
+                    othersInput.style.display = 'block';
+                } else {
+                    othersInput.style.display = 'none';
+                }
             });
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.remove-entry-field').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('.row');
+                row.remove();
+            });
+        });
+        document.querySelectorAll('.remove-exit-field').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('.row');
+                row.remove();
+            });
+        });
+    });
+</script>
+
 @endsection
