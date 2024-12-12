@@ -41,7 +41,7 @@
                                     <select id="category_type" name="category_type" class="form-control" required>
                                         <option value="">Select Category Type</option>
                                         @forelse ($categories as $category)
-                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            <option value="{{ $category->category_id }}">{{ $category->name }}</option>
                                         @empty
                                             <option>No categories available</option>
                                         @endforelse

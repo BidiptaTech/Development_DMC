@@ -20,13 +20,19 @@ class HotelController extends Controller
     */
     public function index(Request $request)
     {
+        $location = $request->query('location');
+        if($location){
+            $hotels = Hotel::with('category')->where('status', 1)
+            ->orderBy('id', 'desc')->where('city', $location)
+            ->get();
+        }
         $cat_id = $request->category_id;
         if ($cat_id) {
-            $hotels = Hotel::where('status', 1)->where('cat_id', $cat_id)
+            $hotels = Hotel::with('category')->where('status', 1)->where('cat_id', $cat_id)
                 ->orderBy('id', 'desc')
                 ->get();
         } else {
-            $hotels = Hotel::where('status', 1)
+            $hotels = Hotel::with('category')->where('status', 1)
                 ->orderBy('id', 'desc')
                 ->get();
         }
@@ -42,14 +48,26 @@ class HotelController extends Controller
                     }
                 }
 
+                // Decode facility_ids stored in the hotel table
+                $facility_ids = json_decode($hotel->facilities, true) ?? [];
+                $facility_names = [];
+                if (is_array($facility_ids)) {
+                    $facility_names = Facility::whereIn('facilityId', $facility_ids)->pluck('name')->toArray();
+                }
+
                 $hotel_list[] = [
                     'id' => $hotel->id,
                     'hotel_name' => $hotel->name,
-                    'location' => $hotel->location ?? '',
-                    'rating' => $hotel->rating ?? '',
-                    'price' => 5000, 
+                    'category' => $hotel->category->name,
+                    'location' => $hotel->address ?? '',
+                    'price' => 5000,
                     'image' => $hotel->main_image ?? '',
-                    'site_image' => $site_image, 
+                    'site_image' => $site_image,
+                    'cancellation' => $hotel->cancellation_type,
+                    'cancellation_charge' => json_decode($hotel->cancellation_data) ?? [],
+                    'entry_port' => json_decode($hotel->port_of_entry) ?? [],
+                    'exit_port' => json_decode($hotel->port_of_exit) ?? [],
+                    'facilities' => $facility_names, // Facility names fetched here
                     'status' => $hotel->status,
                 ];
             }
@@ -60,6 +78,7 @@ class HotelController extends Controller
             ], 404);
         }
     }
+
 
     /*
     * Show Hotel Details.
@@ -201,56 +220,6 @@ class HotelController extends Controller
         });
         return response()->json($category_facilities);
     }
-
-    /*Search hotel with location*/
-    public function location(Request $request)
-    {
-        $location = $request->query('location');
-        // Fetch hotels matching the location
-        $hotels = Hotel::where('city', $location)->get();
-
-        // If no hotels are found, return a 404 response
-        if ($hotels->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => "No hotels found in the location: $location",
-            ], 404);
-        }
-
-        // Process hotel details
-        $hotelDetails = $hotels->map(function ($hotel) {
-            // Fetch the category for the hotel
-            $category = Category::find($hotel->cat_id);
-
-            // Decode facilities JSON (handle null or empty cases)
-            $facilityIds = json_decode($hotel->facilities, true) ?? [];
-
-            // Fetch related facilities
-            $relatedFacilities = Facility::whereIn('id', $facilityIds)->get();
-
-            return [
-                'id' => $hotel->id,
-                'name' => $hotel->name,
-                'location' => $hotel->city,
-                'star' => $category ? $category->name : 'Unknown', // Handle missing category
-                'image'=>$hotel->main_image ?? '',
-                'amenities' => $relatedFacilities->map(function ($amenity) {
-                    return [
-                        'id' => $amenity->id,
-                        'amenityName' => $amenity->name,
-                    ];
-                }),
-                'price' => 5000, // Replace with actual pricing logic if needed
-                // 'images' => $images ?: [], 
-            ];
-        });
-
-        return response()->json([
-            'success' => true,
-            'data' => $hotelDetails,
-        ],200, [], JSON_UNESCAPED_UNICODE);
-    }
-
 
 
     public function roomLists(Request $request)
