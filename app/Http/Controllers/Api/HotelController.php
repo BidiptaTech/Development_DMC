@@ -260,7 +260,7 @@ class HotelController extends Controller
         }
 
         $roomsData = $hotel->rooms->map(function ($room) use($hotel) {
-            $amenities = json_decode($room->facilities);
+            $amenities = json_decode($room->RoomType->facilities);
 
             return [
                 'room_id' => $room->id,
@@ -292,8 +292,6 @@ class HotelController extends Controller
         // Return the room details in the response
         return response()->json(['data' => $roomsData], 200);
     }
-    
-
 
 
     public function hotelDetails(Request $request)

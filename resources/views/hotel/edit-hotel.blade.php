@@ -346,55 +346,41 @@
                                 </div>
                             </div>
 
-                             <!-- key locations -->
-                            
-                             <b>Key Locations</b>
-                             <hr>
-                             <div class="row">
-                                 <div class="mb-3 col-md-4">
-                                     <label for="conference" class="form-label"><strong>Airport</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                     <select name="location[]" id="airport" class="form-control" required >
-                                         <option value="Airport" selected>Airport</option>
-                                     </select>
-                                     @error('location')
-                                         <div class="text-danger mt-1">{{ $message }}</div>
-                                     @enderror
-                                     
-                                 </div>
-                                 <div class="mb-3 col-md-4">
-                                     <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                     <input name="distance[]" id="airport_distance" class="form-control" required type="text">
-                                     @error('distance')
-                                         <div class="text-danger mt-1">{{ $message }}</div>
-                                     @enderror
-                                 </div>
-                             </div>
- 
-                             <div class="row">
-                                 <div class="mb-3 col-md-4">
-                                     <label for="location" class="form-label"><strong>City Centre</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                     <select name="location[]" id="airport" class="form-control" required >
-                                         <option value="City_centre" selected>City Cetre</option>
-                                     </select>
-                                     @error('location')
-                                         <div class="text-danger mt-1">{{ $message }}</div>
-                                     @enderror
-                                 </div>
-                                 <div class="mb-3 col-md-4">
-                                     <label for="distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                     <input name="distance[]" id="cityCentre_distance" class="form-control" required type="text">
-                                     @error('distance')
-                                         <div class="text-danger mt-1">{{ $message }}</div>
-                                     @enderror
-                                 </div>
-                             </div>
-                             
-                             <div class="row" id="Key_locations">
-                                 <div id="locations-additional-fields"></div>
-                                 <div class="mb-3 col-md-4">
-                                     <button type="button" id="locations-add-more" class="btn btn-primary">Add More</button>
-                                 </div>
-                             </div>
+                            <!-- Key Locations -->
+<b>Key Locations</b>
+<hr>
+
+<div id="key-locations-wrapper">
+    @if(!empty($keyLandmarks))
+        @foreach($keyLandmarks as $index => $landmark)
+            <div class="row key-location-row">
+                <div class="mb-3 col-md-4">
+                    <label for="location-{{ $index }}" class="form-label"><strong>Location</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="location[]" id="location-{{ $index }}" class="form-control" required value="{{ $landmark['location'] }}">
+                    @error('location')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="distance-{{ $index }}" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="distance[]" id="distance-{{ $index }}" class="form-control" required value="{{ $landmark['distance'] }}">
+                    @error('distance')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+        @endforeach
+    @endif
+</div>
+
+<div class="row" id="Key_locations">
+    <div id="locations-additional-fields"></div>
+    <div class="mb-3 col-md-4">
+        <button type="button" id="locations-add-more" class="btn btn-primary">Add More</button>
+    </div>
+</div>
+
+
                             <!-- conference -->
                             <b>Conference Room Availability</b>
                             <hr>
@@ -480,13 +466,14 @@
                                     
                                     @endif
 
-                                    <!-- Additional fields container -->
-                                    <div id="cancellation-additional-fields"></div>
 
                                     <!-- Button to add more cancellation fields -->
-                                    <div class="mb-3 col-md-4">
-                                        <button type="button" id="cancellation-add-more" class="btn btn-primary" onclick="addCancellationField()">Add More</button>
-                                    </div>
+                                    <div class="row" id="Key_locations">
+                                <div id="locations-additional-fields"></div>
+                                <div class="mb-3 col-md-4">
+                                    <button type="button" id="locations-add-more" class="btn btn-primary">Add More</button>
+                                </div>
+                            </div>
                                 </div>
                             </div>
 
@@ -499,7 +486,6 @@
                                     type="checkbox" id="hotel_status" value="1">
                                 <label class="form-check-label"></label>
                             </div>
-
 
                             <!-- Submit and Reset Buttons -->
                             <div class="d-flex align-items-center gap-3">
@@ -648,7 +634,22 @@
     });
 
     // Function to add new conference fields
-    let conferenceIndex = {{ count(json_decode($hotel->conference_data, true)) }};
+    let conferenceIndex;
+
+if ($hotel->conference_data !== null) {
+    $conferenceData = json_decode($hotel->conference_data, true);
+
+    if (is_array($conferenceData)) {
+        conferenceIndex = count($conferenceData);
+    } else {
+        conferenceIndex = 0; // Default value if conference_data is not a valid array
+    }
+} else {
+    conferenceIndex = 0; // Default value if conference_data is null
+}
+
+    
+    
     function addConferenceField() {
         var newField = document.createElement('div');
         newField.classList.add('conference-field');

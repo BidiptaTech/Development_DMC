@@ -191,7 +191,8 @@ class HotelController extends Controller
         $facilities = Facility::all();
         $categories = Category::where('category_type', 1)->get();
         $hotel = Hotel::findOrFail($id);
-        return view('hotel.edit-hotel', compact('categories', 'hotel','facilities'));
+        $keyLandmarks = json_decode($hotel->key_landmarks, true);
+        return view('hotel.edit-hotel', compact('categories', 'hotel','facilities','keyLandmarks'));
     }
 
     /*
@@ -408,16 +409,19 @@ class HotelController extends Controller
     */
     public function storeroom(Request $request)
     {
-        $request->validate([
-            'room_type' => 'required',
-            'max_capacity' => 'required',
-            'no_of_room' => 'required',
-            'weekday_price' => 'required',
-            'weekend_price' => 'required',
-            'hotel_status' => 'required', 
-            'extra_bed' => 'required', 
-            'child_cot' => 'required', 
-        ]);
+        // $request->validate([
+        //     'room_type' => 'required',
+        //     'max_capacity' => 'required',
+        //     'no_of_room' => 'required',
+        //     'weekday_price' => 'required',
+        //     'weekend_price' => 'required',
+        //     'hotel_status' => 'required',
+        //     'extra_bed' => 'required', 
+        //     'child_cot' => 'required',
+        // ]);
+        $data = $request->input('added-king-bed');
+        dd($data);
+
         $lastRoom = Room::withTrashed()->orderBy('id', 'desc')->first();
         $room_max_id = $lastRoom->room_id;
         $roomId = CommonHelper::createId($room_max_id);

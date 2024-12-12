@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Http;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,4 +28,16 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/create-tour', 'App\Http\Controllers\Api\TourController@createTour');
     Route::get('/hotels/{hotelId}/facilities', [App\Http\Controllers\RoomtypeController::class, 'getHotelFacilities']);
     Route::post('/logout', 'App\Http\Controllers\Api\LoginControllerApi@logout');
+
+    Route::get('/cities', function (Request $request) {
+        $input = $request->query('input');
+        
+        $response = Http::get("https://maps.googleapis.com/maps/api/place/autocomplete/json", [
+            'input' => $input,
+            'key' => "AIzaSyCLzISM9kkNCKKmQs7BcpSll4emFw1yicw",
+            'types' => '(cities)',
+        ]);
+
+        return $response->json();
+    });
 });
