@@ -21,26 +21,35 @@ class HotelController extends Controller
     public function index(Request $request)
     {
         $cat_id = $request->category_id;
-        if($cat_id){
-            $hotels = Hotel::where('status', 1)->where('cat_id',$cat_id)
-            ->orderBy('id','desc')
-            ->get();
-        }else{
+        if ($cat_id) {
+            $hotels = Hotel::where('status', 1)->where('cat_id', $cat_id)
+                ->orderBy('id', 'desc')
+                ->get();
+        } else {
             $hotels = Hotel::where('status', 1)
-            ->orderBy('id','desc')
-            ->get();
+                ->orderBy('id', 'desc')
+                ->get();
         }
-        
+
         $hotel_list = [];
         if ($hotels->count() > 0) {
             foreach ($hotels as $hotel) {
+                $site_image = [];
+                if (!empty($hotel->images)) {
+                    $images = json_decode($hotel->images, true);
+                    if (is_array($images)) {
+                        $site_image = $images;
+                    }
+                }
+
                 $hotel_list[] = [
                     'id' => $hotel->id,
                     'hotel_name' => $hotel->name,
-                    'location' => $hotel->location,
-                    'rating' => $hotel->rating,
-                    'price' => 5000,
-                    'image' => $hotel->image ?? '',
+                    'location' => $hotel->location ?? '',
+                    'rating' => $hotel->rating ?? '',
+                    'price' => 5000, // Static price; consider dynamic pricing
+                    'image' => $hotel->main_image ?? '',
+                    'site_image' => $site_image, // Return the array of images
                     'status' => $hotel->status,
                 ];
             }
