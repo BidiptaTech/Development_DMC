@@ -77,14 +77,12 @@ class HotelController extends Controller
     public function index(Request $request)
     {
         $location = $request->location;
+        $cat_id = $request->category_id;
         if($location){
             $hotels = Hotel::with('category')->where('status', 1)
             ->orderBy('id', 'desc')->where('address', $location)
             ->get();
-        }
-
-        $cat_id = $request->category_id;
-        if ($cat_id) {
+        }elseif ($cat_id) {
             $hotels = Hotel::with('category')->where('status', 1)->where('cat_id', $cat_id)
                 ->orderBy('id', 'desc')
                 ->get();
@@ -148,84 +146,72 @@ class HotelController extends Controller
     */
     public function details(Request $request)
     {
-        $tax = Setting::where('name', 'tax_percentage')->first();
-        $tax_percentage = $tax ? $tax->value : 0;
-
         $id = $request->query('id');
-        $hotel_details = RoomRate::where('hotel_id', $id)->get();
+        $hotel = Hotel::with('category','rooms')->where('status', 1)->where('id', $id)
+                ->orderBy('id', 'desc')
+                ->first();
+        $hotel_list = [];
+        if ($hotel) {
+            $country = $hotel->country;
+            $check_country = Country::whereRaw('LOWER(name) = ?', [strtolower($country)])->first();
+            $country_tax = $check_country->tax_percentage ?? 0;
+            $site_image = [];
+            if (!empty($hotel->images)) {
+                $images = json_decode($hotel->images, true);
+                if (is_array($images)) {
+                    $site_image = $images;
+                }
+            }
+                $facility_ids = json_decode($hotel->facilities, true) ?? [];
+            $facility_names = [];
+            if (is_array($facility_ids)) {
+                $facility_names = Facility::whereIn('facilityId', $facility_ids)->pluck('name')->toArray();
+            }
 
-        if ($hotel_details->isEmpty()) {
+            $room_data = [];
+            foreach($hotel->rooms as $rooms){
+                //weekday and weekend price calculate
+                $weekend_days = json_decode($hotel->weekend_days);
+                $today = Carbon::now()->format('l');
+                if (in_array($today, $weekend_days)) {
+                    $price = $rooms->weekend_price;
+                }else{
+                    $price = $rooms->weekday_price;
+                }
+                $room_data[] = [
+                    'id' => $hotel->id,
+                    'room_type' => $rooms->room_type,
+                    'room_image' => json_decode($rooms->images) ?? [],
+                    'number_of_room' => $rooms->no_of_room,
+                    'price' => $price,
+                    'breakfast_available' => $rooms->breakfast_included,
+                ];
+            }
+
+            $hotel_list = [
+                'id' => $hotel->id,
+                'hotel_name' => $hotel->name,
+                'category' => $hotel->category->name,
+                'location' => $hotel->address ?? '',
+                'price' => 5000,
+                'tax_amount' => (5000 * $country_tax/100),
+                'total_base_amount' => 5000 + (5000 * $country_tax/100),
+                'image' => $hotel->main_image ?? '',
+                'site_image' => $site_image,
+                'cancellation' => $hotel->cancellation_type,
+                'cancellation_charge' => json_decode($hotel->cancellation_data) ?? [],
+                'entry_port' => json_decode($hotel->port_of_entry) ?? [],
+                'exit_port' => json_decode($hotel->port_of_exit) ?? [],
+                'facilities' => $facility_names,
+                'status' => $hotel->status,
+                'room_data' => $room_data,
+            ];
+            return response()->json($hotel_list);
+        } else {
             return response()->json([
                 'message' => 'No hotels found'
             ], 404);
         }
-
-        $room_details = [];
-        foreach ($hotel_details as $room) {
-            $days = $room->rate_type == 1 ? "Week Day" : "Weekend";
-            switch ($room->room_type) {
-                case 1:
-                    $room_type = "Single Room";
-                    $base_price = $room->single_rate;
-                    break;
-                case 2:
-                    $room_type = "Double Room";
-                    $base_price = $room->double_rate;
-                    break;
-                case 3:
-                    $room_type = "Triple Room";
-                    $base_price = $room->triple_rate;
-                    break;
-                default:
-                    $room_type = "Unknown";
-                    $base_price = 0;
-                    break;
-            }
-
-            $room_rates[] = [
-                'room_only' => [
-                    'price' => $base_price,
-                    'tax_price' => ($base_price * $tax_percentage) / 100,
-                    'total_price' => $base_price + (($base_price * $tax_percentage) / 100)
-                ],
-                'room_with_breakfast' => [
-                    'price' => $base_price + ($room->breakfast ?? 0),
-                    'tax_price' => (($base_price + ($room->breakfast ?? 0)) * $tax_percentage) / 100,
-                    'total_price' => ($base_price + ($room->breakfast ?? 0)) + ((($base_price + ($room->breakfast ?? 0)) * $tax_percentage) / 100)
-                ],
-                'room_with_lunch' => [
-                    'price' => $base_price + ($room->lunch ?? 0),
-                    'tax_price' => (($base_price + ($room->lunch ?? 0)) * $tax_percentage) / 100,
-                    'total_price' => ($base_price + ($room->lunch ?? 0)) + ((($base_price + ($room->lunch ?? 0)) * $tax_percentage) / 100)
-                ],
-                'room_with_dinner' => [
-                    'price' => $base_price + ($room->dinner ?? 0),
-                    'tax_price' => (($base_price + ($room->dinner ?? 0)) * $tax_percentage) / 100,
-                    'total_price' => ($base_price + ($room->dinner ?? 0)) + ((($base_price + ($room->dinner ?? 0)) * $tax_percentage) / 100)
-                ],
-                'room_with_extrabed' => [
-                    'price' => $base_price + ($room->extra_bed ?? 0),
-                    'tax_price' => (($base_price + ($room->extra_bed ?? 0)) * $tax_percentage) / 100,
-                    'total_price' => ($base_price + ($room->extra_bed ?? 0)) + ((($base_price + ($room->extra_bed ?? 0)) * $tax_percentage) / 100)
-                ],
-            ];
-
-            $room_details[] = [
-                'id' => $room->id,
-                'hotel_id' =>$id,
-                'category' => $room->category ?? '',
-                'room_type' => $room_type,
-                'rate_type' => $days,
-                'kids_below_6' => $room->kids_below_6 ?? '',
-                'kids_above_6' => $room->kids_above_6 ?? '',
-                'breakfast_kids_below_6' => $room->breakfast_kids_below_6 ?? '',
-                'lunch_kids_below_6' => $room->lunch_kids_below_6 ?? '',
-                'dinner_kids_below_6' => $room->dinner_kids_below_6 ?? '',
-                'room_rates' => $room_rates,
-            ];
-        }
-
-        return response()->json($room_details);
     }
 
 
