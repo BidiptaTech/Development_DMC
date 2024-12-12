@@ -12,21 +12,15 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
 Route::post('/v1/login', 'App\Http\Controllers\Api\LoginControllerApi@login');
-Route::get('/api/v1/clear', function () {
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
-    Artisan::call('view:clear');
-    Artisan::call('route:clear');
-    return '<center><h1>All Cleared</h1></center>';
-});
 
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
-    Route::get('/hotels', 'App\Http\Controllers\Api\HotelController@index');
+    // Route::get('/hotels', 'App\Http\Controllers\Api\HotelController@index');
     Route::get('/hotel-details', 'App\Http\Controllers\Api\HotelController@details');
     Route::get('/facilities', 'App\Http\Controllers\Api\HotelController@facilities');
     Route::get('/category', 'App\Http\Controllers\Api\HotelController@category');
-    Route::get('/location', 'App\Http\Controllers\Api\HotelController@location');
+    Route::get('/location', 'App\Http\Controllers\Api\HotelController@index');
     Route::get('/details', 'App\Http\Controllers\Api\HotelController@hotelDetails');
     Route::get('/roomlists', 'App\Http\Controllers\Api\HotelController@roomLists');
 
