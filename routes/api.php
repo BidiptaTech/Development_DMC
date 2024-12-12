@@ -13,7 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('/v1/login', 'App\Http\Controllers\Api\LoginControllerApi@login');
-
+Route::get('/api/v1/clear', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    return '<center><h1>All Cleared</h1></center>';
+});
 
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::get('/hotels', 'App\Http\Controllers\Api\HotelController@index');
