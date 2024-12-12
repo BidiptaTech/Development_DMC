@@ -99,7 +99,7 @@ class HotelController extends Controller
             foreach ($hotels as $hotel) {
                 $country = $hotel->country;
                 $check_country = Country::whereRaw('LOWER(name) = ?', [strtolower($country)])->first();
-                $country_tax = $check_country->tax_percentage;
+                $country_tax = $check_country->tax_percentage ?? 0;
                 $site_image = [];
                 if (!empty($hotel->images)) {
                     $images = json_decode($hotel->images, true);
