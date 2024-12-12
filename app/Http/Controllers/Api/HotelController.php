@@ -18,12 +18,12 @@ class HotelController extends Controller
     * Show Hotel Listings.
     * Date 06-11-2024
     */
-    public function index(Request $request)
+    public function location(Request $request)
     {
-        $location = $request->query('location');
+        $location = $request->location;
         if($location){
             $hotels = Hotel::with('category')->where('status', 1)
-            ->orderBy('id', 'desc')->where('city', $location)
+            ->orderBy('id', 'desc')->where('address', $location)
             ->get();
         }
         $cat_id = $request->category_id;
