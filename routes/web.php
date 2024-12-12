@@ -38,6 +38,7 @@ Route::group(['middleware' => ['auth']], function () {
         Artisan::call('route:clear');
         return '<center><h1>All Cleared</h1></center>';
     });
+    
     Route::get('/admin/dashboard', [UserController::class, 'adminlogin'])->name('admin.dashboard');
     Route::get('transaction', [UserController::class, 'transaction'])->name('transaction');
     Route::get('/admin/login-as/{userId}', [UserController::class, 'loginAsUser'])->name('admin.loginAsUser');
