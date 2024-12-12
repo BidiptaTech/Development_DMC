@@ -47,9 +47,9 @@ class HotelController extends Controller
                     'hotel_name' => $hotel->name,
                     'location' => $hotel->location ?? '',
                     'rating' => $hotel->rating ?? '',
-                    'price' => 5000, // Static price; consider dynamic pricing
+                    'price' => 5000, 
                     'image' => $hotel->main_image ?? '',
-                    'site_image' => $site_image, // Return the array of images
+                    'site_image' => $site_image, 
                     'status' => $hotel->status,
                 ];
             }
