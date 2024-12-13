@@ -300,6 +300,13 @@ class HotelController extends Controller
             $request->input('exit_distance', []),
         );
 
+        $portOfOtherData = $this->processPortData(
+            $request->input('others_port_name', []),
+            $request->input('others_latitude', []),
+            $request->input('others_longitude', []),
+            $request->input('others_distance', []),
+        );
+
         $hotel->update([
             'name' => $request->input('name'),
             'hotel_unique_id' => $hotel->hotel_unique_id,
@@ -334,6 +341,7 @@ class HotelController extends Controller
             'facilities' => json_encode($request->facilities),
             'port_of_entry' => !empty($portOfEntryData) ? json_encode($portOfEntryData) : $hotel->port_of_entry,
             'port_of_exit' => json_encode($portOfExitData) ?? $hotel->port_of_exit,
+            'others' => json_encode($portOfOtherData) ?? $hotel->others,
             'is_complete' => 1,
         ]);
 
