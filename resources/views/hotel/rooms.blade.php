@@ -28,39 +28,32 @@
 
                      <div class="row container">
                         <!-- Room Type -->
-                        <div class="col-md-3 mb-3" id="base_room_type">
+                        <div class="col-md-3 mb-3" id="base_room_type" style="display: none;">
                            <label for="room_type" class="form-label"><strong>Base Room Type</strong><span class="text-danger">*</span></label>
-                           <input name="room_type" id="base_room_type" class="form-control" placeholder="Enter Base Room Type" required></input>
-                           @error('base_room_type')
+                           <input name="room_type" class="form-control" placeholder="Enter Base Room Type"></input>
+                           @error('room_type')
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
                         </div>
 
                         <!-- Number of Rooms -->
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-3 mb-3" style="display: none;">
                            <label for="no_of_room" class="form-label"><strong>No of Rooms</strong><span class="text-danger">*</span></label>
-                           <input type="number" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms" required>
+                           <input type="number" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms">
                            @error('base_no_of_room')
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
                         </div>
-
-                        <!-- Varient Price -->
-                        <div class="col-md-3 mb-3" style="display: none">
-                           <label for="no_of_room" class="form-label"><strong>No of Rooms</strong><span class="text-danger">*</span></label>
-                           <input type="number" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms" required>
-                           @error('base_no_of_room')
-                           <div class="text-danger mt-1">{{ $message }}</div>
-                           @enderror
-                        </div>
-
-                        <div class="mb-3 col-md-3" id="base_weekday_price">
+                        
+                        <!-- Weekday -->
+                        <div class="mb-3 col-md-3" id="base_weekday_price" style="display: none;">
                            <label for="weekday_price" class="form-label"><strong>Base Weekday Price</strong></label>
-                           <input type="number" name="weekday_price" id="base-weekday-price" class="form-control" placeholder="Enter Base weekday price" required>
+                           <input type="number" name="base_weekday_price" class="form-control" placeholder="Enter Base weekday price">
                        </div>
-                       <div class="mb-3 col-md-3" id="base_weekend_price">
+                       <!-- Weekend Price -->
+                       <div class="mb-3 col-md-3" id="base_weekend_price" style="display: none;">
                            <label for="weekend_price" class="form-label"><strong>Base Weekend Price</strong></label>
-                           <input type="number" name="weekend_price" id="base-weekend-price" class="form-control" placeholder="Enter Base weekend price" required>
+                           <input type="number" name="base_weekend_price" class="form-control" placeholder="Enter Base weekend price">
                        </div>
 
                         <!-- Breakfast -->
@@ -98,7 +91,7 @@
                            </select>
                        </div>
 
-                       <div class="row"  id="lunch-options" style="display: none;">
+                       <div class="row" id="lunch-options" style="display: none;">
                            <div class="mb-3 col-md-3">
                                <label for="lunch_type" class="form-label"><strong>Lunch Type</strong></label>
                                <select name="lunch_type" id="lunch_type" class="form-control">
@@ -149,21 +142,21 @@
 
                         <!-- Bed types -->
                         <div>
-                           <input type="checkbox" id="king-bed" class="bed-type-checkbox" name="king_bed">
+                           <input type="checkbox" id="king-bed" class="bed-type-checkbox" name="king_bed" value="king_bed">
                            <label for="king-bed">King Bed</label>
                            <hr>
                        </div>
                        <div name="king_bed" class="insert_king_bed_fields bed-fields" id="king-bed-fields"></div>
                        
                        <div>
-                           <input type="checkbox" id="queen-bed" class="bed-type-checkbox" name="queen_bed">
+                           <input type="checkbox" id="queen-bed" class="bed-type-checkbox" name="queen_bed" value="queen_bed">
                            <label for="queen-bed">Queen Bed</label>
                            <hr>
                        </div>
                        <div name="queen_bed" class="insert_queen_bed_fields bed-fields" id="queen-bed-fields"></div>
                        
                        <div>
-                           <input type="checkbox" id="twin-bed" class="bed-type-checkbox" name="twin-bed">
+                           <input type="checkbox" id="twin-bed" class="bed-type-checkbox" name="twin-bed" value="twin_bed">
                            <label for="twin-bed">Twin Bed</label>
                            <hr>
                        </div>
@@ -186,7 +179,8 @@
                      <!-- Submit Buttons -->
                      <div class="d-flex gap-3">
                         <a href="{{ route('contactdetails.edit', $hotel->id) }}" class="btn btn-secondary px-4">Previous</a>
-                        <button id="add_more" type="submit" class="btn btn-primary px-4">Save and Add More Rooms</button>
+                        <button type="submit" class="btn btn-primary px-4">Save and Add More Rooms</button>
+
                         <a href="{{ route('hotels.rates', $hotel->id) }}" class="btn btn-primary px-4">Save and Next</a>
                      </div>
                   </form>
@@ -217,7 +211,7 @@
                   <tbody>
                      @foreach ($rooms as $room)
                      <tr>
-                        <td>"Delux Room"</td>
+                        <td>"{{$room->room_type}}"</td>
                         <td>{{ $room->max_capacity }}</td>
                         <td>{{ $room->weekday_price }}</td>
                         <td>{{ $room->weekend_price }}</td>
@@ -389,6 +383,37 @@
    function toggleOptions(meal, optionsId) {
        const select = document.getElementById(meal);
        const optionsContainer = document.getElementById(optionsId);
+
+       if(select){
+         select.addEventListener('change', function () {
+           if (this.value === '1') {
+               // Show options if "Available" is selected
+               if (optionsContainer.children.length === 0) {
+                   // Append the options dynamically using insertAdjacentHTML
+                   const optionContent = `
+                       <div class="mb-3 col-md-3">
+                           <label for="${meal}_type" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Type</strong></label>
+                           <select name="${meal}_type" id="${meal}_type" class="form-control">
+                               <option value="">Select a type</option>
+                               <option value="0">Buffet</option>
+                               <option value="1">Set Buffet</option>
+                           </select>
+                       </div>
+                       <div class="mb-3 col-md-3">
+                           <label for="${meal}_price" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Price</strong></label>
+                           <input type="number" name="${meal}_price" id="${meal}_price" class="form-control" placeholder="Enter price">
+                       </div>
+                   `;
+                   optionsContainer.insertAdjacentHTML('beforeend', optionContent); // Append the content
+               }
+               optionsContainer.style.display = 'contents'; // Show options
+           } else {
+               // Hide options if "Not Available" is selected
+               optionsContainer.style.display = 'none';
+               optionsContainer.innerHTML = ''; // Clear the options
+           }
+       });
+       }
 
        select.addEventListener('change', function () {
            if (this.value === '1') {
@@ -680,15 +705,16 @@
 
 </script>
 
-<!-- Dynamic varients price -->
 <script>
-   document.getElementById('add_more').addEventListener('click', function(event) {
-       event.preventDefault(); // Prevent form submission if applicable
+   document.addEventListener('DOMContentLoaded', function() {
+       // Get hotel data from server-rendered Blade variable
+       const room = @json($rooms);
+      console.log("Hello from rooms = ", room);
 
-       // Hide the specified divs
-       document.getElementById('base_room_type').style.display = 'none';
-       document.getElementById('base_weekday_price').style.display = 'none';
-       document.getElementById('base_weekend_price').style.display = 'none';
+
+      if (Array.isArray(room) && room.length > 0) {
+           // Hide the specified divs
+      
 
        // Create new divs without "base" prefix
        const container = document.querySelector('.container');
@@ -698,7 +724,7 @@
        newRoomTypeDiv.id = 'room_type';
        newRoomTypeDiv.innerHTML = `
            <label for="room_type" class="form-label"><strong>Room Type</strong><span class="text-danger">*</span></label>
-           <input name="room_type" id="room_type_input" class="form-control" placeholder="Enter Room Type" required>
+           <input name="room_type[]" id="room_type_input" class="form-control" placeholder="Enter Room Type" required>
        `;
 
        const varientPrice = document.createElement('div');
@@ -714,7 +740,7 @@
        newWeekdayPriceDiv.id = 'weekday_price';
        newWeekdayPriceDiv.innerHTML = `
            <label for="weekday_price" class="form-label"><strong>Weekday Price</strong></label>
-           <input type="number" name="weekday_price" id="weekday_price_input" class="form-control" placeholder="Enter Weekday Price" required>
+           <input type="number" name="weekday_price[]" id="weekday_price_input" class="form-control" placeholder="Enter Weekday Price" required>
        `;
 
        const newWeekendPriceDiv = document.createElement('div');
@@ -722,7 +748,7 @@
        newWeekendPriceDiv.id = 'weekend_price';
        newWeekendPriceDiv.innerHTML = `
            <label for="weekend_price" class="form-label"><strong>Weekend Price</strong></label>
-           <input type="number" name="weekend_price" id="weekend_price_input" class="form-control" placeholder="Enter Weekend Price" required>
+           <input type="number" name="weekend_price[]" id="weekend_price_input" class="form-control" placeholder="Enter Weekend Price" required>
        `;
 
        // Insert the new divs at the top of the container
@@ -730,20 +756,19 @@
        container.prepend(newWeekdayPriceDiv);
        container.prepend(varientPrice);
        container.prepend(newRoomTypeDiv);
+
+       document.getElementById
+       }
+
+
+      else{
+         const roomTypeInput = document.getElementById('base_room_type').style.display = "block";
+         const weekdayPrice = document.getElementById('base_weekday_price').style.display = "block";
+         const weekendPrice = document.getElementById('base_weekend_price').style.display = "block";
+
+      
+      } 
    });
-   
 </script>
 
-
 @endsection
-
-<style>
-   .dashed-border {
-    border: 2px dashed #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px; /* or more */
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
-}
-
-</style>

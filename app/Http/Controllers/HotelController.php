@@ -433,13 +433,12 @@ class HotelController extends Controller
     */
     public function storeroom(Request $request)
     {
-        
         $request->validate([
 
-        'room_type' => 'required|string|max:255',
-        'no_of_room' => 'required|integer|min:1',
-        'weekday_price' => 'required|numeric|min:0',
-        'weekend_price' => 'required|numeric|min:0',
+        // 'room_type' => 'required|string|max:255',
+        // 'no_of_room' => 'required|integer|min:1',
+        // 'weekday_price' => 'required|numeric|min:0',
+        // 'weekend_price' => 'required|numeric|min:0',
         'breakfast' => 'required|boolean',
         'breakfast_type' => 'nullable|string|max:255',
         'breakfast_price' => 'nullable|numeric|min:0',
@@ -490,6 +489,7 @@ class HotelController extends Controller
         $room->is_complete = 1;
         $room->room_id = $roomId;
         $room->save();
+        dd(12);
 
         // Validate the incoming request data
         $validated = $request->validate([

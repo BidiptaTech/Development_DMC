@@ -26,29 +26,46 @@
                      @csrf
                      <input type="hidden" class="form-control" name="id" value="{{ $hotel->id }}">
 
-                     
-
                      <label for="charge" class="form-label"><b>Fair And Blackout Price</b><span class="text-danger">*</span></label>
                      <hr>
                      <div id="hotelRatesContainer">
                         <div class="hotel-rate-form">
                            <div class="row">
+                              <!-- Event Name -->
                               <div class="col-md-3 mb-3">
                                  <label for="event" class="form-label"><strong>Event Name</strong><span class="text-danger">*</span></label>
                                  <input type="text" class="form-control" name="event" placeholder="Enter Event Name" required>
                               </div>
+                              <!-- Event Type -->
                               <div class="col-md-3 mb-3">
                                  <label for="event_type" class="form-label"><strong>Event Type</strong><span class="text-danger">*</span></label>
                                  <select class="form-control" name="event_type" required>
                                     <option value="">Select Event Type</option>
                                     <option value="Fair Date">Fair Date</option>
                                     <option value="Blackout Date">Blackout Date</option>
+                                    <option value="Blackout Date">Season</option>
                                  </select>
                               </div>
-                              <div class="col-md-3 mb-3">
+                              
+                              <!-- Price -->
+                              <div class="col-md-3 mb-3" style="display: none;">
                                  <label for="price" class="form-label"><strong>Price</strong></label><span class="text-danger">*</span>
                                  <input type="number" class="form-control" name="price" placeholder="Enter Price" required>
                               </div>
+
+                               <!-- Weekday -->
+                              <div class="mb-3 col-md-3" id="base_weekday_price" style="display: none;">
+                                 <label for="weekday_price" class="form-label"><strong>Base Weekday Price</strong></label>
+                                 <input type="number" name="base_weekday_price" class="form-control" placeholder="Enter Base weekday price">
+                              </div>
+
+                              <!-- Weekend Price -->
+                              <div class="mb-3 col-md-3" id="base_weekend_price" style="display: none;">
+                                    <label for="weekend_price" class="form-label"><strong>Base Weekend Price</strong></label>
+                                    <input type="number" name="base_weekend_price" class="form-control" placeholder="Enter Base weekend price">
+                              </div>
+
+                              <!-- Start Date -->
                               <div class="col-md-3 mb-3">
                                  <label for="start_date" class="form-label"><strong>Start Date</strong><span class="text-danger">*</span></label>
                                  <input type="date" class="form-control" name="start_date" required>
@@ -231,6 +248,10 @@
          }
       });
    });
+</script>
+
+<script>
+
 </script>
 
 @endsection
