@@ -234,15 +234,13 @@
                                     </div>
                                 </div>
 
-                                <div class="row"  id="12_hours_booking_price" style="display: none;">
-                                    <div class="mb-3 col-md-4">
-                                        <label for="12_hours_booking_price" class="form-label"><strong>12 Hours Booking Price</strong></label>
-                                        <input type="number" name="twelve_hours_booking_price" id="twelve_hours_booking_price" class="form-control" placeholder="Enter price">
-                                    </div>
+                                <div class="mb-3 col-md-4">
+                                    <label for="12_hours_booking_price" class="form-label"><strong>Day Usage Price</strong></label>
+                                    <input type="number" name="twelve_hours_booking_price" id="twelve_hours_booking_price" class="form-control" placeholder="Enter price">
                                 </div>
 
                                 <!-- Description -->
-                                <div class="mb-3 col-md-6">
+                                <div class="mb-3 col-md-4">
                                     <label for="description" class="form-label"><strong>Description</strong><span style="color: red; font-weight: bold;">*</span></label>
                                     <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description" required></textarea>
                                     @error('description')
@@ -251,7 +249,7 @@
                                 </div>
 
                                 <!-- Policies -->
-                                <div class="mb-3 col-md-6">
+                                <div class="mb-3 col-md-4">
                                     <label for="policies" class="form-label"><strong>Policies</strong><span style="color: red; font-weight: bold;">*</span></label>
                                     <textarea class="form-control" id="policies" name="policies" rows="4" placeholder="Enter Policies"></textarea>
                                     @error('policies')
@@ -280,7 +278,7 @@
 
                             <!-- key locations -->
                             
-                            <b>Port of Entry & Port of Exit</b>
+                            <b>Port of Entry & Port of Exit & Others</b>
                             <hr>
                             <!-- Port of Entry Section -->
                             <div class="row">
@@ -302,8 +300,9 @@
                                             <option value="">Select a Port</option>
                                             <option value="Airport">Airport</option>
                                             <option value="Seaport">Seaport</option>
-                                            <option value="Land Port">Land Port</option>
-                                            <option value="Others">Others</option>
+                                            <option value="LandPort">Land Border Crossing</option>
+                                            <option value="Railway">Railway</option>
+                                            <option value="BusStand">Bus Stand</option>
                                         </select>
                                     </div>
 
@@ -325,10 +324,6 @@
                                         <input type="text" name="distanceentry[]" class="form-control" placeholder="Enter Distance">
                                     </div>
 
-                                    <div class="mb-3 col-md-3 others-input-container" style="display: none;">
-                                        <label for="port_name_others" class="form-label"><strong>Specify Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                        <input type="text" id="port_name_others" name="entry_name_others[]" class="form-control" placeholder="Enter Port Name">
-                                    </div>
                                 </div>
 
                                 <!-- Add More Button for Port of Entry -->
@@ -360,8 +355,9 @@
                                             <option value="">Select a Port</option>
                                             <option value="Airport">Airport</option>
                                             <option value="Seaport">Seaport</option>
-                                            <option value="Land Port">Land Port</option>
-                                            <option value="Others">Others</option>
+                                            <option value="LandPort">Land Border Crossing</option>
+                                            <option value="Railway">Railway</option>
+                                            <option value="BusStand">Bus Stand</option>
                                         </select>
                                     </div>
                                     
@@ -398,6 +394,67 @@
                                 </div>
                             </div>
                             
+                            <!-- Others Section -->
+                            <div class="row">
+                                <div class="mb-3 col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="others" class="form-check-input">
+                                        <label class="form-check-label" for="others"><strong>Enable Others</strong></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Others Conditional Fields (Initially Hidden) -->
+                            <div id="others_fields_container" style="display: none;">
+                                <div class="row">
+                                    <!-- Port Name Select Box -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="others_port_name" class="form-label"><strong>Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <select id="others_port_name" name="others_port_name[]" class="form-control port-name-select">
+                                            <option value="">Select One</option>
+                                            <option value="CityCenter">City Center</option>
+                                            <option value="Seaport">Seaport</option>
+                                            <option value="LandPort">Land Border Crossing</option>
+                                            <option value="Railway">Railway</option>
+                                            <option value="BusStand">Bus Stand</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Latitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="others_latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="others_latitude[]" class="form-control" placeholder="Enter Latitude">
+                                    </div>
+
+                                    <!-- Longitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="others_longitude" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="others_longitude[]" class="form-control" placeholder="Enter Longitude">
+                                    </div>
+
+                                    <!-- Distance Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="others_distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="others_distance[]" class="form-control" placeholder="Enter Distance">
+                                    </div>
+
+                                    <!-- Specify Port Name (Others) -->
+                                    <div class="mb-3 col-md-3 others-input-container" style="display: none;">
+                                        <label for="others_name_others" class="form-label"><strong>Specify Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" id="others_name_others" name="others_name_others[]" class="form-control" placeholder="Enter Port Name">
+                                    </div>
+                                </div>
+
+                                <!-- Add More Button for Others -->
+                                <div id="others_key_locations">
+                                    <div id="others_locations-additional-fields"></div>
+                                    <div class="mb-3 col-md-4">
+                                        <button type="button" id="others-locations-add-more" class="btn btn-primary">Add More</button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Conference Room Availability -->
                             <b>Conference Room Availability</b>
                             <hr>
@@ -676,8 +733,9 @@
                                 <option value="">Select a Port</option>
                                 <option value="Airport">Airport</option>
                                 <option value="Seaport">Seaport</option>
-                                <option value="Land Port">Land Port</option>
-                                <option value="Others">Others</option>
+                                <option value="LandPort">Land Border Crossing</option>
+                                <option value="Railway">Railway</option>
+                                <option value="BusStand">Bus Stand</option>
                             </select>
                         </div>
                         <div class="mb-3 col-md-3">
@@ -691,10 +749,6 @@
                         <div class="mb-3 col-md-3">
                             <label class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
                             <input type="text" name="distanceentry[]" class="form-control" placeholder="Enter Distance">
-                        </div>
-                        <div class="mb-3 col-md-3 others-input-container" style="display: none;">
-                            <label class="form-label"><strong>Specify Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                            <input type="text" name="entry_name_others[]" class="form-control" placeholder="Enter Port Name">
                         </div>
                     </div>
                     <button type="button" class="btn btn-danger delete-entry">Delete</button>
@@ -753,8 +807,9 @@
                                 <option value="">Select a Port</option>
                                 <option value="Airport">Airport</option>
                                 <option value="Seaport">Seaport</option>
-                                <option value="Land Port">Land Port</option>
-                                <option value="Others">Others</option>
+                                <option value="LandPort">Land Border Crossing</option>
+                                <option value="Railway">Railway</option>
+                                <option value="BusStand">Bus Stand</option>
                             </select>
                         </div>
                         <div class="mb-3 col-md-3">
@@ -768,10 +823,6 @@
                         <div class="mb-3 col-md-3">
                             <label class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
                             <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance">
-                        </div>
-                        <div class="mb-3 col-md-3 others-input-container" style="display: none;">
-                            <label class="form-label"><strong>Specify Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                            <input type="text" name="exit_name_others[]" class="form-control" placeholder="Enter Port Name">
                         </div>
                     </div>
                     <button type="button" class="btn btn-danger delete-exit">Delete</button>
@@ -803,21 +854,6 @@
         exitAddMoreButton.addEventListener('click', addExitField);
     });
 </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.port-name-select').forEach(function (dropdown) {
-            dropdown.addEventListener('change', function () {
-                const container = this.closest('.row'); // Get the parent row
-                const othersInput = container.querySelector('.others-input-container'); // Get the "Others" input container
-                if (this.value === 'Others') {
-                    othersInput.style.display = 'block';
-                } else {
-                    othersInput.style.display = 'none';
-                }
-            });
-        });
-    });
-</script>
 
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -839,4 +875,54 @@
         });
     });
 </script>
+<script>
+    // Toggle visibility for Others fields
+    document.getElementById('others').addEventListener('change', function() {
+        const othersFieldsContainer = document.getElementById('others_fields_container');
+        othersFieldsContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Show/hide "Specify Port Name" field based on "Other" selection in Port Name dropdown
+    document.getElementById('others_port_name').addEventListener('change', function() {
+        const othersInputContainer = document.querySelector('.others-input-container');
+        othersInputContainer.style.display = this.value === 'Other' ? 'block' : 'none';
+    });
+
+    // Add More functionality for Others section
+    document.getElementById('others-locations-add-more').addEventListener('click', function() {
+        const container = document.getElementById('others_locations-additional-fields');
+        const newFields = `
+            <div class="row">
+                <div class="mb-3 col-md-3">
+                    <label for="others_port_name" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <select name="others_port_name[]" class="form-control port-name-select">
+                        <option value="">Select a Port</option>
+                        <option value="Airport">Airport</option>
+                        <option value="Seaport">Seaport</option>
+                        <option value="LandPort">Land Border Crossing</option>
+                        <option value="Railway">Railway</option>
+                        <option value="BusStand">Bus Stand</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="mb-3 col-md-3">
+                    <label for="others_latitude" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="others_latitude[]" class="form-control" placeholder="Enter Latitude">
+                </div>
+
+                <div class="mb-3 col-md-3">
+                    <label for="others_longitude" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="others_longitude[]" class="form-control" placeholder="Enter Longitude">
+                </div>
+
+                <div class="mb-3 col-md-3">
+                    <label for="others_distance" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="others_distance[]" class="form-control" placeholder="Enter Distance">
+                </div>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', newFields);
+    });
+</script>
+
 @endsection

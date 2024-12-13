@@ -263,6 +263,11 @@
                                     </div>
                                 </div>
 
+                                <div class="mb-3 col-md-4">
+                                    <label for="day_usage_price" class="form-label"><strong>Day Usage Price</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                    <input type="number" class="form-control" id="day_usage_price" name="day_usage_price" placeholder="Enter Price" value="{{ old('day_usage_price', $hotel->twelve_hours_charge) }}" step="0.01"required>
+                                </div>
+
                                 <!-- Description -->
                                 <div class="mb-3 col-md-4">
                                     <label for="description" class="form-label"><strong>Description</strong><span style="color: red; font-weight: bold;">*</span></label>
@@ -326,8 +331,9 @@
                                             <option value="">Select a Port</option>
                                             <option value="Airport" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Airport' ? 'selected' : '' }}>Airport</option>
                                             <option value="Seaport" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Seaport' ? 'selected' : '' }}>Seaport</option>
-                                            <option value="Land Port" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Land Port' ? 'selected' : '' }}>Land Port</option>
-                                            <option value="Others" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Others' ? 'selected' : '' }}>Others</option>
+                                            <option value="LandPort" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'LandPort' ? 'selected' : '' }}>Land Border Crossing</option>
+                                            <option value="Railway" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Railway' ? 'selected' : '' }}>Railway</option>
+                                            <option value="BusStand" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'BusStand' ? 'selected' : '' }}>Bus Stand</option>
                                         </select>
                                     </div>
                                     <!-- Latitude Field -->
@@ -345,18 +351,7 @@
                                         <label for="distance_{{ $index }}" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
                                         <input type="text" name="distance[]" class="form-control" placeholder="Enter Distance" value="{{ old('distance.' . $index, $entry['distance'] ?? '') }}">
                                     </div>
-                                    <div class="mb-3 col-md-3 others-input-container" 
-                                        style="{{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Others' ? '' : 'display: none;' }}">
-                                        <label class="form-label">
-                                            <strong>Specify Port Name</strong>
-                                            <span style="color: red; font-weight: bold;">*</span>
-                                        </label>
-                                        <input type="text" 
-                                            name="entry_name_others[]" 
-                                            class="form-control" 
-                                            placeholder="Enter Port Name" 
-                                            value="{{ old('entry_name_others.' . $index, $entry['other_name'] ?? '') }}">
-                                    </div>
+                                    
 
                                     <!-- Delete Button -->
                                     <div class="mb-3 col-md-1">
@@ -394,8 +389,10 @@
                                             <option value="">Select a Port</option>
                                             <option value="Airport" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Airport' ? 'selected' : '' }}>Airport</option>
                                             <option value="Seaport" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Seaport' ? 'selected' : '' }}>Seaport</option>
-                                            <option value="Land Port" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Land Port' ? 'selected' : '' }}>Land Port</option>
-                                            <option value="Others" {{ old('exit_port_name.' . $index, $entry['port_name'] ?? '') == 'Others' ? 'selected' : '' }}>Others</option>
+                                            <option value="LandPort" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'LandPort' ? 'selected' : '' }}>Land Border Crossing</option>
+                                            <option value="Railway" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Railway' ? 'selected' : '' }}>Railway</option>
+                                            <option value="BusStand" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'BusStand' ? 'selected' : '' }}>Bus Stand</option>
+                                            <option value="Others" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Others' ? 'selected' : '' }}>Others</option>
                                         </select>
                                     </div>
                                     <!-- Latitude Field -->
@@ -413,18 +410,7 @@
                                         <label for="exit_distance_{{ $index }}" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
                                         <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance" value="{{ old('exit_distance.' . $index, $exit['distance'] ?? '') }}">
                                     </div>
-                                    <div class="mb-3 col-md-3 others-input-container" 
-                                        style="{{ old('exit_port_name_.' . $index, $exit['port_name'] ?? '') == 'Others' ? '' : 'display: none;' }}">
-                                        <label class="form-label">
-                                            <strong>Specify Port Name</strong>
-                                            <span style="color: red; font-weight: bold;">*</span>
-                                        </label>
-                                        <input type="text" 
-                                            name="exit_name_others[]" 
-                                            class="form-control" 
-                                            placeholder="Enter Port Name" 
-                                            value="{{ old('exit_name_others.' . $index, $exit['other_name'] ?? '') }}">
-                                    </div>
+                                    
                                     <!-- Delete Button -->
                                     <div class="mb-3 col-md-1">
                                         <button type="button" class="btn btn-danger remove-exit-field" style="margin-top: 30px;">Delete</button>
@@ -438,6 +424,95 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Others Section -->
+                            <div class="row">
+                                <div class="mb-3 col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="others" name="enable_others" class="form-check-input" 
+                                            {{ old('enable_others', $others_data ?? false) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="others"><strong>Enable Others</strong></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Others Conditional Fields (Initially Hidden/Shown based on enable_others) -->
+                            <div id="others_fields_container" style="{{ old('enable_others', $others_data ?? false) ? '' : 'display: none;' }}">
+                                @foreach($others as $index => $other)
+                                <div class="row" id="others_fields_{{ $index }}">
+                                    <!-- Port Name Select Box -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="others_port_name_{{ $index }}" class="form-label">
+                                            <strong>Name</strong><span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <select id="others_port_name_{{ $index }}" name="others_port_name[]" class="form-control port-name-select">
+                                            <option value="">Select One</option>
+                                            <option value="CityCenter" {{ old('others_port_name.' . $index, $other['port_name'] ?? '') == 'CityCenter' ? 'selected' : '' }}>City Center</option>
+                                            <option value="Seaport" {{ old('others_port_name.' . $index, $other['port_name'] ?? '') == 'Seaport' ? 'selected' : '' }}>Seaport</option>
+                                            <option value="LandPort" {{ old('others_port_name.' . $index, $other['port_name'] ?? '') == 'LandPort' ? 'selected' : '' }}>Land Border Crossing</option>
+                                            <option value="Railway" {{ old('others_port_name.' . $index, $other['port_name'] ?? '') == 'Railway' ? 'selected' : '' }}>Railway</option>
+                                            <option value="BusStand" {{ old('others_port_name.' . $index, $other['port_name'] ?? '') == 'BusStand' ? 'selected' : '' }}>Bus Stand</option>
+                                            <option value="Other" {{ old('others_port_name.' . $index, $other['port_name'] ?? '') == 'Other' ? 'selected' : '' }}>Other</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Latitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="others_latitude_{{ $index }}" class="form-label">
+                                            <strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <input type="text" id="others_latitude_{{ $index }}" name="others_latitude[]" class="form-control" 
+                                            placeholder="Enter Latitude" 
+                                            value="{{ old('others_latitude.' . $index, $other['latitude'] ?? '') }}">
+                                    </div>
+
+                                    <!-- Longitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="others_longitude_{{ $index }}" class="form-label">
+                                            <strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <input type="text" id="others_longitude_{{ $index }}" name="others_longitude[]" class="form-control" 
+                                            placeholder="Enter Longitude" 
+                                            value="{{ old('others_longitude.' . $index, $other['longitude'] ?? '') }}">
+                                    </div>
+
+                                    <!-- Distance Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="others_distance_{{ $index }}" class="form-label">
+                                            <strong>Distance</strong><span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <input type="text" id="others_distance_{{ $index }}" name="others_distance[]" class="form-control" 
+                                            placeholder="Enter Distance" 
+                                            value="{{ old('others_distance.' . $index, $other['distance'] ?? '') }}">
+                                    </div>
+
+                                    <!-- Specify Port Name (Others) -->
+                                    <div class="mb-3 col-md-3 others-input-container" 
+                                        style="{{ old('others_port_name.' . $index, $other['port_name'] ?? '') == 'Other' ? '' : 'display: none;' }}">
+                                        <label for="others_name_others_{{ $index }}" class="form-label">
+                                            <strong>Specify Port Name</strong><span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <input type="text" id="others_name_others_{{ $index }}" name="others_name_others[]" class="form-control" 
+                                            placeholder="Enter Port Name" 
+                                            value="{{ old('others_name_others.' . $index, $other['other_name'] ?? '') }}">
+                                    </div>
+
+                                    <!-- Delete Button -->
+                                    <div class="mb-3 col-md-1">
+                                        <button type="button" class="btn btn-danger remove-other-field" style="margin-top: 30px;">Delete</button>
+                                    </div>
+                                </div>
+                                @endforeach
+
+                                <!-- Add More Button -->
+                                <div id="others_key_locations">
+                                    <div id="others_locations-additional-fields"></div>
+                                    <div class="mb-3 col-md-4">
+                                        <button type="button" id="others-locations-add-more" class="btn btn-primary">Add More</button>
+                                    </div>
+                                </div>
+                            </div>
+
 
                             <!-- conference -->
                             <b>Conference Room Availability</b>
@@ -487,47 +562,47 @@
 
                             <b>Cancellation Details</b>
                             <hr>
-                            <!-- Cancellation Type Selection -->
                             <div class="mb-3 col-md-4">
-                                <label for="cancellation_type" class="form-label"><strong>Cancellation Type</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                <select name="cancellation_type" id="cancellation_type" class="form-control" required onchange="toggleCancellationOptions()">
+                                <label for="cancellation_type" class="form-label">
+                                    <strong>Cancellation Type</strong>
+                                    <span style="color: red; font-weight: bold;">*</span>
+                                </label>
+                                <select name="cancellation_type" id="cancellation_type" class="form-control" required>
                                     <option value="">Select an option</option>
-                                    <option {{ $hotel->cancellation_type == 0 ? 'selected' : '' }} value="0">Free</option>
-                                    <option {{ $hotel->cancellation_type == 1 ? 'selected' : '' }} value="1">Chargeable</option>
+                                    <option value="0" {{ old('cancellation_type', $hotel->cancellation_type) == 0 ? 'selected' : '' }}>Free</option>
+                                    <option value="1" {{ old('cancellation_type', $hotel->cancellation_type) == 1 ? 'selected' : '' }}>Chargeable</option>
                                 </select>
                             </div>
-
-                            <div class="row">
-                                <div id="cancellation-options" style="{{ $hotel->cancellation_type == 1 ? 'display: block;' : 'display: none;' }}">
-                                    @if ($hotel->cancellation_data)
-                                    @foreach (json_decode($hotel->cancellation_data, true) as $index => $cancellation)
-                                        <div class="cancellation-field mb-3 col-md-12" id="cancellation-field-{{ $index }}">
-                                            <div class="row">
-                                                <div class="mb-3 col-md-4">
-                                                    <label for="cancellation_duration" class="form-label"><strong>Duration</strong></label>
-                                                    <input type="text" class="form-control" name="cancellation_duration[]" placeholder="Enter Duration" value="{{ old('cancellation_duration', $cancellation['duration'] ?? '') }}">
-                                                </div>
-                                                <div class="mb-3 col-md-4">
-                                                    <label for="cancellation_price" class="form-label"><strong>Price</strong></label>
-                                                    <input type="number" class="form-control" name="cancellation_price[]" placeholder="Enter Price" value="{{ old('cancellation_price', $cancellation['price'] ?? '') }}">
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <button type="button" class="btn btn-danger" onclick="removeCancellationField({{ $index }})">Delete</button>
-                                                </div>
-                                            </div>
+                            <div id="cancellation-options" style="{{ old('cancellation_type', $hotel->cancellation_type) == 1 ? '' : 'display: none;' }}">
+                            <div id="cancellation-fields">
+                                @foreach($cancellation_data as $index => $rule)
+                                    <div class="row mb-3 cancellation-rule" id="cancellation-rule-{{ $index }}">
+                                        <div class="col-md-5">
+                                            <label class="form-label"><strong>Duration</strong></label>
+                                            <input 
+                                                type="text" 
+                                                class="form-control" 
+                                                name="cancellation_duration[]" 
+                                                placeholder="Enter Duration" 
+                                                value="{{ old('cancellation_duration.' . $index, $rule['duration'] ?? '') }}">
                                         </div>
-                                    @endforeach
-                                    
-                                    @endif
-
-
-                                    <!-- Button to add more cancellation fields -->
-                                    <div class="row" id="Key_locations">
-                                <div id="locations-additional-fields"></div>
-                                <div class="mb-3 col-md-4">
-                                    <button type="button" id="locations-add-more" class="btn btn-primary">Add More</button>
-                                </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label"><strong>Price</strong></label>
+                                            <input 
+                                                type="number" 
+                                                class="form-control" 
+                                                name="cancellation_price[]" 
+                                                placeholder="Enter Price" 
+                                                value="{{ old('cancellation_price.' . $index, $rule['price'] ?? '') }}">
+                                        </div>
+                                        <div class="col-md-2" style="margin-top: 1.5rem">
+                                            <button type="button" class="btn btn-danger" onclick="removeCancellationField({{ $index }})">Delete</button>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
+                                <div class="mb-3">
+                                    <button type="button" id="add-cancellation-field" class="btn btn-primary">Add More</button>
                                 </div>
                             </div>
 
@@ -647,7 +722,7 @@
     });
 </script>
 
-<script>
+<!-- <script>
     // Toggle conference options visibility based on the selection
     function toggleConferenceOptions() {
         var conferenceSelect = document.getElementById('conference');
@@ -708,84 +783,51 @@
         var field = document.getElementById('conference-field-' + index);
         field.remove();
     }
-</script>
-
+</script> -->
+<!-- Cancellation type -->
 <script>
-    // Toggle cancellation options visibility based on the cancellation type
-    function toggleCancellationOptions() {
-        var cancellationSelect = document.getElementById('cancellation_type');
-        var cancellationOptions = document.getElementById('cancellation-options');
+    // Initialize cancellation options and toggle visibility based on selection
+    document.addEventListener('DOMContentLoaded', function () {
+        const cancellationType = document.getElementById('cancellation_type');
+        const cancellationOptions = document.getElementById('cancellation-options');
+        const fieldsContainer = document.getElementById('cancellation-fields');
+        let index = fieldsContainer.querySelectorAll('.cancellation-rule').length;
 
-        if (cancellationSelect.value == '1') {
-            cancellationOptions.style.display = 'contents';
-        } else {
-            cancellationOptions.style.display = 'none';
+        // Toggle visibility on change
+        cancellationType.addEventListener('change', function () {
+            cancellationOptions.style.display = this.value == '1' ? '' : 'none';
+        });
+
+        // Add new cancellation field dynamically
+        document.getElementById('add-cancellation-field').addEventListener('click', function () {
+            const fieldHTML = `
+                <div class="row mb-3 cancellation-rule" id="cancellation-rule-${index}">
+                    <div class="col-md-5">
+                        <label class="form-label"><strong>Duration</strong></label>
+                        <input type="text" class="form-control" name="cancellation_duration[]" placeholder="Enter Duration">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label"><strong>Price</strong></label>
+                        <input type="number" class="form-control" name="cancellation_price[]" placeholder="Enter Price">
+                    </div>
+                    <div class="col-md-2" style="margin-top: 1.5rem">
+                        <button type="button" class="btn btn-danger" onclick="removeCancellationField(${index})">Delete</button>
+                    </div>
+                </div>`;
+            fieldsContainer.insertAdjacentHTML('beforeend', fieldHTML);
+            index++; // Increment the index for the next field
+        });
+    });
+
+    // Function to remove a cancellation field dynamically
+    function removeCancellationField(index) {
+        var field = document.getElementById('cancellation-rule-' + index);
+        if (field) {
+            field.remove(); // Remove the specific cancellation field
         }
     }
-
-    // Initialize cancellation options visibility on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleCancellationOptions();
-    });
-
-    // Function to add new cancellation fields
-    @if(!empty($hotel->cancellation_data) && is_array(json_decode($hotel->cancellation_data, true)))
-    let cancellationIndex = {{ count(json_decode($hotel->cancellation_data, true)) }};
-    function addCancellationField() {
-        var newField = document.createElement('div');
-        newField.classList.add('cancellation-field');
-        newField.classList.add('mb-3');
-        newField.classList.add('col-md-12');
-        newField.id = 'cancellation-field-' + cancellationIndex;
-
-        newField.innerHTML = `
-            <div class="row">
-                <div class="mb-3 col-md-4">
-                    <label for="cancellation_duration" class="form-label"><strong>Duration</strong></label>
-                    <input type="text" class="form-control" name="cancellation_duration[]" placeholder="Enter Duration">
-                </div>
-                <div class="mb-3 col-md-4">
-                    <label for="cancellation_price" class="form-label"><strong>Price</strong></label>
-                    <input type="number" class="form-control" name="cancellation_price[]" placeholder="Enter Price">
-                </div>
-                <div class="col-md-12">
-                    <button type="button" class="btn btn-danger" onclick="removeCancellationField(${cancellationIndex})">Delete</button>
-                </div>
-            </div>
-        `;
-        
-        // Append the new cancellation field to the container
-        document.getElementById('cancellation-additional-fields').appendChild(newField);
-        cancellationIndex++;
-    }
-    @else
-        let cancellationIndex = 0;
-    @endif
-
-    // Function to remove a cancellation field
-    function removeCancellationField(index) {
-        var field = document.getElementById('cancellation-field-' + index);
-        field.remove();
-    }
-
-
-        // Key Locations
-        $('#locations-add-more').on('click', function () {
-        const newLocationFields = `
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="location" class="form-label"><strong>Location Name</strong></label>
-                    <input type="text" class="form-control" name="location[]" placeholder="Enter Location">
-                </div>
-                <div class="col-md-4">
-                    <label for="conference_duration" class="form-label"><strong>Distance</strong></label>
-                    <input type="text" class="form-control" name="distance[]" placeholder="Enter Distance">
-                </div>
-            </div>
-        `;
-        $('#locations-additional-fields').append(newLocationFields);
-    });
 </script>
+
 
 <script>
     let currentIndex = 0;
@@ -980,4 +1022,83 @@
     });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Toggle visibility for Others fields
+    document.getElementById('others').addEventListener('change', function() {
+        const othersFieldsContainer = document.getElementById('others_fields_container');
+        othersFieldsContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Show/hide "Specify Port Name" field based on "Other" selection in Port Name dropdown
+    document.querySelectorAll('.port-name-select').forEach(function (selectElement) {
+        selectElement.addEventListener('change', function() {
+            const othersInputContainer = this.closest('.row').querySelector('.others-input-container');
+            othersInputContainer.style.display = this.value === 'Other' ? 'block' : 'none';
+        });
+    });
+
+    // Add More functionality for Others section
+    document.getElementById('others-locations-add-more').addEventListener('click', function() {
+        const container = document.getElementById('others_locations-additional-fields');
+        const newFields = `
+            <div class="row mb-3" id="new-other-location">
+                <div class="mb-3 col-md-3">
+                    <label class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <select name="others_port_name[]" class="form-control port-name-select">
+                        <option value="">Select a Port</option>
+                        <option value="CityCenter">City Center</option>
+                        <option value="Seaport">Seaport</option>
+                        <option value="LandPort">Land Border Crossing</option>
+                        <option value="Railway">Railway</option>
+                        <option value="BusStand">Bus Stand</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="mb-3 col-md-3">
+                    <label class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="others_latitude[]" class="form-control" placeholder="Enter Latitude">
+                </div>
+
+                <div class="mb-3 col-md-3">
+                    <label class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="others_longitude[]" class="form-control" placeholder="Enter Longitude">
+                </div>
+
+                <div class="mb-3 col-md-3">
+                    <label class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                    <input type="text" name="others_distance[]" class="form-control" placeholder="Enter Distance">
+                </div>
+
+                <div class="mb-3 col-md-1">
+                    <button type="button" class="btn btn-danger remove-other-field">Delete</button>
+                </div>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', newFields);
+
+        // Reattach event listeners for newly added "Port Name" selects
+        document.querySelectorAll('.port-name-select').forEach(function (selectElement) {
+            selectElement.addEventListener('change', function() {
+                const othersInputContainer = this.closest('.row').querySelector('.others-input-container');
+                othersInputContainer.style.display = this.value === 'Other' ? 'block' : 'none';
+            });
+        });
+
+        // Add Delete functionality to new Delete button
+        document.querySelectorAll('.remove-other-field').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                this.closest('.row').remove();
+            });
+        });
+    });
+
+    // Remove delete button functionality for initially loaded fields
+    document.querySelectorAll('.remove-other-field').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            this.closest('.row').remove();
+        });
+    });
+});
+</script>
 @endsection
