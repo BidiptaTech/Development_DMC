@@ -112,7 +112,6 @@ class HotelController extends Controller
                 $request->input('latitudentry', []),
                 $request->input('longitudeentry', []),
                 $request->input('distanceentry', []),
-                $request->input('entry_name_others', [])
             );
 
             $portOfExitData = $this->processPortData(
@@ -120,7 +119,13 @@ class HotelController extends Controller
                 $request->input('exit_latitude', []),
                 $request->input('exit_longitude', []),
                 $request->input('exit_distance', []),
-                $request->input('exit_name_others', [])
+            );
+
+            $portOfOtherData = $this->processPortData(
+                $request->input('others_port_name', []),
+                $request->input('others_latitude', []),
+                $request->input('others_longitude', []),
+                $request->input('others_distance', []),
             );
 
             // Create hotel record
@@ -153,7 +158,6 @@ class HotelController extends Controller
                 'policies' => $request->input('policies'),
                 'management_comp_name' => $request->input('management_comp_name'),
                 'status' => $request->input('hotel_status'),
-
                 'weekend_days' => json_encode($request->input('weekend_days')),
                 // 'conference_data' => json_encode($conferenceData),
                 'cancellation_data' => json_encode($cancellationData),
@@ -161,7 +165,7 @@ class HotelController extends Controller
                 'facilities' => json_encode($request->input('facilities')),
                 'port_of_entry' => json_encode($portOfEntryData),
                 'port_of_exit' => json_encode($portOfExitData),
-
+                'others' => json_encode($portOfOtherData),
                 'twelve_hours_charge' => $request->input('twelve_hours_booking_price'),
                 'is_complete' => 1,
             ]);
@@ -174,7 +178,7 @@ class HotelController extends Controller
 /**
  * Helper function to process port data.
  */
-    private function processPortData($names, $latitudes, $longitudes, $distances, $others)
+    private function processPortData($names, $latitudes, $longitudes, $distances)
     {
         $data = [];
 
@@ -185,15 +189,11 @@ class HotelController extends Controller
                     'latitude' => $latitudes[$index],
                     'longitude' => $longitudes[$index],
                     'distance' => $distances[$index],
-                    'other_name' => isset($others[$index]) ? $others[$index] : null, // Check if $others index exists
                 ];
             }
         }
-
         return $data;
     }
-
-
 
     /*
     * Editing Hotel details.
@@ -204,11 +204,14 @@ class HotelController extends Controller
         $facilities = Facility::all();
         $categories = Category::where('category_type', 1)->get();
         $hotel = Hotel::findOrFail($id);
+        $cancellation_data = json_decode($hotel->cancellation_data, true) ?? [];
         $entry_data = json_decode($hotel->port_of_entry, true) ?? [];
         $exit_data = json_decode($hotel->port_of_exit, true) ?? [];
+        $others = json_decode($hotel->others, true) ?? [];
         $enable_port_of_entry = !empty($entry_data);
         $enable_port_of_exit = !empty($exit_data);
-        return view('hotel.edit-hotel', compact('categories', 'hotel','facilities','entry_data','exit_data','enable_port_of_entry','enable_port_of_exit'));
+        $others_data = !empty($others);
+        return view('hotel.edit-hotel', compact('categories', 'hotel','facilities','entry_data','exit_data','enable_port_of_entry','enable_port_of_exit','others','others_data','cancellation_data'));
     }
 
     /*
@@ -271,33 +274,37 @@ class HotelController extends Controller
 
         if ($request->cancellation_type == 1) {
             $cancellationData = [];
-            if ($request->has('cancellation_duration')) {
+            if ($request->has('cancellation_duration') && is_array($request->cancellation_duration)) {
                 foreach ($request->cancellation_duration as $index => $duration) {
                     $cancellationData[] = [
                         'duration' => $duration,
-                        'price' => $request->cancellation_price[$index] ?? null,
+                        'price' => $request->cancellation_price[$index] ?? null, // Default to null if price is missing
                     ];
                 }
             }
-            $cancellationDataJson = json_encode($cancellationData);
+            $cancellationDataJson = !empty($cancellationData) ? json_encode($cancellationData) : null;
         } else {
             $cancellationDataJson = null;
         }
-
         // Handle port of entry and exit data
         $portOfEntryData = $this->processPortData(
             $request->input('port_name', []),
             $request->input('latitudentry', []),
             $request->input('longitudentry', []),
             $request->input('distancentry', []),
-            $request->input('entry_name_others', [])
         );
         $portOfExitData = $this->processPortData(
             $request->input('exit_port_name', []),
             $request->input('exit_latitude', []),
             $request->input('exit_longitude', []),
             $request->input('exit_distance', []),
-            $request->input('exit_name_others', [])
+        );
+
+        $portOfOtherData = $this->processPortData(
+            $request->input('others_port_name', []),
+            $request->input('others_latitude', []),
+            $request->input('others_longitude', []),
+            $request->input('others_distance', []),
         );
 
         $hotel->update([
@@ -308,6 +315,7 @@ class HotelController extends Controller
             'child_age_limit' => $request->input('child_age_limit'),
             'weekend_days' => json_encode($request->weekend_days),
             '12_hour_book' => $request->input('date_range'),
+            'twelve_hours_charge' => $request->input('day_usage_price'),
             'conference_room' => $request->input('conference'),
             // 'conference_data' => $conferenceDataJson ?? '',
             'cancellation_type' => $request->input('cancellation_type'),
@@ -333,6 +341,7 @@ class HotelController extends Controller
             'facilities' => json_encode($request->facilities),
             'port_of_entry' => !empty($portOfEntryData) ? json_encode($portOfEntryData) : $hotel->port_of_entry,
             'port_of_exit' => json_encode($portOfExitData) ?? $hotel->port_of_exit,
+            'others' => json_encode($portOfOtherData) ?? $hotel->others,
             'is_complete' => 1,
         ]);
 
