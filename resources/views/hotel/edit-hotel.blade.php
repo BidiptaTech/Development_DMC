@@ -299,6 +299,7 @@
                                 </div>
                             </div>
 
+
                              <!-- key locations -->
                              <b>Port of Entry & Port of Exit</b>
                             <hr>
@@ -437,7 +438,7 @@
                                     </div>
                                 </div>
                             </div>
-                             
+
                             <!-- conference -->
                             <b>Conference Room Availability</b>
                             <hr>
@@ -519,13 +520,14 @@
                                     
                                     @endif
 
-                                    <!-- Additional fields container -->
-                                    <div id="cancellation-additional-fields"></div>
 
                                     <!-- Button to add more cancellation fields -->
-                                    <div class="mb-3 col-md-4">
-                                        <button type="button" id="cancellation-add-more" class="btn btn-primary" onclick="addCancellationField()">Add More</button>
-                                    </div>
+                                    <div class="row" id="Key_locations">
+                                <div id="locations-additional-fields"></div>
+                                <div class="mb-3 col-md-4">
+                                    <button type="button" id="locations-add-more" class="btn btn-primary">Add More</button>
+                                </div>
+                            </div>
                                 </div>
                             </div>
 
@@ -538,7 +540,6 @@
                                     type="checkbox" id="hotel_status" value="1">
                                 <label class="form-check-label"></label>
                             </div>
-
 
                             <!-- Submit and Reset Buttons -->
                             <div class="d-flex align-items-center gap-3">
