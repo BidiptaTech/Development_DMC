@@ -225,11 +225,10 @@ class HotelController extends Controller
     //         'rooms.rates', // Eager load rates for each room
     //         'rooms.RoomType' // Eager load RoomType for each room
     //     ])->find($hotelId);
-    
+
     //     if (!$hotel) {
     //         return response()->json(['message' => 'Hotel not found'], 404);
     //     }
-
     //     $roomsData = $hotel->rooms->map(function ($room) use($hotel) {
     //         $amenities = json_decode($room->facilities);
 
@@ -255,12 +254,14 @@ class HotelController extends Controller
     //                     'cancellationPolicy' => $rate->cancellation_policy ?? 'Non-Refundable',
     //                 ];
                 
+
     //             }),
     //             'amenities' => $amenities,
     //         ];
     //     });
     //     return response()->json(['data' => $roomsData], 200);
     // }
+
 
     // public function hotelDetails(Request $request)
     // {
@@ -361,6 +362,7 @@ class HotelController extends Controller
     //     return $dates;
     // }
 
+
     // /**
     //  * Calculate room price based on user type and weekend days.
     //  */
@@ -384,6 +386,3 @@ class HotelController extends Controller
 
     
 }
-
-
-

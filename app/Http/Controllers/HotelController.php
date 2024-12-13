@@ -419,24 +419,48 @@ class HotelController extends Controller
         return view('hotel.rooms', compact('hotel','rooms','roomtypes','beds'));
     }
 
+    public function hotelrates($hotelId){
+        
+        $hotel = Hotel::findOrFail($hotelId);
+        $rooms = Room::where('hotel_id', $hotelId)->get();
+        $rates = Rate::all();
+        return view('hotel.rates', compact('hotel','rooms','rates'));
+    }
+
     /*
     * Store new Rooms.
     * Date 15-11-2024
     */
     public function storeroom(Request $request)
     {
+        
         $request->validate([
-            'room_type' => 'required',
-            'max_capacity' => 'required',
-            'no_of_room' => 'required',
-            'weekday_price' => 'required',
-            'weekend_price' => 'required',
-            'hotel_status' => 'required', 
-            'extra_bed' => 'required', 
-            'child_cot' => 'required', 
+
+        'room_type' => 'required|string|max:255',
+        'no_of_room' => 'required|integer|min:1',
+        'weekday_price' => 'required|numeric|min:0',
+        'weekend_price' => 'required|numeric|min:0',
+        'breakfast' => 'required|boolean',
+        'breakfast_type' => 'nullable|string|max:255',
+        'breakfast_price' => 'nullable|numeric|min:0',
+        'lunch' => 'required|boolean',
+        'lunch_type' => 'nullable|string|max:255',
+        'lunch_price' => 'nullable|numeric|min:0',
+        'dinner' => 'required|boolean',
+        'dinner_type' => 'nullable|string|max:255',
+        'dinner_price' => 'nullable|numeric|min:0',
+        'breakfast_included' => 'required|boolean',
+        'event.*' => 'nullable|string|max:255',
+        'event_type.*' => 'nullable|string|max:255',
+        'price.*' => 'nullable|numeric|min:0',
+        'start_date.*' => 'nullable|date',
+        'end_date.*' => 'nullable|date|after:start_date',
         ]);
+
+        
+
         $lastRoom = Room::withTrashed()->orderBy('id', 'desc')->first();
-        $room_max_id = $lastRoom->room_id;
+        $room_max_id = $lastRoom->room_id ?? 0;
         $roomId = CommonHelper::createId($room_max_id);
         while (Room::where('room_id', $roomId)->exists()) {
             $roomId = CommonHelper::createId($roomId);
@@ -444,10 +468,11 @@ class HotelController extends Controller
         
         $room = new Room(); 
         $room->hotel_id = $request->id;
-        $room->room_type_id = $request->room_type;
+        $room->room_type = $request->room_type;
         $room->no_of_room = $request->no_of_room;
         $room->weekday_price = $request->weekday_price;
         $room->weekend_price = $request->weekend_price;
+
         $room->max_capacity = $request->max_capacity;
         $room->adult_count = $request->adult_count;
         $room->child_count = $request->child_count ?? 0;
@@ -461,30 +486,119 @@ class HotelController extends Controller
         $room->room_id = $roomId;
         $room->save();
 
-        foreach ($request->event as $index => $eventName) {
-            $lastRate = Rate::withTrashed()->orderBy('rate_id', 'desc')->first();
-            if ($lastRate) {
-                $rateId = $lastRate->rate_id + 1;
-            } else {
-                $rateId = 1;
-            }
-            while (Rate::where('rate_id', $rateId)->exists()) {
-                $rateId++;  
-            }
-            Rate::create([
-                'event' => $eventName,
-                'room_id' => $roomId, 
-                'hotel_id' => $request->id,
-                'rate_id' => $rateId,
-                'event_type' => $request->event_type[$index],
-                'price' => $request->price[$index],
-                'start_date' => $request->start_date[$index],
-                'end_date' => $request->end_date[$index],
-            ]);
+        // Validate the incoming request data
+        $validated = $request->validate([
+            
+            'king_bed_no_of_rooms' => 'nullable|integer',
+            'king_bed_max_occupancy' => 'nullable|integer',
+            'king_bed_adult_count' => 'nullable|integer',
+            'king_bed_child_count' => 'nullable|integer',
+            'king_bed_extra_bed' => 'nullable|boolean',
+            'king_bed_extra_bed_price' => 'nullable|numeric',
+            'king_bed_baby_cot' => 'nullable|boolean',
+            'king_bed_baby_cot_price' => 'nullable|numeric',
+            'queen_bed_no_of_rooms' => 'nullable|integer',
+            'queen_bed_max_occupancy' => 'nullable|integer',
+            'queen_bed_adult_count' => 'nullable|integer',
+            'queen_bed_child_count' => 'nullable|integer',
+            'queen_bed_extra_bed' => 'nullable|boolean',
+            'queen_bed_extra_bed_price' => 'nullable|numeric',
+            'queen_bed_baby_cot' => 'nullable|boolean',
+            'queen_bed_baby_cot_price' => 'nullable|numeric',
+            'twin_bed_no_of_rooms' => 'nullable|integer',
+            'twin_bed_max_occupancy' => 'nullable|integer',
+            'twin_bed_adult_count' => 'nullable|integer',
+            'twin_bed_child_count' => 'nullable|integer',
+            'twin_bed_extra_bed' => 'nullable|boolean',
+            'twin_bed_extra_bed_price' => 'nullable|numeric',
+            'twin_bed_baby_cot' => 'nullable|boolean',
+            'twin_bed_baby_cot_price' => 'nullable|numeric',
+        ]);
+
+        $lastBed = Bed::withTrashed()->orderBy('id', 'desc')->first();
+        $bed_max_id = $lastBed->bedId ?? 0;
+        $bedId = CommonHelper::createId($bed_max_id);
+        while (Bed::where('bedId', $bedId)->exists()) {
+            $bedId = CommonHelper::createId($bedId);
         }
+
+        $lastRoomId = Room::latest()->value('room_id');
+
+        // Create a new RoomBed instance and save to database
+        
+        $bed = new Bed();
+
+        $bed->king_bed_no_of_rooms = $validated['king_bed_no_of_rooms'] ?? 0;
+        $bed->king_bed_max_occupancy = $validated['king_bed_max_occupancy'] ?? 0;
+        $bed->king_bed_adult_count = $validated['king_bed_adult_count'] ?? 0;
+        $bed->king_bed_child_count = $validated['king_bed_child_count'] ?? 0;
+        $bed->king_bed_extra_bed = $validated['king_bed_extra_bed'] ?? false;
+        $bed->king_bed_extra_bed_price = $validated['king_bed_extra_bed_price'] ?? 0.00;
+        $bed->king_bed_baby_cot = $validated['king_bed_baby_cot'] ?? false;
+        $bed->king_bed_baby_cot_price = $validated['king_bed_baby_cot_price'] ?? 0.00;
+
+        $bed->queen_bed_no_of_rooms = $validated['queen_bed_no_of_rooms'] ?? 0;
+        $bed->queen_bed_max_occupancy = $validated['queen_bed_max_occupancy'] ?? 0;
+        $bed->queen_bed_adult_count = $validated['queen_bed_adult_count'] ?? 0;
+        $bed->queen_bed_child_count = $validated['queen_bed_child_count'] ?? 0;
+        $bed->queen_bed_extra_bed = $validated['queen_bed_extra_bed'] ?? false;
+        $bed->queen_bed_extra_bed_price = $validated['queen_bed_extra_bed_price'] ?? 0.00;
+        $bed->queen_bed_baby_cot = $validated['queen_bed_baby_cot'] ?? false;
+        $bed->queen_bed_baby_cot_price = $validated['queen_bed_baby_cot_price'] ?? 0.00;
+
+        $bed->twin_bed_no_of_rooms = $validated['twin_bed_no_of_rooms'] ?? 0;
+        $bed->twin_bed_max_occupancy = $validated['twin_bed_max_occupancy'] ?? 0;
+        $bed->twin_bed_adult_count = $validated['twin_bed_adult_count'] ?? 0;
+        $bed->twin_bed_child_count = $validated['twin_bed_child_count'] ?? 0;
+        $bed->twin_bed_extra_bed = $validated['twin_bed_extra_bed'] ?? false;
+        $bed->twin_bed_extra_bed_price = $validated['twin_bed_extra_bed_price'] ?? 0.00;
+        $bed->twin_bed_baby_cot = $validated['twin_bed_baby_cot'] ?? false;
+        $bed->twin_bed_baby_cot_price = $validated['twin_bed_baby_cot_price'] ?? 0.00;
+        $bed->bedId = $bedId;
+        $bed->room_id = $lastRoomId;
+
+        $bed->save();
+        
         if ($room->save()) {
             return redirect()->back()
                 ->with('success', 'Room details saved successfully!');
+        } else {
+            return redirect()->back()
+                ->with('error', 'An error occurred while saving the room details.');
+        }
+    }
+
+    /**
+     * store rates
+     * 
+     */
+    public function storerates(Request $request){
+
+        $lastRoomId = Room::latest()->value('room_id');
+        $lastRate = Rate::withTrashed()->orderBy('rate_id', 'desc')->first();
+        if ($lastRate) {
+            $rateId = $lastRate->rate_id + 1;
+        } else {
+            $rateId = 1;
+        }
+        while (Rate::where('rate_id', $rateId)->exists()) {
+            $rateId++;  
+        }
+
+        $rate = Rate::create([
+            'event' => $request->event,
+            'room_id' => $lastRoomId, 
+            'hotel_id' => $request->id,
+            'rate_id' => $rateId,
+            'event_type' => $request->event_type,
+            'price' => $request->price,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+        ]);
+
+        if ($rate->save()) {
+            return redirect()->back()
+                ->with('success', 'Rates details saved successfully!');
         } else {
             return redirect()->back()
                 ->with('error', 'An error occurred while saving the room details.');

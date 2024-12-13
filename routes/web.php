@@ -65,6 +65,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/hotels/{hotel}/contact', [HotelController::class, 'hotelcontacts'])->name('hotels.contact');
         Route::post('/updatecontacts', [HotelController::class, 'updatecontacts'])->name('hotels.createcontacts');
         Route::get('/hotels/{hotel}/room', [HotelController::class, 'hotelrooms'])->name('hotels.room');
+
+        Route::get('/hotels/{hotel}/rates', [HotelController::class, 'hotelrates'])->name('hotels.rates');
+        Route::post('storerates', [HotelController::class, 'storerates'])->name('storerates');
+
         Route::get('/editcontacts/{hotel}', [HotelController::class, 'editcontacts'])->name('contactdetails.edit');
         Route::post('storeroom', [HotelController::class, 'storeroom'])->name('storeroom');
         Route::get('editroom/{id}', [HotelController::class, 'editroom'])->name('rooms.edit');

@@ -1058,3 +1058,11 @@ form select.error:focus {
 .form-check-label-highlighter .form-check-input:checked[type=checkbox] ~ .form-check-label, .form-check-label-highlighter .form-check-input:checked[type=radio] ~ .form-check-label {
   border-color: #377dff;
 }/*# sourceMappingURL=main.css.map */
+
+.dashed-border {
+  border: 2px dashed #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px; /* or more */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
+}
