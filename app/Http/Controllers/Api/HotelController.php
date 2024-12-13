@@ -225,6 +225,7 @@ class HotelController extends Controller
                 'location' => $hotel->city,
                 'star' => $category ? $category->name : 'Unknown', // Handle missing category
                 'image'=>$hotel->main_image ?? '',
+                'side_images' => $hotel->images,
                 'amenities' => $relatedFacilities->map(function ($amenity) {
                     return [
                         'id' => $amenity->id,
@@ -414,9 +415,5 @@ private function calculateRoomPrice($room, array $weekendDays, $user)
             return $room->weekday_price; // Default to weekday price for other user types
     }
 }
-
     
 }
-
-
-
