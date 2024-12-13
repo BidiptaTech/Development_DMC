@@ -1,16 +1,12 @@
 @extends('layouts.layout')
-
 @section('title', 'Edit Hotel')
-@section('css')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.css" rel="stylesheet">
-@endsection
-
 @section('script')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.js"></script>
 @endsection
 
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 <div class="page-content">
     <div class="page-container">
         <div class="row justify-content-center">
@@ -107,7 +103,7 @@
 
                                 <!-- State -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="state" class="form-label"><strong>State</strong>
+                                    <label for="state" class="form-label"><strong>State/Provision</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
                                     <input type="text" class="form-control" id="state" name="state" value="{{ old('state', $hotel->state) }}" placeholder="Enter State" required>
@@ -129,7 +125,7 @@
 
                                 <!-- Zip code -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="pincode" class="form-label"><strong>Zip Code</strong>
+                                    <label for="pincode" class="form-label"><strong>Postal Code</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
                                     <input type="number" class="form-control" id="pincode" name="pincode" value="{{ old('zipcode', $hotel->zipcode) }}" placeholder="Enter Zip Code" required>
@@ -183,61 +179,6 @@
                                 </div>
 
                                 <div class="mb-3 col-md-4">
-                                    <label for="breakfast" class="form-label"><strong>Breakfast</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="breakfast" id="breakfast" class="form-control" required onchange="toggleMealOptions('breakfast')">
-                                        <option value="">Select an option</option>
-                                        <option value="1" {{ old('breakfast', $hotel->includes_breakfast) == 1 ? 'selected' : '' }}>Available</option>
-                                        <option value="0" {{ old('breakfast', $hotel->includes_breakfast) == 0 ? 'selected' : '' }}>Not Available</option>
-                                    </select>
-                                </div>
-
-                                <div class="row" id="breakfast-options" style="{{ old('breakfast', $hotel->breakfast) == 1 ? 'display: block;' : 'display: none;' }}">
-                                    <div class="mb-3 col-md-4">
-                                        <label for="breakfast_type" class="form-label"><strong>Breakfast Type</strong></label>
-                                        <select name="breakfast_type" id="breakfast_type" class="form-control">
-                                            <option value="">Select a type</option>
-                                            <option value="0" {{ old('breakfast_type', (string) $hotel->breakfast_type) === '0' ? 'selected' : '' }}>Buffet</option>
-                                            <option value="1" {{ old('breakfast_type', (string) $hotel->breakfast_type) === '1' ? 'selected' : '' }}>Set Buffet</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3 col-md-4">
-                                        <label for="breakfast_price" class="form-label"><strong>Breakfast Price</strong></label>
-                                        <input type="number" name="breakfast_price" id="breakfast_price" class="form-control" placeholder="Enter price" value="{{ old('breakfast_price', $hotel->breakfast_price) }}">
-                                    </div>
-                                </div>
-
-                                <div class="mb-3 col-md-4">
-                                    <label for="lunch" class="form-label"><strong>Lunch</strong></label>
-                                    <select name="lunch" id="lunch" class="form-control" required onchange="toggleMealOptions('lunch')">
-                                        <option value="">Select an option</option>
-                                        <option value="1" {{ old('lunch', $hotel->includes_lunch) == 1 ? 'selected' : '' }}>Available</option>
-                                        <option value="0" {{ old('lunch', $hotel->includes_lunch) == 0 ? 'selected' : '' }}>Not Available</option>
-                                    </select>
-                                </div>
-
-                                <div class="row" id="lunch-options" style="{{ old('lunch', $hotel->lunch) == 1 ? 'display: block;' : 'display: none;' }}">
-                                    <div class="mb-3 col-md-4">
-                                        <label for="lunch_price" class="form-label"><strong>Lunch Price</strong></label>
-                                        <input type="number" name="lunch_price" id="lunch_price" class="form-control" placeholder="Enter price" value="{{ old('lunch_price', $hotel->lunch_price) }}">
-                                    </div>
-                                </div>
-                                <div class="mb-3 col-md-4">
-                                    <label for="dinner" class="form-label"><strong>Dinner</strong></label>
-                                    <select name="dinner" id="dinner" class="form-control" required onchange="toggleMealOptions('dinner')">
-                                        <option value="">Select an option</option>
-                                        <option value="1" {{ old('dinner', $hotel->includes_dinner) == 1 ? 'selected' : '' }}>Available</option>
-                                        <option value="0" {{ old('dinner', $hotel->includes_dinner) == 0 ? 'selected' : '' }}>Not Available</option>
-                                    </select>
-                                </div>
-
-                                <div class="row" id="dinner-options" style="{{ old('dinner', $hotel->dinner) == 1 ? 'display: block;' : 'display: none;' }}">
-                                    <div class="mb-3 col-md-4">
-                                        <label for="dinner_price" class="form-label"><strong>Dinner Price</strong></label>
-                                        <input type="number" name="dinner_price" id="dinner_price" class="form-control" placeholder="Enter price" value="{{ old('dinner_price', $hotel->dinner_price) }}">
-                                    </div>
-                                </div>
-
-                                <div class="mb-3 col-md-4">
                                     <label for="infant_age_limit" class="form-label"><strong>Infant Upper Age Limit</strong></label>
                                     <input type="number" class="form-control" id="infant_age_limit" name="infant_age_limit" value="{{ old('infant_age_limit', $hotel->infant_age_limit) }}" placeholder="Enter Infant Age Limit">
                                 </div>
@@ -286,39 +227,53 @@
                                 <div class="mb-3 col-md-4">
                                     <label for="images" class="form-label"><strong>Additional Images</strong></label>
                                     <input type="file" class="form-control" id="images" name="images[]" multiple>
+
+                                    <!-- Display existing images -->
+                                    <div class="mt-3">
+                                        <div class="image-slider-container" style="position: relative; overflow: hidden;">
+                                            <div class="image-slider d-flex" style="transition: transform 0.5s ease;">
+                                                @if(!empty($hotel->images))
+                                                    @foreach(json_decode($hotel->images, true) as $image)
+                                                        <div class="col-md-4 mb-3" style="flex-shrink: 0; width: 33.33%;"> <!-- 3 images per row -->
+                                                            <a href="{{ $image }}" target="_blank" data-lightbox="hotel-images" data-title="Hotel Image">
+                                                                <img src="{{ $image }}" alt="Hotel Image" class="img-thumbnail" style="width: 100%; height: auto;">
+                                                            </a>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <p>No images uploaded yet.</p>
+                                                @endif
+                                            </div>
+                                            <button class="slider-arrow left" onclick="moveSlide(-1)" type="button" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px 15px; font-size: 18px; cursor: pointer; border-radius: 50%;">&lt;</button>
+                                            <button class="slider-arrow right" onclick="moveSlide(1)" type="button" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px 15px; font-size: 18px; cursor: pointer; border-radius: 50%;">&gt;</button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- 12 hours booking available -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="booking_available" class="form-label"><strong>12 Hours Booking Available</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <select name="booking_available" id="booking_available" class="form-control" required>
-                                        <option value="">Select an option</option>
-                                        <option value="1" {{ $hotel->{'12_hour_book'} == 1 ? 'selected' : '' }}>Available</option>
-                                        <option value="0"  {{ $hotel->{'12_hour_book'} == 0 ? 'selected' : '' }}>Not Available</option>
-                                    </select>
-                                </div>
-
-                                <div class="row"  id="12_hours_booking_price" style="display: none;">
-                                    <div class="mb-3 col-md-4">
-                                        <label for="12_hours_booking_price" class="form-label"><strong>12 Hours Booking Price</strong></label>
-                                        <input type="number" name="twelve_hours_booking_price" id="12_hours_booking_price" class="form-control" placeholder="Enter price">
+                                    <label for="date_range" class="form-label"><strong>Day Use Range</strong></label>
+                                    <div class="input-group">
+                                        <input type="text" id="date_range" name="date_range" class="form-control" 
+                                            value="{{ old('date_range', $hotel->{'12_hour_book'} ?? '') }}" 
+                                            placeholder="Select date range">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Description -->
-                                <div class="mb-3 col-md-6">
+                                <div class="mb-3 col-md-4">
                                     <label for="description" class="form-label"><strong>Description</strong><span style="color: red; font-weight: bold;">*</span></label>
                                     <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description" required>{{ old('description', $hotel->description) }}</textarea>
                                 </div>
                                 <!-- Policies -->
-                                <div class="mb-3 col-md-6">
+                                <div class="mb-3 col-md-4">
                                     <label for="policies" class="form-label"><strong>Policies</strong><span style="color: red; font-weight: bold;">*</span></label>
                                     <textarea class="form-control" id="policies" name="policies" rows="4" placeholder="Enter Policies" required>{{ old('description', $hotel->description) }}</textarea>
                                 </div>
-
-                                
                             </div>
-                            <!-- Facilities Selection (loaded dynamically) -->
                             <div class="mb-3">
                                 <label for="facilities" class="form-label"><strong>Select Facilities</strong></label>
                                 <div id="facilities-container" class="d-flex flex-wrap">
@@ -340,46 +295,149 @@
                                         </label>
                                     </div>
                                     @empty
-                                        
                                     @endforelse
-                                    
                                 </div>
                             </div>
 
-                            <!-- Key Locations -->
-<b>Key Locations</b>
-<hr>
 
-<div id="key-locations-wrapper">
-    @if(!empty($keyLandmarks))
-        @foreach($keyLandmarks as $index => $landmark)
-            <div class="row key-location-row">
-                <div class="mb-3 col-md-4">
-                    <label for="location-{{ $index }}" class="form-label"><strong>Location</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="location[]" id="location-{{ $index }}" class="form-control" required value="{{ $landmark['location'] }}">
-                    @error('location')
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="mb-3 col-md-4">
-                    <label for="distance-{{ $index }}" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                    <input type="text" name="distance[]" id="distance-{{ $index }}" class="form-control" required value="{{ $landmark['distance'] }}">
-                    @error('distance')
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-        @endforeach
-    @endif
-</div>
+                             <!-- key locations -->
+                             <b>Port of Entry & Port of Exit</b>
+                            <hr>
 
-<div class="row" id="Key_locations">
-    <div id="locations-additional-fields"></div>
-    <div class="mb-3 col-md-4">
-        <button type="button" id="locations-add-more" class="btn btn-primary">Add More</button>
-    </div>
-</div>
+                            <!-- Port of Entry Section -->
+                            <div class="row">
+                                <div class="mb-3 col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="port_of_entry" name="enable_port_of_entry" class="form-check-input" 
+                                            {{ old('enable_port_of_entry', $enable_port_of_entry ?? false) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="port_of_entry"><strong>Enable Port of Entry</strong></label>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <!-- Port of Entry Fields Container -->
+                            <div id="entry_fields_container" style="{{ old('enable_port_of_entry', $entry_data ? true : false) ? '' : 'display: none;' }}">
+                                @foreach($entry_data as $index => $entry)
+                                <div class="row" id="entry_fields_{{ $index }}">
+                                    <!-- Port Name Select Box -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="port_name_{{ $index }}" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <select id="port_name_{{ $index }}" name="port_name[]" class="form-control">
+                                            <option value="">Select a Port</option>
+                                            <option value="Airport" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Airport' ? 'selected' : '' }}>Airport</option>
+                                            <option value="Seaport" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Seaport' ? 'selected' : '' }}>Seaport</option>
+                                            <option value="Land Port" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Land Port' ? 'selected' : '' }}>Land Port</option>
+                                            <option value="Others" {{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Others' ? 'selected' : '' }}>Others</option>
+                                        </select>
+                                    </div>
+                                    <!-- Latitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="latitude_{{ $index }}" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="latitude[]" class="form-control" placeholder="Enter Latitude" value="{{ old('latitude.' . $index, $entry['latitude'] ?? '') }}">
+                                    </div>
+                                    <!-- Longitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="longitude_{{ $index }}" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="longitude[]" class="form-control" placeholder="Enter Longitude" value="{{ old('longitude.' . $index, $entry['longitude'] ?? '') }}">
+                                    </div>
+                                    <!-- Distance Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="distance_{{ $index }}" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="distance[]" class="form-control" placeholder="Enter Distance" value="{{ old('distance.' . $index, $entry['distance'] ?? '') }}">
+                                    </div>
+                                    <div class="mb-3 col-md-3 others-input-container" 
+                                        style="{{ old('port_name.' . $index, $entry['port_name'] ?? '') == 'Others' ? '' : 'display: none;' }}">
+                                        <label class="form-label">
+                                            <strong>Specify Port Name</strong>
+                                            <span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <input type="text" 
+                                            name="entry_name_others[]" 
+                                            class="form-control" 
+                                            placeholder="Enter Port Name" 
+                                            value="{{ old('entry_name_others.' . $index, $entry['other_name'] ?? '') }}">
+                                    </div>
+
+                                    <!-- Delete Button -->
+                                    <div class="mb-3 col-md-1">
+                                        <button type="button" class="btn btn-danger remove-entry-field" style="margin-top: 30px;">Delete</button>
+                                    </div>
+                                </div>
+                                @endforeach
+                                <div id="entry_key_locations">
+                                    <div id="entry_locations-additional-fields"></div>
+                                    <div class="mb-3 col-md-3">
+                                        <button type="button" id="entry-locations-add-more" class="btn btn-primary">Add More</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Port of Entry Section -->
+                            <div class="row">
+                                <div class="mb-3 col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="port_of_exit" name="enable_port_of_exit" class="form-check-input" 
+                                            {{ old('enable_port_of_exit', $enable_port_of_exit ?? false) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="port_of_exit"><strong>Enable Port of Exit</strong></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Port of Exit Fields Container -->
+                            <div id="exit_fields_container" style="{{ old('enable_port_of_exit', $exit_data ? true : false) ? '' : 'display: none;' }}">
+                                @foreach($exit_data as $index => $exit)
+                                <div class="row" id="exit_fields_{{ $index }}">
+                                    <!-- Port Name Select Box -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="exit_port_name_{{ $index }}" class="form-label"><strong>Port Name</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <select id="exit_port_name_{{ $index }}" name="exit_port_name[]" class="form-control">
+                                            <option value="">Select a Port</option>
+                                            <option value="Airport" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Airport' ? 'selected' : '' }}>Airport</option>
+                                            <option value="Seaport" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Seaport' ? 'selected' : '' }}>Seaport</option>
+                                            <option value="Land Port" {{ old('exit_port_name.' . $index, $exit['port_name'] ?? '') == 'Land Port' ? 'selected' : '' }}>Land Port</option>
+                                            <option value="Others" {{ old('exit_port_name.' . $index, $entry['port_name'] ?? '') == 'Others' ? 'selected' : '' }}>Others</option>
+                                        </select>
+                                    </div>
+                                    <!-- Latitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="exit_latitude_{{ $index }}" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="exit_latitude[]" class="form-control" placeholder="Enter Latitude" value="{{ old('exit_latitude.' . $index, $exit['latitude'] ?? '') }}">
+                                    </div>
+                                    <!-- Longitude Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="exit_longitude_{{ $index }}" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="exit_longitude[]" class="form-control" placeholder="Enter Longitude" value="{{ old('exit_longitude.' . $index, $exit['longitude'] ?? '') }}">
+                                    </div>
+                                    <!-- Distance Field -->
+                                    <div class="mb-3 col-md-3">
+                                        <label for="exit_distance_{{ $index }}" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
+                                        <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance" value="{{ old('exit_distance.' . $index, $exit['distance'] ?? '') }}">
+                                    </div>
+                                    <div class="mb-3 col-md-3 others-input-container" 
+                                        style="{{ old('exit_port_name_.' . $index, $exit['port_name'] ?? '') == 'Others' ? '' : 'display: none;' }}">
+                                        <label class="form-label">
+                                            <strong>Specify Port Name</strong>
+                                            <span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <input type="text" 
+                                            name="exit_name_others[]" 
+                                            class="form-control" 
+                                            placeholder="Enter Port Name" 
+                                            value="{{ old('exit_name_others.' . $index, $exit['other_name'] ?? '') }}">
+                                    </div>
+                                    <!-- Delete Button -->
+                                    <div class="mb-3 col-md-1">
+                                        <button type="button" class="btn btn-danger remove-exit-field" style="margin-top: 30px;">Delete</button>
+                                    </div>
+                                </div>
+                                @endforeach
+                                <div id="exit_key_locations">
+                                    <div id="exit_locations-additional-fields"></div>
+                                    <div class="mb-3 col-md-3">
+                                        <button type="button" id="exit-locations-add-more" class="btn btn-primary">Add More</button>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- conference -->
                             <b>Conference Room Availability</b>
@@ -392,11 +450,10 @@
                                     <option {{ $hotel->conference_room == 1 ? 'selected' : '' }} value="1">Available</option>
                                 </select>
                             </div>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <div id="conference-options" style="{{ $hotel->conference_room == 1 ? 'display: block;' : 'display: none;' }}">
 
-                                    <!-- Existing conference fields (Pre-populated) -->
-                                    @if($hotel->conference_data)
+                                    @if($hotel->conference_data){
                                     @foreach (json_decode($hotel->conference_data, true) as $index => $conference)
                                         <div class="conference-field mb-3 col-md-12" id="conference-field-{{ $index }}">
                                             <div class="row">
@@ -421,15 +478,12 @@
                                     
                                     @endif
 
-                                    <!-- Additional fields -->
                                     <div id="conference-additional-fields"></div>
-
-                                    <!-- Button to add more fields -->
                                     <div class="mb-3 col-md-4">
                                         <button type="button" id="conference-add-more" class="btn btn-primary" onclick="addConferenceField()">Add More</button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <b>Cancellation Details</b>
                             <hr>
@@ -500,8 +554,6 @@
 @endsection
 
 @section('scripts')
-
-<!-- Script For Fetching Hotels  -->
 <script>
     $(document).ready(function () {
         $('#hotelName').select2({
@@ -533,7 +585,6 @@
     });
 </script>
 
-<!-- Script For Fetching Facilities  -->
 <script>
     $(document).ready(function () {
         $('#hotelName').on('change', function () {
@@ -586,6 +637,7 @@
         });
     });
 </script>
+
 <script>
     $(document).ready(function() {
         $('#weekend_days').select2({
@@ -594,27 +646,7 @@
         });
     });
 </script>
-<script>
-    function toggleMealOptions(mealType) {
-    var mealSelect = document.getElementById(mealType);
-    var mealOptions = document.getElementById(mealType + '-options');
 
-    if (mealSelect && mealOptions) {
-        if (mealSelect.value == '1') {
-            mealOptions.style.display = 'contents';
-        } else {
-            mealOptions.style.display = 'none';
-        }
-    }
-    }
-    document.addEventListener('DOMContentLoaded', function () {
-        // Initialize all meal options on page load
-        toggleMealOptions('breakfast');
-        toggleMealOptions('lunch');
-        toggleMealOptions('dinner');
-        toggleOptions('booking_available', '12_hours_booking_price');
-    });
-</script>
 <script>
     // Toggle conference options visibility based on the selection
     function toggleConferenceOptions() {
@@ -634,22 +666,9 @@
     });
 
     // Function to add new conference fields
-    let conferenceIndex;
 
-if ($hotel->conference_data !== null) {
-    $conferenceData = json_decode($hotel->conference_data, true);
-
-    if (is_array($conferenceData)) {
-        conferenceIndex = count($conferenceData);
-    } else {
-        conferenceIndex = 0; // Default value if conference_data is not a valid array
-    }
-} else {
-    conferenceIndex = 0; // Default value if conference_data is null
-}
-
-    
-    
+    @if(!empty($hotel->conference_data) && is_array(json_decode($hotel->conference_data, true)))
+    let conferenceIndex = {{ count(json_decode($hotel->conference_data, true)) }};
     function addConferenceField() {
         var newField = document.createElement('div');
         newField.classList.add('conference-field');
@@ -680,14 +699,17 @@ if ($hotel->conference_data !== null) {
         // Append the new conference field to the container
         document.getElementById('conference-additional-fields').appendChild(newField);
         conferenceIndex++;
-    }
-
+        }
+    @else
+        let conferenceIndex = 0;
+    @endif
     // Function to remove a conference field
     function removeConferenceField(index) {
         var field = document.getElementById('conference-field-' + index);
         field.remove();
     }
 </script>
+
 <script>
     // Toggle cancellation options visibility based on the cancellation type
     function toggleCancellationOptions() {
@@ -707,6 +729,7 @@ if ($hotel->conference_data !== null) {
     });
 
     // Function to add new cancellation fields
+    @if(!empty($hotel->cancellation_data) && is_array(json_decode($hotel->cancellation_data, true)))
     let cancellationIndex = {{ count(json_decode($hotel->cancellation_data, true)) }};
     function addCancellationField() {
         var newField = document.createElement('div');
@@ -735,6 +758,9 @@ if ($hotel->conference_data !== null) {
         document.getElementById('cancellation-additional-fields').appendChild(newField);
         cancellationIndex++;
     }
+    @else
+        let cancellationIndex = 0;
+    @endif
 
     // Function to remove a cancellation field
     function removeCancellationField(index) {
@@ -760,4 +786,198 @@ if ($hotel->conference_data !== null) {
         $('#locations-additional-fields').append(newLocationFields);
     });
 </script>
+
+<script>
+    let currentIndex = 0;
+    function moveSlide(direction) {
+        const images = document.querySelector('.image-slider');
+        const totalImages = document.querySelectorAll('.image-slider .col-md-4').length;
+        const imagesToShow = 3; 
+        currentIndex += direction;
+        if (currentIndex < 0) {
+            currentIndex = Math.ceil(totalImages / imagesToShow) - 1;
+        } else if (currentIndex >= Math.ceil(totalImages / imagesToShow)) {
+            currentIndex = 0;
+        }
+        const offset = -(currentIndex * (imagesToShow * 100 / totalImages)) + "%";
+        images.style.transform = `translateX(${offset})`;
+    }
+
+</script>
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#date_range').daterangepicker({
+            opens: 'right', // Opens to the right of the input
+            autoApply: true, // Automatically apply the selected range
+            locale: {
+                format: 'MM/DD/YYYY', // Format of the dates
+                separator: ' - ', // Separator between start and end dates
+                applyLabel: "Apply",
+                cancelLabel: "Clear"
+            }
+        });
+        $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+    });
+</script>
+<script>
+   document.addEventListener('DOMContentLoaded', function () {
+    // Handle Port of Entry Toggle
+    const portOfEntryCheckbox = document.getElementById('port_of_entry');
+    const entryFieldsContainer = document.getElementById('entry_fields_container');
+
+    portOfEntryCheckbox.addEventListener('change', function () {
+        entryFieldsContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Handle Add More for Port of Entry
+    const entryAddMoreButton = document.getElementById('entry-locations-add-more');
+    const entryAdditionalFieldsContainer = document.getElementById('entry_locations-additional-fields');
+
+    entryAddMoreButton.addEventListener('click', function () {
+        const newEntryContainer = document.createElement('div');
+        newEntryContainer.classList.add('mt-3', 'border', 'p-3');
+        newEntryContainer.innerHTML = `
+            
+            <div class="entry-input-fields mt-3">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="port_type">Port Name</label>
+                        <select name="port_name[]" class="form-select port-type-select">
+                            <option value="">Select a Port</option>
+                            <option value="Airport">Airport</option>
+                            <option value="Seaport">Seaport</option>
+                            <option value="Landport">Landport</option>
+                            <option value="Others">Others</option>
+                        </select>
+                        <input type="text" name="entry_name_others[]" class="form-control mt-2 other-port-input" placeholder="Specify Other Port" style="display: none;">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="latitude">Latitude</label>
+                        <input type="text" name="latitudentry[]" class="form-control" placeholder="Enter Latitude">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="longitude">Longitude</label>
+                        <input type="text" name="longitudentry[]" class="form-control" placeholder="Enter Longitude">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="distance">Distance</label>
+                        <input type="text" name="distancentry[]" class="form-control" placeholder="Enter Distance">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger delete-entry">Delete</button>
+            </div>
+        `;
+        entryAdditionalFieldsContainer.appendChild(newEntryContainer);
+
+        const portTypeSelect = newEntryContainer.querySelector('.port-type-select');
+        const otherPortInput = newEntryContainer.querySelector('.other-port-input');
+
+        portTypeSelect.addEventListener('change', function () {
+            otherPortInput.style.display = this.value === 'Others' ? 'block' : 'none';
+        });
+
+        const deleteButton = newEntryContainer.querySelector('.delete-entry');
+        deleteButton.addEventListener('click', function () {
+            newEntryContainer.remove();
+        });
+    });
+
+    // Handle Port of Exit Toggle
+    const portOfExitCheckbox = document.getElementById('port_of_exit');
+    const exitFieldsContainer = document.getElementById('exit_fields_container');
+
+    portOfExitCheckbox.addEventListener('change', function () {
+        exitFieldsContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Handle Add More for Port of Exit
+    const exitAddMoreButton = document.getElementById('exit-locations-add-more');
+    const exitAdditionalFieldsContainer = document.getElementById('exit_locations-additional-fields');
+
+    exitAddMoreButton.addEventListener('click', function () {
+        const newExitContainer = document.createElement('div');
+        newExitContainer.classList.add('mt-3', 'border', 'p-3');
+        newExitContainer.innerHTML = `
+                <div class="row">
+                    <div  class="col-md-3">
+                        <label for="exit_port_type">Port Name</label>
+                        <select name="exit_port_name[]" class="form-select port-type-select">
+                            <option value="">Select a Port</option>
+                            <option value="Airport">Airport</option>
+                            <option value="Seaport">Seaport</option>
+                            <option value="Landport">Landport</option>
+                            <option value="Others">Others</option>
+                        </select>
+                        <input type="text" name="exit_name_others[]" class="form-control mt-2 other-port-input" placeholder="Specify Other Port" style="display: none;">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="exit_latitude">Latitude</label>
+                        <input type="text" name="exit_latitude[]" class="form-control" placeholder="Enter Latitude">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="exit_longitude">Longitude</label>
+                        <input type="text" name="exit_longitude[]" class="form-control" placeholder="Enter Longitude">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="exit_distance">Distance</label>
+                        <input type="text" name="exit_distance[]" class="form-control" placeholder="Enter Distance">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger delete-exit">Delete</button>
+            </div>
+        `;
+        exitAdditionalFieldsContainer.appendChild(newExitContainer);
+
+        const portTypeSelect = newExitContainer.querySelector('.port-type-select');
+        const otherPortInput = newExitContainer.querySelector('.other-port-input');
+
+        portTypeSelect.addEventListener('change', function () {
+            otherPortInput.style.display = this.value === 'Others' ? 'block' : 'none';
+        });
+
+        const deleteButton = newExitContainer.querySelector('.delete-exit');
+        deleteButton.addEventListener('click', function () {
+            newExitContainer.remove();
+        });
+    });
+});
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.port-name-select').forEach(function (dropdown) {
+            dropdown.addEventListener('change', function () {
+                const container = this.closest('.row'); // Get the parent row
+                const othersInput = container.querySelector('.others-input-container'); // Get the "Others" input container
+                if (this.value === 'Others') {
+                    othersInput.style.display = 'block';
+                } else {
+                    othersInput.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.remove-entry-field').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('.row');
+                row.remove();
+            });
+        });
+        document.querySelectorAll('.remove-exit-field').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('.row');
+                row.remove();
+            });
+        });
+    });
+</script>
+
 @endsection

@@ -17,10 +17,13 @@ class Room extends Model
     {
         return $this->hasMany(Rate::class, 'room_id', 'room_id'); // A room can have multiple rates
     }
+
     public function hotel(){
         return $this->belongsTo(Hotel::class,'hotel_id');
     }
-    public function RoomType(){
-        return $this->belongsTo(RoomType::class,'room_type_id');
+
+    public function beds()
+    {
+        return $this->hasMany(Bed::class, 'room_id'); 
     }
 }
