@@ -498,7 +498,6 @@ class HotelController extends Controller
         $room->breakfast_included = $request->breakfast_included;
        
         $room->status = $request->hotel_status;
-        $room->is_complete = 1;
         $room->room_id = $roomId;
         $room->save();
         
