@@ -442,13 +442,12 @@ class HotelController extends Controller
     */
     public function storeroom(Request $request)
     {
-        
         $request->validate([
 
-        'room_type' => 'required|string|max:255',
-        'no_of_room' => 'required|integer|min:1',
-        'weekday_price' => 'required|numeric|min:0',
-        'weekend_price' => 'required|numeric|min:0',
+        // 'room_type' => 'required|string|max:255',
+        // 'no_of_room' => 'required|integer|min:1',
+        // 'weekday_price' => 'required|numeric|min:0',
+        // 'weekend_price' => 'required|numeric|min:0',
         'breakfast' => 'required|boolean',
         'breakfast_type' => 'nullable|string|max:255',
         'breakfast_price' => 'nullable|numeric|min:0',
@@ -476,24 +475,33 @@ class HotelController extends Controller
         }
         
         $room = new Room(); 
+       
+        
         $room->hotel_id = $request->id;
-        $room->room_type = $request->room_type;
+        $room->room_type = $request->base_room_type ? $request->base_room_type : $request->room_type;
         $room->no_of_room = $request->no_of_room;
-        $room->weekday_price = $request->weekday_price;
-        $room->weekend_price = $request->weekend_price;
+        $room->weekday_price = $request->base_weekday_price ? $request->base_weekday_price : $request->weekday_price;
+        $room->weekend_price = $request->base_weekend_price ? $request->base_weekend_price : $request->weekend_price;
+        $room->varient_price = $request->varient_price??0;
 
-        $room->max_capacity = $request->max_capacity;
-        $room->adult_count = $request->adult_count;
-        $room->child_count = $request->child_count ?? 0;
-        $room->extra_bed = $request->extra_bed;
-        $room->bed_type = $request->bed_type;
-        $room->extra_bed_price = $request->extra_bed_price;
-        $room->child_cot = $request->child_cot;
-        $room->child_cot_price = $request->child_cot_price;
+        $room->breakfast = $request->breakfast;
+        $room->breakfast_type = $request->breakfast_type;
+        $room->breakfast_price = $request->breakfast_price;
+
+        $room->lunch = $request->lunch;
+        $room->lunch_type = $request->lunch_type;
+        $room->lunch_price = $request->lunch_price;
+
+        $room->dinner = $request->dinner;
+        $room->dinner_type = $request->dinner_type;
+        $room->dinner_price = $request->dinner_price;
+        $room->breakfast_included = $request->breakfast_included;
+       
         $room->status = $request->hotel_status;
         $room->is_complete = 1;
         $room->room_id = $roomId;
         $room->save();
+        
 
         // Validate the incoming request data
         $validated = $request->validate([
@@ -601,6 +609,8 @@ class HotelController extends Controller
             'rate_id' => $rateId,
             'event_type' => $request->event_type,
             'price' => $request->price,
+            'weekday_price' => $request->weekday_price ? $request->weekday_price : 0.00,
+            'weekend_price' => $request->weekend_price ? $request->weekend_price : 0.00,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ]);
@@ -615,15 +625,52 @@ class HotelController extends Controller
     }
 
     /*
+    * Edit Rate Details .
+    * Date 15-12-2024
+    */
+    public function editrate($id, $hotelId){
+        $rate = Rate::where('rate_id', $id)->first();
+        $hotel = Hotel::where('id', $hotelId)->first();
+        
+        return view('hotel.edit-rate', compact('rate','hotel'));
+    }
+
+    public function updaterates(Request $request){
+     
+        $rate_id = $request->rate_id;
+        
+        $hotel = Hotel::where('id', $request->hotel_id)->first();
+
+        $rate = Rate::where('rate_id', $rate_id)->first();
+        $rate->event = $request->event;
+        $rate->event_type = $request->event_type;  // Correct assignment of 'event_type'
+        $rate->price = $request->price;
+        $rate->weekday_price = $request->weekday_price ? $request->weekday_price : 0.00;
+        $rate->weekend_price = $request->weekend_price ? $request->weekend_price : 0.00;
+        $rate->start_date = $request->start_date;
+        $rate->end_date = $request->end_date;
+
+        if ($rate->save()) {
+            $rates = Rate::all();
+            return view('hotel.rates', compact('hotel', 'rates'))
+                ->with('success', 'Rates details saved successfully!');
+        } else {
+            return redirect()->back()
+                ->with('error', 'An error occurred while saving the rate details.');
+        }
+    }
+
+    /*
     * Edit Room Details .
     * Date 18-11-2024
     */
     public function editroom(Request $request, $id){
         $room = Room::with('rates')->findOrFail($id);
-        $roomtypes = RoomType::where('status', 1)->get();
         $beds = Bed::where('is_active', 1)->get();
-        return view('hotel.editroom', compact('room','roomtypes','beds'));
+        return view('hotel.editroom', compact('room','beds'));
     }
+
+
 
     /*
     * Update Room Details .
@@ -646,10 +693,11 @@ class HotelController extends Controller
         $room = Room::where('room_id',$room_id->room_id)->first();
 
         // Update the room details
-        $room->room_type_id = $request->room_type;
+        $room->room_type = $request->base_room_type ? $request->base_room_type : $request->room_type;
         $room->no_of_room = $request->no_of_room;
-        $room->weekday_price = $request->weekday_price;
-        $room->weekend_price = $request->weekend_price;
+        $room->weekday_price = $request->base_weekday_price ? $request->base_weekday_price : $request->weekday_price;
+        $room->weekend_price = $request->base_weekend_price ? $request->base_weekend_price : $request->weekend_price;
+        $room->varient_price = $request->varient_price;
         $room->max_capacity = $request->max_capacity;
         $room->adult_count = $request->adult_count ?? $room->adult_count;
         $room->child_count = $request->child_count ?? $room->child_count;
@@ -696,14 +744,16 @@ class HotelController extends Controller
                 }
 
                 Rate::create([
-                    'event' => $eventName,
+                    'event' => $request->event,
                     'room_id' => $room_id->room_id, // Correctly reference the room ID
                     'hotel_id' => $request->id,
                     'rate_id' => $rateId,
-                    'event_type' => $request->event_type[$index],
-                    'price' => $request->price[$index],
-                    'start_date' => $request->start_date[$index],
-                    'end_date' => $request->end_date[$index],
+                    'event_type' => $request->event_type,
+                    'price' => $request->price,
+                    'weekday_price' => $request->weekday_price,
+                    'weekend_price' => $request->weekend_price,
+                    'start_date' => $request->start_date,
+                    'end_date' => $request->end_date,
                 ]);
             }
         }
