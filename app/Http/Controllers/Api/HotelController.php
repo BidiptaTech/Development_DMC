@@ -221,7 +221,7 @@ class HotelController extends Controller
                         'bed_type' => $bed->bed_type,
                         'bed_image' => json_decode($bed->image) ?? [],
                         'king_bed_max_occupancy' => $bed->king_bed_max_occupancy,
-                        'king_ed_adult_count' => $bed->king_ed_adult_count,
+                        'king_bed_adult_count' => $bed->king_ed_adult_count,
                         'king_bed_child_count' => $bed->king_bed_child_count,
                         'king_bed_extra_bed' => $bed->king_bed_extra_bed,
                         'king_bed_extra_bed_price' => $bed->king_bed_extra_bed_price,
