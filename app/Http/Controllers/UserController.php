@@ -162,6 +162,8 @@ class UserController extends Controller
             'phone' => $request->input('phone'),
             'email' => $request->input('email'),
             'userId' => $user->userId,
+            'markup_type' => $request->input('markup_type'), 
+            'markup_price' => $request->input('markup_price'), 
             'password' => $request->filled('password') ? bcrypt($request->input('password')) : $user->password,
         ]);
         //update user role
