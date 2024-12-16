@@ -1,313 +1,276 @@
 @extends('layouts.layout')
-
 @section('title', 'Hotels')
 @section('css')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.css" rel="stylesheet">
-@endsection
-
-@section('script')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote.min.js"></script>
+<link href="{{ URL::asset('build/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 @endsection
 
 @section('content')
 <div class="page-content">
-    <div class="page-container">
-        <div class="row justify-content-center">
-            <div class="col-lg-11 col-md-10 col-sm-12">
-                <div class="card">
-                    <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white; margin-top: 10px !important;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Edit Room Details</h5>
-                            <a href="javascript:history.back()" class="btn btn-sm btn-outline-light">
-                                <i class="mdi mdi-arrow-left"></i> Back
-                            </a>
-                        </div>
-                    </div>
-                    <x-alert />
-                    <div class="card-body p-4">
-                    <form id="hotelForm" method="POST" action="{{ route('room.update') }}" enctype="multipart/form-data">
-                    @csrf
-                    <!-- Hidden Hotel ID -->
-                    <input type="hidden" class="form-control" name="id" value="{{ $room->id }}">
-                    <div class="row">
+   <div class="page-container">
+      <!-- Add Room Details -->
+      <div class="row justify-content-center">
+         <div class="col-lg-11 col-md-10 col-sm-12">
+            <div class="card">
+               <div class="card-header text-white" style="background-color: #8e44ad;">
+                  <div class="d-flex justify-content-between align-items-center">
+                     <h5 class="mb-0">Edit Room Details</h5>
+                     <a href="javascript:history.back()" class="btn btn-sm btn-outline-light">
+                        <i class="mdi mdi-arrow-left"></i> Back
+                     </a>
+                  </div>
+               </div>
+               <x-alert />
+               <div class="card-body">
+                  <form id="hotelForm" method="POST" action="{{ route('storeroom') }}" enctype="multipart/form-data">
+                     @csrf
+                     
+
+                     <div class="row container">
                         <!-- Room Type -->
-                        <div class="col-md-3 mb-3">
-                            <label for="room_type" class="form-label"><strong>Room Type</strong>
-                                <span style="color: red; font-weight: bold;">*</span>
-                            </label>
-                            <select name="room_type" id="room_type" class="form-control" required>
-                                @foreach($roomtypes as $roomtype)
-                                    <option value="{{ $roomtype->id }}" {{ $room->room_type_id == $roomtype->id ? 'selected' : '' }}>
-                                        {{ $roomtype->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('room_type')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
+                        <div class="col-md-3 mb-3" id="base_room_type" style="display: none;">
+                           <label for="room_type" class="form-label"><strong>Room Type</strong><span class="text-danger">*</span></label>
+                           <input value={{$room->room_type}} name="room_type" class="form-control" placeholder="Enter Room Type"></input>
+                           @error('room_type')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
                         </div>
 
                         <!-- Number of Rooms -->
                         <div class="col-md-3 mb-3">
-                           <label for="no_of_room" class="form-label"><strong>No of Room</strong><span class="text-danger">*</span></label>
-                           <input type="text" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms" value="{{ $room->no_of_room }}">
-                           @error('no_of_room')
+                           <label for="no_of_room" class="form-label"><strong>No of Rooms</strong><span class="text-danger">*</span></label>
+                           <input value={{$room->no_of_room}} type="number" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms">
+                           @error('base_no_of_room')
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
                         </div>
+                        
+                        <!-- Weekday -->
+                        <div class="mb-3 col-md-3" id="base_weekday_price" style="display: none;">
+                           <label for="weekday_price" class="form-label"><strong>Weekday Price</strong></label>
+                           <input value={{$room->weekday_price}} type="number" name="base_weekday_price" class="form-control" placeholder="Enter Base weekday price">
+                       </div>
+                       <!-- Weekend Price -->
+                       <div class="mb-3 col-md-3" id="base_weekend_price" style="display: none;">
+                           <label for="weekend_price" class="form-label"><strong>Weekend Price</strong></label>
+                           <input value={{$room->weekend_price}} type="number" name="base_weekend_price" class="form-control" placeholder="Enter Base weekend price">
+                       </div>
 
-                        <div class="col-md-3 mb-3">
-                            <label for="bed_type" class="form-label"><strong>Bed Type</strong><span class="text-danger">*</span></label>
-                            <select name="bed_type" id="bed_type" class="form-control" required>
-                                <option value="">Select One</option>
-                                @foreach($beds as $bed)value="{{ $bed->bedId }}"> {{ $bed->bed_type }}
-                                    <option value="{{ $bed->bedId }}" {{ $room->bed_type == $bed->bedId ? 'selected' : '' }}>
-                                        {{ $bed->bed_type }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('bed_type')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                       <!-- dimension -->
+                       <div class="mb-3 col-md-3" id="dimension">
+                           <label for="weekend_price" class="form-label"><strong>Dimension</strong></label>
+                           <input type="text" name="dimension" class="form-control" placeholder="length x breadth">
+                       </div>
 
-                        <div class="col-md-3 mb-3">
-                           <label for="weekday_price" class="form-label"><strong>Week Day Price</strong><span class="text-danger">*</span></label>
-                           <input type="text" class="form-control" name="weekday_price" placeholder="Enter Number of Rooms" value="{{ $room->weekday_price }}">
-                           @error('weekday_price')
-                           <div class="text-danger mt-1">{{ $message }}</div>
-                           @enderror
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                           <label for="weekend_price" class="form-label"><strong>Week End Price</strong><span class="text-danger">*</span></label>
-                           <input type="text" class="form-control" name="weekend_price" placeholder="Enter Number of Rooms" value="{{ $room->weekend_price }}">
-                           @error('weekend_price')
-                           <div class="text-danger mt-1">{{ $message }}</div>
-                           @enderror
-                        </div>
-
-                        <!-- Max Capacity -->
-                        <div class="col-md-3 mb-3">
-                           <label for="occupancy" class="form-label"><strong>Maximum Occupancy</strong><span class="text-danger">*</span></label>
-                           <input type="number" id="occupancy" class="form-control" name="max_capacity" placeholder="Enter Occupancy" min="1" max="10" value="{{ $room->max_capacity }}">
-                           @error('max_capacity')
-                           <div class="text-danger mt-1">{{ $message }}</div>
-                           @enderror
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                           <label for="adult" class="form-label"><strong>Adults</strong><span class="text-danger">*</span></label>
-                           <select id="adult" class="form-control" name="adult_count" disabled>
-                            @if($room->adult_count > 0)
-                              <option value="">{{ $room->adult_count }}</option>
-                            @else
-                              <option value="">Select Adults</option>
-                            @endif
+                        <!-- Breakfast -->
+                        <div class="mb-3 col-md-3">
+                           <label for="breakfast" class="form-label"><strong>Breakfast</strong><span style="color: red; font-weight: bold;">*</span></label>
+                           <select name="breakfast" id="breakfast" class="form-control" required>
+                               <option value="">Select an option</option>
+                               <option value="1">Available</option>
+                               <option value="0">Not Available</option>
                            </select>
-                           @error('adult_count')
-                           <div class="text-danger mt-1">{{ $message }}</div>
-                           @enderror
-                        </div>
-                        <div class="col-md-3 mb-3">
-                           <label for="child" class="form-label"><strong>Children</strong><span class="text-danger">*</span></label>
-                           <select id="child" class="form-control" name="child_count" disabled>
-                           @if($room->child_count > 0)
-                              <option value="">{{ $room->child_count }}</option>
-                            @else
-                              <option value="">Select Adults</option>
-                            @endif
+                       </div>
+
+                       <div class="row" id="breakfast-options" style="display: none;">
+                           <div class="mb-3 col-md-3">
+                               <label for="breakfast_type" class="form-label"><strong>Breakfast Type</strong></label>
+                               <select name="breakfast_type" id="breakfast_type" class="form-control">
+                                   <option value="">Select a type</option>
+                                   <option value="0">Buffet</option>
+                                   <option value="1">Set Buffet</option>
+                               </select>
+                           </div>
+                           <div class="mb-3 col-md-3">
+                               <label for="breakfast_price" class="form-label"><strong>Breakfast Price</strong></label>
+                               <input type="number" name="breakfast_price" id="breakfast_price" class="form-control" placeholder="Enter price">
+                           </div>
+                       </div>
+
+                       <!-- Lunch -->
+                       <div class="mb-3 col-md-3">
+                           <label for="lunch" class="form-label"><strong>Lunch</strong><span style="color: red; font-weight: bold;">*</span></label>
+                           <select name="lunch" id="lunch" class="form-control" required>
+                               <option value="">Select an option</option>
+                               <option value="1">Available</option>
+                               <option value="0">Not Available</option>
                            </select>
-                           @error('child_count')
-                           <div class="text-danger mt-1">{{ $message }}</div>
-                           @enderror
-                        </div>
+                       </div>
 
-                        <div class="col-md-3 mb-3">
-                            <label for="extra_bed" class="form-label"><strong>Extra Bed Available</strong><span class="text-danger">*</span></label>
-                            <select name="extra_bed" id="extra_bed" class="form-control" required>
-                                <option value="">Select One</option>
-                                <option value="1" {{ old('extra_bed', $room->extra_bed) == 1 ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ old('extra_bed', $room->extra_bed) == 0 ? 'selected' : '' }}>No</option>
-                            </select>
-                            @error('extra_bed')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                       <div class="row" id="lunch-options" style="display: none;">
+                           <div class="mb-3 col-md-3">
+                               <label for="lunch_type" class="form-label"><strong>Lunch Type</strong></label>
+                               <select name="lunch_type" id="lunch_type" class="form-control">
+                                   <option value="">Select a type</option>
+                                   <option value="0">Buffet</option>
+                                   <option value="1">Set Buffet</option>
+                               </select>
+                           </div>
+                           <div class="mb-3 col-md-3">
+                               <label for="lunch_price" class="form-label"><strong>Lunch Price</strong></label>
+                               <input type="number" name="lunch_price" id="lunch_price" class="form-control" placeholder="Enter price">
+                           </div>
+                       </div>
 
-                        <div class="col-md-3 mb-3 extra-bed-price" style="display: {{ $room->extra_bed == 1 ? 'block' : 'none' }};">
-                            <label for="extra_bed_price" class="form-label"><strong>Price</strong><span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="extra_bed_price" id="extra_bed_price" value="{{ old('extra_bed_price', $room->extra_bed_price) }}" placeholder="Enter Price">
-                            @error('extra_bed_price')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                       <!-- Dinner -->
+                       <div class="mb-3 col-md-3">
+                           <label for="dinner" class="form-label"><strong>Dinner</strong><span style="color: red; font-weight: bold;">*</span></label>
+                           <select name="dinner" id="dinner" class="form-control" required>
+                               <option value="">Select an option</option>
+                               <option value="1">Available</option>
+                               <option value="0">Not Available</option>
+                           </select>
+                       </div>
 
-                        <div class="col-md-3 mb-3">
-                            <label for="child_cot" class="form-label"><strong>Baby Cot Available</strong><span class="text-danger">*</span></label>
-                            <select name="child_cot" id="child_cot" class="form-control" required>
-                                <option value="">Select One</option>
-                                <option value="1" {{ old('child_cot', $room->child_cot) == 1 ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ old('child_cot', $room->child_cot) == 0 ? 'selected' : '' }}>No</option>
-                            </select>
-                            @error('child_cot')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-3 mb-3 child-cot-price" style="display: {{ $room->child_cot == 1 ? 'block' : 'none' }};">
-                            <label for="child_cot_price" class="form-label"><strong>Price</strong><span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="child_cot_price" id="child_cot_price" value="{{ old('child_cot_price', $room->child_cot_price) }}" placeholder="Enter Price">
-                            @error('child_cot_price')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <label for="charge" class="form-label"><b>Fair And Backout Price</b><span class="text-danger">*</span></label>
-                        <hr>
-                        <div id="hotelRatesContainer">
-                            
-                            @if($room->rates != null)  <!-- Check if there are any rates available -->
-                                @foreach($room->rates as $rate)  <!-- Loop through the rates associated with the room -->
-                                    <div class="hotel-rate-form">
-                                        <div class="row">
-                                            <div class="col-md-3 mb-3">
-                                                <label for="event" class="form-label"><strong>Event Name</strong></label>
-                                                <input type="text" class="form-control" name="event[]" value="{{ old('event[]', $rate->event) }}" placeholder="Enter Event Name">
-                                            </div>
-                                            <div class="col-md-3 mb-3">
-                                                <label for="event_type" class="form-label"><strong>Event Type</strong></label>
-                                                <select class="form-control" name="event_type[]">
-                                                    <option value="">Select Event Type</option>
-                                                    <option value="Fair Date" {{ old('event_type[]', $rate->event_type) == 'Fair Date' ? 'selected' : '' }}>Fair Date</option>
-                                                    <option value="Blackout Date" {{ old('event_type[]', $rate->event_type) == 'Blackout Date' ? 'selected' : '' }}>Blackout Date</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3 mb-3">
-                                                <label for="price" class="form-label"><strong>Price</strong></label>
-                                                <input type="number" class="form-control" name="price[]" value="{{ old('price[]', $rate->price) }}" placeholder="Enter Price">
-                                            </div>
-                                            <div class="col-md-3 mb-3">
-                                                <label for="start_date" class="form-label"><strong>Start Date</strong></label>
-                                                <input type="date" class="form-control" name="start_date[]" value="{{ old('start_date[]', $rate->start_date) }}">
-                                            </div>
-                                            <!-- End Date -->
-                                            <div class="col-md-3 mb-3">
-                                                <label for="end_date" class="form-label"><strong>End Date</strong></label>
-                                                <input type="date" class="form-control" name="end_date[]" value="{{ old('end_date[]', $rate->end_date) }}">
-                                            </div>
-                                            <div class="col-md-3 mb-3 d-flex align-items-end">
-                                                <button type="button" class="btn btn-danger remove-rate">Delete</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @else
-                                <p>No rates available. Please add new rates.</p>  <!-- Message to show if no rates are available -->
-                            @endif
-                        </div>
-
-                        <div class="mb-3">
-                            <button type="button" id="addRateButton" class="btn btn-primary">Add More</button>
-                        </div>
-
-                        <!-- Status -->
+                       <div class="row" id="dinner-options" style="display: none;">
+                           <div class="mb-3 col-md-3">
+                               <label for="dinner_type" class="form-label"><strong>Dinner Type</strong></label>
+                               <select name="dinner_type" id="dinner_type" class="form-control">
+                                   <option value="">Select a type</option>
+                                   <option value="0">Buffet</option>
+                                   <option value="1">Set Buffet</option>
+                               </select>
+                           </div>
+                           <div class="mb-3 col-md-3">
+                               <label for="dinner_price" class="form-label"><strong>Dinner Price</strong></label>
+                               <input type="number" name="dinner_price" id="dinner_price" class="form-control" placeholder="Enter price">
+                           </div>
+                       </div>
                         <div class="form-check form-switch">
-                            <label for="hotel_status" class="form-label"><strong>Status</strong></label>
-                            <input type="hidden" name="hotel_status" value="0">
-                            <input class="form-check-input" name="hotel_status" 
-                                @if($room->status == 1) checked @endif 
-                                type="checkbox" id="hotel_status" value="1">
-                            <label class="form-check-label"></label>
+                           <label for="breakfast_included" class="form-label"><strong>Breakfast included</strong></label>
+                           <span style="color: red; font-weight: bold;">*</span>
+                           <input class="mb-4 form-check-input" name="breakfast_included" type="checkbox" id="breakfast_included" value="1">
+                           <label class="form-check-label"></label>
+                           @error('brakfast_included')
+                              <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
                         </div>
 
-                        <!-- Submit Button -->
-                        <div class="d-flex align-items-center gap-3">
-                            <button type="submit" class="btn btn-primary px-4">Update</button>
-                        </div>
-                    </div>
-                    </form>
-                    </div>
-                </div>
+                        <!-- Bed types -->
+                        <div>
+                           <input type="checkbox" id="king-bed" class="bed-type-checkbox" name="king_bed" value="king_bed">
+                           <label for="king-bed">King Bed</label>
+                           <hr>
+                       </div>
+                       <div name="king_bed" class="insert_king_bed_fields bed-fields" id="king-bed-fields"></div>
+                       
+                       <div>
+                           <input type="checkbox" id="queen-bed" class="bed-type-checkbox" name="queen_bed" value="queen_bed">
+                           <label for="queen-bed">Queen Bed</label>
+                           <hr>
+                       </div>
+                       <div name="queen_bed" class="insert_queen_bed_fields bed-fields" id="queen-bed-fields"></div>
+                       
+                       <div>
+                           <input type="checkbox" id="twin-bed" class="bed-type-checkbox" name="twin-bed" value="twin_bed">
+                           <label for="twin-bed">Twin Bed</label>
+                           <hr>
+                       </div>
+                       <div name="twin_bed" class="insert_twin_bed_fields bed-fields" id="twin-bed-fields"></div>
+
+                       
+                        
+                     </div>
+
+                     <div class="form-check form-switch">
+                        <label for="hotel_status" class="form-label"><strong>Status</strong></label>
+                        <span style="color: red; font-weight: bold;">*</span>
+                        <input class="form-check-input" name="hotel_status" type="checkbox" id="hotel_status" value="1">
+                        <label class="form-check-label"></label>
+                        @error('hotel_status')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
+                     </div>
+
+                     <!-- Submit Buttons -->
+                     <div class="d-flex gap-3">
+                        <a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-secondary px-4">Previous</a>
+                        <button type="submit" class="btn btn-primary px-4">Save and Add More Rooms</button>
+
+                     </div>
+                  </form>
+               </div>
             </div>
-        </div>
+         </div>
+      </div>
+
+   </div>
 </div>
 @endsection
-
-@section('scripts')
+@section('scripts') 
+<!-- DataTable Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="{{ URL::asset('build/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ URL::asset('build/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const occupancyInput = document.getElementById("occupancy");
-        const adultDropdown = document.getElementById("adult");
-        const childDropdown = document.getElementById("child");
+    $(document).ready(function() {
+        $('#example2').DataTable({
+            lengthChange: false,
+            buttons: ['copy', 'excel', 'pdf', 'print']
+        });
 
-        // Function to update adult dropdown options
-        function updateAdultOptions() {
-            const occupancy = parseInt(occupancyInput.value) || 0;
-
-            adultDropdown.innerHTML = `<option value="">Select Adults</option>`; // Reset options
-
-            if (occupancy > 0) {
-                for (let i = 1; i <= occupancy; i++) {
-                    adultDropdown.innerHTML += `<option value="${i}">${i}</option>`;
-                }
-                adultDropdown.disabled = false;
-                updateChildOptions(); // Update child options based on the new adult selection
-            } else {
-                adultDropdown.disabled = true;
-                childDropdown.disabled = true;
-            }
-        }
-
-        // Function to update child dropdown options
-        function updateChildOptions() {
-            const occupancy = parseInt(occupancyInput.value) || 0;
-            const adults = parseInt(adultDropdown.value) || 0;
-            const maxChildren = occupancy - adults;
-
-            childDropdown.innerHTML = `<option value="">Select Children</option>`; // Reset options
-
-            if (maxChildren > 0) {
-                for (let i = 0; i <= maxChildren; i++) {
-                    childDropdown.innerHTML += `<option value="${i}">${i}</option>`;
-                }
-                childDropdown.disabled = false;
-            } else {
-                childDropdown.disabled = true;
-            }
-        }
-
-        // Add event listeners
-        occupancyInput.addEventListener("input", updateAdultOptions);
-        adultDropdown.addEventListener("change", updateChildOptions);
+        $('#example2').DataTable().buttons().container().appendTo('#example2_wrapper .col-md-6:eq(0)');
     });
+
+    function setDeleteForm(action) {
+        document.getElementById('deleteForm').action = action;
+    }
 </script>
+<script>
+   function setDeleteForm(action) {
+           const test = document.getElementById('deleteForm').action = action;
+           console.log(test)
+       }
+   
+   function toggleChargeField() {
+       const chargeable = document.getElementById("cancellation_type").value;
+       const chargeField = document.getElementById("cancellation_charge_field");
+   
+       if (chargeable === "1") {
+           chargeField.style.display = "block";
+       } else {
+           chargeField.style.display = "none";
+       }
+   }
+   window.onload = function() {
+       toggleChargeField();
+   };
+</script>
+
 <script>
    document.addEventListener('DOMContentLoaded', function () {
       // Handle Extra Bed Price
       const extraBedSelect = document.getElementById('extra_bed');
       const extraBedPrice = document.querySelector('.extra-bed-price');
-      extraBedSelect.addEventListener('change', function () {
-         if (this.value === '1') {
-            extraBedPrice.style.display = 'block';
-         } else {
-            extraBedPrice.style.display = 'none';
-         }
-      });
+         if(extraBedSelect){
+            extraBedSelect.addEventListener('change', function () {
+            if (this.value === '1') {
+               extraBedPrice.style.display = 'block';
+            } else {
+               extraBedPrice.style.display = 'none';
+            }
+         });
+      }
+      
 
       // Handle Child Cot Price
       const childCotSelect = document.getElementById('child_cot');
       const childCotPrice = document.querySelector('.child-cot-price');
-      childCotSelect.addEventListener('change', function () {
-         if (this.value === '1') {
-            childCotPrice.style.display = 'block';
-         } else {
-            childCotPrice.style.display = 'none';
-         }
-      });
+
+      if(childCotSelect){
+         childCotSelect.addEventListener('change', function () {
+            if (this.value === '1') {
+               childCotPrice.style.display = 'block';
+            } else {
+               childCotPrice.style.display = 'none';
+            }
+         });
+      }
+      
    });
 </script>
+
 <script>
    document.addEventListener('DOMContentLoaded', function () {
       const hotelRatesContainer = document.getElementById('hotelRatesContainer');
@@ -321,11 +284,11 @@
             <div class="row">
                <div class="col-md-3 mb-3">
                   <label for="event" class="form-label"><strong>Event Name</strong></label>
-                  <input type="text" class="form-control" name="event[]" placeholder="Enter Event Name">
+                  <input type="text" class="form-control" name="event" placeholder="Enter Event Name">
                </div>
                <div class="col-md-3 mb-3">
                   <label for="event_type" class="form-label"><strong>Event Type</strong></label>
-                  <select class="form-control" name="event_type[]">
+                  <select class="form-control" name="event_type">
                      <option value="">Select Event Type</option>
                      <option value="Fair Date">Fair Date</option>
                      <option value="Blackout Date">Blackout Date</option>
@@ -333,15 +296,15 @@
                </div>
                <div class="col-md-3 mb-3">
                   <label for="price" class="form-label"><strong>Price</strong></label>
-                  <input type="number" class="form-control" name="price[]" placeholder="Enter Price">
+                  <input type="number" class="form-control" name="price" placeholder="Enter Price">
                </div>
                <div class="col-md-3 mb-3">
                   <label for="start_date" class="form-label"><strong>Start Date</strong></label>
-                  <input type="date" class="form-control" name="start_date[]">
+                  <input type="date" class="form-control" name="start_date">
                </div>
                <div class="col-md-3 mb-3">
                   <label for="end_date" class="form-label"><strong>End Date</strong></label>
-                  <input type="date" class="form-control" name="end_date[]">
+                  <input type="date" class="form-control" name="end_date">
                </div>
                <div class="col-md-3 mb-3 d-flex align-items-end">
                   <button type="button" class="btn btn-danger remove-rate">Delete</button>
@@ -362,4 +325,409 @@
       });
    });
 </script>
+
+<!-- Food availabity -->
+<script>
+   // Function to append options for a given meal
+   function toggleOptions(meal, optionsId) {
+       const select = document.getElementById(meal);
+       const optionsContainer = document.getElementById(optionsId);
+
+       if(select){
+         select.addEventListener('change', function () {
+           if (this.value === '1') {
+               // Show options if "Available" is selected
+               if (optionsContainer.children.length === 0) {
+                   // Append the options dynamically using insertAdjacentHTML
+                   const optionContent = `
+                       <div class="mb-3 col-md-3">
+                           <label for="${meal}_type" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Type</strong></label>
+                           <select name="${meal}_type" id="${meal}_type" class="form-control">
+                               <option value="">Select a type</option>
+                               <option value="0">Buffet</option>
+                               <option value="1">Set Buffet</option>
+                           </select>
+                       </div>
+                       <div class="mb-3 col-md-3">
+                           <label for="${meal}_price" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Price</strong></label>
+                           <input type="number" name="${meal}_price" id="${meal}_price" class="form-control" placeholder="Enter price">
+                       </div>
+                   `;
+                   optionsContainer.insertAdjacentHTML('beforeend', optionContent); // Append the content
+               }
+               optionsContainer.style.display = 'contents'; // Show options
+           } else {
+               // Hide options if "Not Available" is selected
+               optionsContainer.style.display = 'none';
+               optionsContainer.innerHTML = ''; // Clear the options
+           }
+       });
+       }
+
+       select.addEventListener('change', function () {
+           if (this.value === '1') {
+               // Show options if "Available" is selected
+               if (optionsContainer.children.length === 0) {
+                   // Append the options dynamically using insertAdjacentHTML
+                   const optionContent = `
+                       <div class="mb-3 col-md-3">
+                           <label for="${meal}_type" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Type</strong></label>
+                           <select name="${meal}_type" id="${meal}_type" class="form-control">
+                               <option value="">Select a type</option>
+                               <option value="0">Buffet</option>
+                               <option value="1">Set Buffet</option>
+                           </select>
+                       </div>
+                       <div class="mb-3 col-md-3">
+                           <label for="${meal}_price" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Price</strong></label>
+                           <input type="number" name="${meal}_price" id="${meal}_price" class="form-control" placeholder="Enter price">
+                       </div>
+                   `;
+                   optionsContainer.insertAdjacentHTML('beforeend', optionContent); // Append the content
+               }
+               optionsContainer.style.display = 'contents'; // Show options
+           } else {
+               // Hide options if "Not Available" is selected
+               optionsContainer.style.display = 'none';
+               optionsContainer.innerHTML = ''; // Clear the options
+           }
+       });
+   }
+
+   // Initialize for breakfast, lunch, and dinner
+   toggleOptions('breakfast', 'breakfast-options');
+   toggleOptions('lunch', 'lunch-options');
+   toggleOptions('dinner', 'dinner-options');
+   toggleOptions('booking_available', '12_hours_booking_price');
+</script>
+
+<!-- Add checkbox contents -->
+
+<script>
+   
+   const baseWeekdayPrice = document.getElementById('base-weekday-price');
+   const baseWeekendPrice = document.getElementById('base-weekend-price');
+
+   //Function to toggle visibility of price fields
+   const togglePriceField = (dropdownId, priceFieldClass) => {
+      const dropdown = document.getElementById(dropdownId);
+      const priceField = document.querySelector(`.${priceFieldClass}`);
+    
+      if (dropdown && priceField) {
+         priceField.style.display = dropdown.value === "1" ? "block" : "none";
+      }
+   };
+
+
+   document.addEventListener('DOMContentLoaded', () => {
+       
+      let track = 0;
+      let counter = 0;
+      let checkboxCounter = 0
+      let delCounter = 0;
+         // Function to add checkbox fields dynamically
+         const addFields = (bedType, containerId) => {
+            counter=counter+1;
+         
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+               <div class="row">
+                   
+                   <div class="mb-3 col-md-3">
+                       <label for="${bedType}-no-rooms" class="form-label"><strong>No. of Rooms</strong></label>
+                       <input type="number" name="${bedType}_no_Of_rooms" id="${bedType}-no-rooms${counter}" class="form-control" placeholder="Enter number of rooms">
+                   </div>
+                    <div class="mb-3 col-md-3">
+                        <label for="${bedType}-max-occupancy" class="form-label"><strong>Maximum Occupancy</strong></label>
+                        <input type="number" name="${bedType}_max_occupancy" id="${bedType}-occupancy${counter}" class="form-control" placeholder="Enter maximum occupancy">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                           <label for="adult" class="form-label"><strong>Adults</strong><span class="text-danger">*</span></label>
+                           <select id="${bedType}-adult${counter}" class="form-control" name="${bedType}_adult_count" disabled>
+                              <option value="">Select Adults</option>
+                           </select>
+                           @error('${bedType}_adult_count')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+                        <div class="col-md-3 mb-3">
+                           <label for="child" class="form-label"><strong>Children</strong><span class="text-danger">*</span></label>
+                           <select id="${bedType}-child${counter}" class="form-control" name="${bedType}_child_count" disabled>
+                              <option value="">Select Children</option>
+                           </select>
+                           @error('${bedType}_child_count')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                           <label for="${bedType}-extra-bed" class="form-label"><strong>Extra Bed</strong><span class="text-danger">*</span></label>
+                           <select name="${bedType}_extra_bed" id="${bedType}-extra-bed${counter}" class="form-control"
+                              onchange="togglePriceField('${bedType}-extra-bed${counter}', '${bedType}-extra-bed-price${counter}')">
+                              <option value="">Select One</option>
+                              <option value="1">Yes</option>
+                              <option value="0">No</option>
+                           </select>
+                        </div>
+                        <div class="col-md-3 mb-3 ${bedType}-extra-bed-price${counter}" style="display: none;">
+                            <label for="${bedType}-extra-bed-price" class="form-label"><strong>Extra Bed Price</strong><span class="text-danger">*</span></label>
+                            <input type="number" name="${bedType}_extra_bed_price" id="${bedType}-extra-bed-price${counter}" class="form-control" placeholder="Enter Price">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="${bedType}-baby-cot" class="form-label"><strong>Baby Cot</strong><span class="text-danger">*</span></label>
+                            <select name="${bedType}_baby_cot" id="${bedType}-baby-cot${counter}" class="form-control"
+                              onchange="togglePriceField('${bedType}-baby-cot${counter}', '${bedType}-baby-cot-price${counter}')">
+                                 <option value="">Select One</option>
+                                 <option value="1">Yes</option>
+                                 <option value="0">No</option>
+                              </select>
+                        </div>
+                        <div class="col-md-3 mb-3 ${bedType}-baby-cot-price${counter}" style="display: none;">
+                            <label for="${bedType}-baby-cot-price" class="form-label"><strong>Baby Cot Price</strong><span class="text-danger">*</span></label>
+                            <input type="number" name="${bedType}_baby_cot_price" id="${bedType}-baby-cot-price${counter}" class="form-control" placeholder="Enter Price">
+                        </div>
+                        <hr>
+                     </div>`;
+
+                // Attach event listeners for Extra Bed and Baby Cot
+                  const extraBedSelect = document.getElementById(`${bedType}-extra-bed${counter}`);
+                  const extraBedPriceField = document.querySelector(`.${bedType}-extra-bed-price${counter}`);
+                  const babyCotSelect = document.getElementById(`${bedType}-baby-cot${counter}`);
+                  const babyCotPriceField = document.querySelector(`.${bedType}-baby-cot-price${counter}`);
+               attachOccupancyListeners(`${bedType}-occupancy${counter}`, `${bedType}-adult${counter}`, `${bedType}-child${counter}`);
+               track++;
+         };
+
+       // Event listeners for checkboxes
+         const handleCheckboxChange = (e) => {
+           const bedType = e.target.name;
+           const container = e.target.id;
+
+           const fieldsContainerId = `${container}-fields`;
+           console.log("bed = ", fieldsContainerId);
+           if (e.target.checked) {
+            
+               addFields(bedType, fieldsContainerId);
+           } else {
+               document.getElementById(fieldsContainerId).innerHTML = ''; // Clear fields if unchecked
+           }
+       };
+
+       // Attach initial event listeners to existing checkboxes
+       const checkboxes = document.querySelectorAll('.bed-type-checkbox');
+       checkboxes.forEach((checkbox) => {
+           checkbox.addEventListener('change', handleCheckboxChange);
+       });
+
+
+        // Function to attach listeners to dynamically added fields
+         const attachOccupancyListeners = (occupancyId, adultId, childId) => {
+           const occupancyInput = document.getElementById(occupancyId);
+           const adultDropdown = document.getElementById(adultId);
+           const childDropdown = document.getElementById(childId);
+
+           const updateAdultOptions = () => {
+               const occupancy = parseInt(occupancyInput.value) || 0;
+
+               adultDropdown.innerHTML = `<option value="">Select Adults</option>`; // Reset options
+
+               if (occupancy > 0) {
+                   for (let i = 1; i <= occupancy; i++) {
+                       adultDropdown.innerHTML += `<option value="${i}">${i}</option>`;
+                   }
+                   adultDropdown.disabled = false;
+                   updateChildOptions(); // Update child options based on the new adult selection
+               } else {
+                   adultDropdown.disabled = true;
+                   childDropdown.disabled = true;
+               }
+           };
+
+           const updateChildOptions = () => {
+               const occupancy = parseInt(occupancyInput.value) || 0;
+               const adults = parseInt(adultDropdown.value) || 0;
+               const maxChildren = occupancy - adults;
+
+               childDropdown.innerHTML = `<option value="">Select Children</option>`; // Reset options
+
+               if (maxChildren > 0) {
+                   for (let i = 0; i <= maxChildren; i++) {
+                       childDropdown.innerHTML += `<option value="${i}">${i}</option>`;
+                   }
+                   childDropdown.disabled = false;
+               } else {
+                   childDropdown.disabled = true;
+               }
+           };
+
+           // Add event listeners
+           occupancyInput.addEventListener("input", updateAdultOptions);
+           adultDropdown.addEventListener("change", updateChildOptions);
+       };
+
+       //handle dynamically created
+
+ 
+
+    $('#add_more_checkboxes').on('input', '.varient-price', function (event) {
+        const varientPriceInput = event.target; // Get the input element
+        const varientPriceValue = parseFloat(varientPriceInput.value) || 0; // Parse the value or set to 0
+
+        // Find related fields using their IDs
+        const sectionId = varientPriceInput.id.replace('varient_price', '');
+
+        const weekdayPriceInput = $(`#weekday-price${sectionId}`);
+        const weekendPriceInput = $(`#weekend-price${sectionId}`);
+
+        const base_weekday_price = parseFloat(baseWeekdayPrice.value) || 0;
+        const base_weekend_price = parseFloat(baseWeekendPrice.value) || 0;
+
+        //calculate weekday and weekend prices
+        const finalWeekdayPrice = varientPriceValue+base_weekday_price;
+        const finalWeekendPrice = varientPriceValue+base_weekend_price;
+
+
+        // Populate the related fields
+        weekdayPriceInput.val(finalWeekdayPrice.toFixed(2));
+        weekendPriceInput.val(finalWeekendPrice.toFixed(2));
+    });
+
+
+
+    // Handle Extra Bed Price
+    const extraBedSelect = document.getElementById('extra_bed');
+      const extraBedPrice = document.querySelector('.extra-bed-price');
+         if(extraBedSelect){
+            extraBedSelect.addEventListener('change', function () {
+            if (this.value === '1') {
+               extraBedPrice.style.display = 'block';
+            } else {
+               extraBedPrice.style.display = 'none';
+            }
+         });
+      }
+      
+
+      // Handle Child Cot Price
+      const childCotSelect = document.getElementById('child_cot');
+      const childCotPrice = document.querySelector('.child-cot-price');
+
+      if(childCotSelect){
+         childCotSelect.addEventListener('change', function () {
+            if (this.value === '1') {
+               childCotPrice.style.display = 'block';
+            } else {
+               childCotPrice.style.display = 'none';
+            }
+         });
+      }
+
+      if(extraBedPriceField !=null){
+            extraBedSelect.addEventListener('change', () => {
+               extraBedPriceField.style.display = extraBedSelect.value === "1" ? "block" : "none";
+            });
+      }
+               
+      if(babyCotPriceField){
+         babyCotSelect.addEventListener('change', () => {
+            babyCotPriceField.style.display = babyCotSelect.value === "1" ? "block" : "none";
+         });
+      }
+               
+   });
+
+   //Handle dynamically added food fields
+   // $(document).on('change', '#add_more_checkboxes select[name$="[]"]', function () {
+   //  const meal = $(this).attr('name').replace('[]', '');
+   //  const optionsId1 = `${meal}-type-options`;
+   //  const optionsId2 = `${meal}-price-options`;
+   //  const optionsContainer1 = $(this).closest('.existing-fields').find(`#${optionsId1}`);
+   //  const optionsContainer2 = $(this).closest('.existing-fields').find(`#${optionsId2}`);
+   //  if (this.value === '1') {
+   //      optionsContainer1.show();
+   //      optionsContainer2.show();
+   //  } else {
+   //      optionsContainer1.hide().find('input, select').val('');
+   //      optionsContainer2.hide().find('input, select').val('');
+   //  }
+   // });
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get hotel data from server-rendered Blade variable
+        const room = @json($room);
+
+        if (Array.isArray(room) && room.length > 0) {
+            // Hide the specified base divs
+            document.getElementById('base_room_type').style.display = "none";
+            document.getElementById('base_weekday_price').style.display = "none";
+            document.getElementById('base_weekend_price').style.display = "none";
+
+            // Create new divs without "base" prefix
+            const container = document.querySelector('.container');
+            const newRoomTypeDiv = document.createElement('div');
+            newRoomTypeDiv.className = 'col-md-3 mb-3';
+            newRoomTypeDiv.id = 'room_type_wrapper';
+            newRoomTypeDiv.innerHTML = `
+                <label for="room_type" class="form-label"><strong>Room Type</strong><span class="text-danger">*</span></label>
+                <input name="room_type" id="room_type_input" class="form-control" placeholder="Enter Room Type" required>
+            `;
+
+            const varientPrice = document.createElement('div');
+            varientPrice.className = 'col-md-3 mb-3';
+            varientPrice.id = 'varient_price';
+            varientPrice.innerHTML = `
+                <label for="varient_price" class="form-label"><strong>Variance Price</strong><span class="text-danger">*</span></label>
+                <input name="varient_price" id="varient_price_input" class="form-control" placeholder="Enter Variance Price" required>
+            `;
+
+            const newWeekdayPriceDiv = document.createElement('div');
+            newWeekdayPriceDiv.className = 'mb-3 col-md-3';
+            newWeekdayPriceDiv.id = 'weekday_price';
+            newWeekdayPriceDiv.innerHTML = `
+                <label for="weekday_price" class="form-label"><strong>Weekday Price</strong></label>
+                <input type="number" name="weekday_price" id="weekday_price_input" class="form-control" placeholder="Enter Weekday Price" readonly>
+            `;
+
+            const newWeekendPriceDiv = document.createElement('div');
+            newWeekendPriceDiv.className = 'mb-3 col-md-3';
+            newWeekendPriceDiv.id = 'weekend_price';
+            newWeekendPriceDiv.innerHTML = `
+                <label for="weekend_price" class="form-label"><strong>Weekend Price</strong></label>
+                <input type="number" name="weekend_price" id="weekend_price_input" class="form-control" placeholder="Enter Weekend Price" readonly>
+            `;
+
+            // Insert the new divs at the top of the container
+            container.prepend(newWeekendPriceDiv);
+            container.prepend(newWeekdayPriceDiv);
+            container.prepend(varientPrice);
+            container.prepend(newRoomTypeDiv);
+
+            // Populate initial values for weekday and weekend prices
+            const weekdayPriceInput = document.getElementById('weekday_price_input');
+            const weekendPriceInput = document.getElementById('weekend_price_input');
+            const varientPriceInput = document.getElementById('varient_price_input');
+
+            // Assuming only one room object is used for data population
+            weekdayPriceInput.value = room[0]?.weekday_price || 0;
+            weekendPriceInput.value = room[0]?.weekend_price || 0;
+
+            // Update prices dynamically based on variance price
+            varientPriceInput.addEventListener('input', function () {
+                const varientValue = parseFloat(varientPriceInput.value) || 0; // Default to 0 if input is invalid
+                weekdayPriceInput.value = (parseFloat(room[0]?.weekday_price || 0) + varientValue).toFixed(2);
+                weekendPriceInput.value = (parseFloat(room[0]?.weekend_price || 0) + varientValue).toFixed(2);
+            });
+        } else {
+            // Show base divs if no room data is available
+            document.getElementById('base_room_type').style.display = "block";
+            document.getElementById('base_weekday_price').style.display = "block";
+            document.getElementById('base_weekend_price').style.display = "block";
+        }
+    });
+</script>
+
+
 @endsection
