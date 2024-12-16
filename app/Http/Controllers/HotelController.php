@@ -669,8 +669,6 @@ class HotelController extends Controller
         return view('hotel.editroom', compact('room','beds'));
     }
 
-
-
     /*
     * Update Room Details .
     * Date 18-11-2024
@@ -777,4 +775,12 @@ class HotelController extends Controller
         }  
     }
     
+
+    /*
+    * Hotel Calender Details .
+    * Date 16-12-2024
+    */
+    public function calender(){
+dd(12);
+    }
 }

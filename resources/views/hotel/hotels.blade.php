@@ -32,6 +32,7 @@
                                 <th>Phone</th>
                                 <th>Email</th>
                                 <th>Image</th>
+                                <th>Calender</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -43,6 +44,11 @@
                                     <td>{{ $hotel->email }}</td>
                                     <td>
                                         <img src="{{ $hotel->main_image }}" alt="Hotel Image" style="width: 50px; height: auto;">
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('hotels.calender') }}" target="_blank">
+                                            <i class="fa fa-calendar-alt"></i>View Calendar
+                                        </a>
                                     </td>
                                     <td class="d-flex justify-content-start align-items-center" style="gap: 8px;">
                                         <!-- Edit Button -->
