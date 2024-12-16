@@ -203,7 +203,7 @@ class HotelController extends Controller
     {
         $facilities = Facility::all();
         $categories = Category::where('category_type', 1)->get();
-        $hotel = Hotel::findOrFail($id);
+        $hotel = Hotel::where('hotel_unique_id',$id)->first();
         $cancellation_data = json_decode($hotel->cancellation_data, true) ?? [];
         $entry_data = json_decode($hotel->port_of_entry, true) ?? [];
         $exit_data = json_decode($hotel->port_of_exit, true) ?? [];
@@ -643,8 +643,6 @@ class HotelController extends Controller
         return view('hotel.editroom', compact('room','beds'));
     }
 
-
-
     /*
     * Update Room Details .
     * Date 18-11-2024
@@ -751,4 +749,32 @@ class HotelController extends Controller
         }  
     }
     
+    /*
+    * Hotel Calender Details.
+    * Date 16-12-2024
+    */
+    public function calender($id, $year = null)
+    {
+        $hotel = Hotel::where('hotel_unique_id', $id)->first();
+        if (!$hotel) {
+            return redirect()->back()->with('error', 'Hotel not found!');
+        }
+        $hotelId = $hotel->hotel_unique_id;
+        $year = $year ?? now()->year;
+        $rates = Rate::where('hotel_id', $hotelId)->get();
+        $rate_dates = [];
+        foreach ($rates as $rate) {
+            $rate_dates[] = [
+                'id' => $rate->id,
+                'start_date' => $rate->start_date, 
+                'end_date' => $rate->end_date,     
+            ];
+        }
+        dd($rate_dates);
+        return view('hotel.calender', compact('hotel', 'rate_dates', 'year'));
+    }
+
+
+    
+
 }

@@ -118,10 +118,17 @@ class HotelController extends Controller
                     $site_image = is_array($images) ? $images : [];
                 }
                 $facility_ids = json_decode($hotel->facilities, true) ?? [];
-                $facility_names = [];
+                $facility = []; 
                 if (is_array($facility_ids)) {
-                    $facility_names = Facility::whereIn('facilityId', $facility_ids)->pluck('name')->toArray();
+                    $facility_data = Facility::whereIn('facilityId', $facility_ids)->get(['name', 'icon']);
+                    foreach ($facility_data as $data) {
+                        $facility[] = [
+                            'name' => $data->name,
+                            'icon' => $data->icon,
+                        ];
+                    }
                 }
+
                 $hotel_list[] = [
                     'id' => $hotel->id,
                     'hotel_name' => $hotel->name ?? '',
@@ -136,7 +143,7 @@ class HotelController extends Controller
                     'cancellation_charge' => json_decode($hotel->cancellation_data) ?? [],
                     'entry_port' => json_decode($hotel->port_of_entry) ?? [],
                     'exit_port' => json_decode($hotel->port_of_exit) ?? [],
-                    'facilities' => $facility_names, // Facility names fetched here
+                    'facilities' => $facility, // Facility names fetched here
                     'status' => $hotel->status,
                 ];
             }
@@ -197,18 +204,18 @@ class HotelController extends Controller
             $today = Carbon::now()->format('l');
 
             foreach ($hotel->rooms as $rooms) {
-                // Reset bed data for each room
                 $bed_data = [];
-
                 // Weekday or Weekend price calculation
                 $price = in_array($today, $weekend_days) ? $rooms->weekend_price : $rooms->weekday_price;
-                if ($rate->event_type == "Blackout Date") {
-                    $price = $rate->price; // Override price completely
-                    break; // Blackout dates take precedence
-                } elseif ($rate->event_type == "Fair Date") {
-                    $price = $price + (int)$rate->price;
-                } elseif ($rate->event_type == "Season") {
-                    $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
+                if($rate){
+                    if ($rate->event_type == "Blackout Date") {
+                        $price = $rate->price; // Override price completely
+                        break; // Blackout dates take precedence
+                    } elseif ($rate->event_type == "Fair Date") {
+                        $price = $price + (int)$rate->price;
+                    } elseif ($rate->event_type == "Season") {
+                        $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
+                    }
                 }
 
                 // Update base price for the hotel
@@ -221,7 +228,7 @@ class HotelController extends Controller
                         'bed_type' => $bed->bed_type,
                         'bed_image' => json_decode($bed->image) ?? [],
                         'king_bed_max_occupancy' => $bed->king_bed_max_occupancy,
-                        'king_ed_adult_count' => $bed->king_ed_adult_count,
+                        'king_bed_adult_count' => $bed->king_ed_adult_count,
                         'king_bed_child_count' => $bed->king_bed_child_count,
                         'king_bed_extra_bed' => $bed->king_bed_extra_bed,
                         'king_bed_extra_bed_price' => $bed->king_bed_extra_bed_price,
@@ -265,8 +272,8 @@ class HotelController extends Controller
                 'price' => $base_price,
                 'tax_amount' => ($base_price * $country_tax / 100),
                 'total_base_amount' => $base_price + ($base_price * $country_tax / 100),
-                'event_name' => $rate->event,
-                'event_type' => $rate->event_type,
+                'event_name' => $rate->event ?? '',
+                'event_type' => $rate->event_type ??'',
                 'image' => $hotel->main_image ?? '',
                 'site_image' => $site_image,
                 'cancellation' => $hotel->cancellation_type ?? 'No cancellation policy',

@@ -21,7 +21,7 @@
                         </div>
                     </div>
                     <div class="card-body p-4">
-                        <form id="hotelForm" method="POST" action="{{ route('hotels.update', $hotel->id) }}" enctype="multipart/form-data">
+                        <form id="hotelForm" method="POST" action="{{ route('hotels.update', $hotel->hotel_unique_id) }}" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="row">
@@ -339,17 +339,17 @@
                                     <!-- Latitude Field -->
                                     <div class="mb-3 col-md-3">
                                         <label for="latitude_{{ $index }}" class="form-label"><strong>Latitude</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                        <input type="text" name="latitude[]" class="form-control" placeholder="Enter Latitude" value="{{ old('latitude.' . $index, $entry['latitude'] ?? '') }}">
+                                        <input type="text" name="latitudentry[]" class="form-control" placeholder="Enter Latitude" value="{{ old('latitude.' . $index, $entry['latitude'] ?? '') }}">
                                     </div>
                                     <!-- Longitude Field -->
                                     <div class="mb-3 col-md-3">
                                         <label for="longitude_{{ $index }}" class="form-label"><strong>Longitude</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                        <input type="text" name="longitude[]" class="form-control" placeholder="Enter Longitude" value="{{ old('longitude.' . $index, $entry['longitude'] ?? '') }}">
+                                        <input type="text" name="longitudeentry[]" class="form-control" placeholder="Enter Longitude" value="{{ old('longitude.' . $index, $entry['longitude'] ?? '') }}">
                                     </div>
                                     <!-- Distance Field -->
                                     <div class="mb-3 col-md-3">
                                         <label for="distance_{{ $index }}" class="form-label"><strong>Distance</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                        <input type="text" name="distance[]" class="form-control" placeholder="Enter Distance" value="{{ old('distance.' . $index, $entry['distance'] ?? '') }}">
+                                        <input type="text" name="distanceentry[]" class="form-control" placeholder="Enter Distance" value="{{ old('distance.' . $index, $entry['distance'] ?? '') }}">
                                     </div>
                                     
 
