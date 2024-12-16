@@ -124,7 +124,7 @@ class HotelController extends Controller
                 }
                 $hotel_list[] = [
                     'id' => $hotel->id,
-                    'hotel_name' => $hotel->name,
+                    'hotel_name' => $hotel->name ?? '',
                     'category' => $hotel->category->name ?? '',
                     'location' => $hotel->address ?? '',
                     'price' => $base_price,
