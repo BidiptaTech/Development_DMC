@@ -238,7 +238,7 @@ class HotelController extends Controller
             'hotel_status' => 'required',
         ]);
 
-        $hotel = Hotel::where('hotel_id', $id)->first();
+        $hotel = Hotel::where('hotel_unique_id', $id)->first();
         $storage_file = $hotel->main_image;
         if ($request->hasFile('main_image')) {
             $image = $request->file('main_image');
@@ -770,7 +770,6 @@ class HotelController extends Controller
                 'end_date' => $rate->end_date,     
             ];
         }
-        dd($rate_dates);
         return view('hotel.calender', compact('hotel', 'rate_dates', 'year'));
     }
 
