@@ -30,14 +30,14 @@
                         <!-- Room Type -->
                         <div class="col-md-3 mb-3" id="base_room_type" style="display: none;">
                            <label for="room_type" class="form-label"><strong>Base Room Type</strong><span class="text-danger">*</span></label>
-                           <input name="room_type" class="form-control" placeholder="Enter Base Room Type"></input>
+                           <input name="base_room_type" class="form-control" placeholder="Enter Base Room Type"></input>
                            @error('room_type')
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
                         </div>
 
                         <!-- Number of Rooms -->
-                        <div class="col-md-3 mb-3" style="display: none;">
+                        <div class="col-md-3 mb-3">
                            <label for="no_of_room" class="form-label"><strong>No of Rooms</strong><span class="text-danger">*</span></label>
                            <input type="number" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms">
                            @error('base_no_of_room')
@@ -54,6 +54,12 @@
                        <div class="mb-3 col-md-3" id="base_weekend_price" style="display: none;">
                            <label for="weekend_price" class="form-label"><strong>Base Weekend Price</strong></label>
                            <input type="number" name="base_weekend_price" class="form-control" placeholder="Enter Base weekend price">
+                       </div>
+
+                       <!-- dimension -->
+                       <div class="mb-3 col-md-3" id="dimension">
+                           <label for="weekend_price" class="form-label"><strong>Dimension</strong></label>
+                           <input type="text" name="dimension" class="form-control" placeholder="length x breadth">
                        </div>
 
                         <!-- Breakfast -->
@@ -200,7 +206,7 @@
                   <thead class="table-dark">
                      <tr>
                         <th>Room Type</th>
-                        <th>Occupancy</th>
+                        <th>No of Rooms</th>
                         <th>Weekday Price</th>
                         <th>Weekend Price</th>
                         <th>Extra Bed</th>
@@ -212,7 +218,7 @@
                      @foreach ($rooms as $room)
                      <tr>
                         <td>"{{$room->room_type}}"</td>
-                        <td>{{ $room->max_capacity }}</td>
+                        <td>{{ $room->no_of_room }}</td>
                         <td>{{ $room->weekday_price }}</td>
                         <td>{{ $room->weekend_price }}</td>
                         <td>
@@ -335,11 +341,11 @@
             <div class="row">
                <div class="col-md-3 mb-3">
                   <label for="event" class="form-label"><strong>Event Name</strong></label>
-                  <input type="text" class="form-control" name="event[]" placeholder="Enter Event Name">
+                  <input type="text" class="form-control" name="event" placeholder="Enter Event Name">
                </div>
                <div class="col-md-3 mb-3">
                   <label for="event_type" class="form-label"><strong>Event Type</strong></label>
-                  <select class="form-control" name="event_type[]">
+                  <select class="form-control" name="event_type">
                      <option value="">Select Event Type</option>
                      <option value="Fair Date">Fair Date</option>
                      <option value="Blackout Date">Blackout Date</option>
@@ -347,15 +353,15 @@
                </div>
                <div class="col-md-3 mb-3">
                   <label for="price" class="form-label"><strong>Price</strong></label>
-                  <input type="number" class="form-control" name="price[]" placeholder="Enter Price">
+                  <input type="number" class="form-control" name="price" placeholder="Enter Price">
                </div>
                <div class="col-md-3 mb-3">
                   <label for="start_date" class="form-label"><strong>Start Date</strong></label>
-                  <input type="date" class="form-control" name="start_date[]">
+                  <input type="date" class="form-control" name="start_date">
                </div>
                <div class="col-md-3 mb-3">
                   <label for="end_date" class="form-label"><strong>End Date</strong></label>
-                  <input type="date" class="form-control" name="end_date[]">
+                  <input type="date" class="form-control" name="end_date">
                </div>
                <div class="col-md-3 mb-3 d-flex align-items-end">
                   <button type="button" class="btn btn-danger remove-rate">Delete</button>
@@ -706,69 +712,81 @@
 </script>
 
 <script>
-   document.addEventListener('DOMContentLoaded', function() {
-       // Get hotel data from server-rendered Blade variable
-       const room = @json($rooms);
-      console.log("Hello from rooms = ", room);
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get hotel data from server-rendered Blade variable
+        const room = @json($rooms);
+        console.log("Hello from rooms = ", room);
 
+        if (Array.isArray(room) && room.length > 0) {
+            // Hide the specified base divs
+            document.getElementById('base_room_type').style.display = "none";
+            document.getElementById('base_weekday_price').style.display = "none";
+            document.getElementById('base_weekend_price').style.display = "none";
 
-      if (Array.isArray(room) && room.length > 0) {
-           // Hide the specified divs
-      
+            // Create new divs without "base" prefix
+            const container = document.querySelector('.container');
 
-       // Create new divs without "base" prefix
-       const container = document.querySelector('.container');
+            const newRoomTypeDiv = document.createElement('div');
+            newRoomTypeDiv.className = 'col-md-3 mb-3';
+            newRoomTypeDiv.id = 'room_type_wrapper';
+            newRoomTypeDiv.innerHTML = `
+                <label for="room_type" class="form-label"><strong>Room Type</strong><span class="text-danger">*</span></label>
+                <input name="room_type" id="room_type_input" class="form-control" placeholder="Enter Room Type" required>
+            `;
 
-       const newRoomTypeDiv = document.createElement('div');
-       newRoomTypeDiv.className = 'col-md-3 mb-3';
-       newRoomTypeDiv.id = 'room_type';
-       newRoomTypeDiv.innerHTML = `
-           <label for="room_type" class="form-label"><strong>Room Type</strong><span class="text-danger">*</span></label>
-           <input name="room_type[]" id="room_type_input" class="form-control" placeholder="Enter Room Type" required>
-       `;
+            const varientPrice = document.createElement('div');
+            varientPrice.className = 'col-md-3 mb-3';
+            varientPrice.id = 'varient_price';
+            varientPrice.innerHTML = `
+                <label for="varient_price" class="form-label"><strong>Variance Price</strong><span class="text-danger">*</span></label>
+                <input name="varient_price" id="varient_price_input" class="form-control" placeholder="Enter Variance Price" required>
+            `;
 
-       const varientPrice = document.createElement('div');
-       varientPrice.className = 'col-md-3 mb-3';
-       varientPrice.id = 'varient_price';
-       varientPrice.innerHTML = `
-           <label for="varient_price" class="form-label"><strong>Variance Price</strong><span class="text-danger">*</span></label>
-           <input name="varient_price" id="varient_price_input" class="form-control" placeholder="Enter Variance Price" required>
-       `;
+            const newWeekdayPriceDiv = document.createElement('div');
+            newWeekdayPriceDiv.className = 'mb-3 col-md-3';
+            newWeekdayPriceDiv.id = 'weekday_price';
+            newWeekdayPriceDiv.innerHTML = `
+                <label for="weekday_price" class="form-label"><strong>Weekday Price</strong></label>
+                <input type="number" name="weekday_price" id="weekday_price_input" class="form-control" placeholder="Enter Weekday Price" readonly>
+            `;
 
-       const newWeekdayPriceDiv = document.createElement('div');
-       newWeekdayPriceDiv.className = 'mb-3 col-md-3';
-       newWeekdayPriceDiv.id = 'weekday_price';
-       newWeekdayPriceDiv.innerHTML = `
-           <label for="weekday_price" class="form-label"><strong>Weekday Price</strong></label>
-           <input type="number" name="weekday_price[]" id="weekday_price_input" class="form-control" placeholder="Enter Weekday Price" required>
-       `;
+            const newWeekendPriceDiv = document.createElement('div');
+            newWeekendPriceDiv.className = 'mb-3 col-md-3';
+            newWeekendPriceDiv.id = 'weekend_price';
+            newWeekendPriceDiv.innerHTML = `
+                <label for="weekend_price" class="form-label"><strong>Weekend Price</strong></label>
+                <input type="number" name="weekend_price" id="weekend_price_input" class="form-control" placeholder="Enter Weekend Price" readonly>
+            `;
 
-       const newWeekendPriceDiv = document.createElement('div');
-       newWeekendPriceDiv.className = 'mb-3 col-md-3';
-       newWeekendPriceDiv.id = 'weekend_price';
-       newWeekendPriceDiv.innerHTML = `
-           <label for="weekend_price" class="form-label"><strong>Weekend Price</strong></label>
-           <input type="number" name="weekend_price[]" id="weekend_price_input" class="form-control" placeholder="Enter Weekend Price" required>
-       `;
+            // Insert the new divs at the top of the container
+            container.prepend(newWeekendPriceDiv);
+            container.prepend(newWeekdayPriceDiv);
+            container.prepend(varientPrice);
+            container.prepend(newRoomTypeDiv);
 
-       // Insert the new divs at the top of the container
-       container.prepend(newWeekendPriceDiv);
-       container.prepend(newWeekdayPriceDiv);
-       container.prepend(varientPrice);
-       container.prepend(newRoomTypeDiv);
+            // Populate initial values for weekday and weekend prices
+            const weekdayPriceInput = document.getElementById('weekday_price_input');
+            const weekendPriceInput = document.getElementById('weekend_price_input');
+            const varientPriceInput = document.getElementById('varient_price_input');
 
-       document.getElementById
-       }
+            // Assuming only one room object is used for data population
+            weekdayPriceInput.value = room[0]?.weekday_price || 0;
+            weekendPriceInput.value = room[0]?.weekend_price || 0;
 
-
-      else{
-         const roomTypeInput = document.getElementById('base_room_type').style.display = "block";
-         const weekdayPrice = document.getElementById('base_weekday_price').style.display = "block";
-         const weekendPrice = document.getElementById('base_weekend_price').style.display = "block";
-
-      
-      } 
-   });
+            // Update prices dynamically based on variance price
+            varientPriceInput.addEventListener('input', function () {
+                const varientValue = parseFloat(varientPriceInput.value) || 0; // Default to 0 if input is invalid
+                weekdayPriceInput.value = (parseFloat(room[0]?.weekday_price || 0) + varientValue).toFixed(2);
+                weekendPriceInput.value = (parseFloat(room[0]?.weekend_price || 0) + varientValue).toFixed(2);
+            });
+        } else {
+            // Show base divs if no room data is available
+            document.getElementById('base_room_type').style.display = "block";
+            document.getElementById('base_weekday_price').style.display = "block";
+            document.getElementById('base_weekend_price').style.display = "block";
+        }
+    });
 </script>
+
 
 @endsection
