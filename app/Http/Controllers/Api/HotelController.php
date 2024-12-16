@@ -257,12 +257,10 @@ class HotelController extends Controller
                     'bed_details' => $bed_data,
                 ];
             }
-
             // Handle case where no rooms exist
             if ($base_price === PHP_INT_MAX) {
                 $base_price = 0;
             }
-
             // Hotel List Response
             $hotel_list = [
                 'id' => $hotel->id,
