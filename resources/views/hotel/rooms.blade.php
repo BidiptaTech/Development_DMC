@@ -59,7 +59,7 @@
                        <!-- dimension -->
                         <div class="mb-3 col-md-3" id="dimension">
                            <label for="weekend_price" class="form-label"><strong>Dimension</strong></label>
-                           <input type="number" name="dimension" class="form-control" placeholder="length x breadth">
+                           <input type="text" name="dimension" class="form-control" placeholder="length x breadth">
                         </div>
 
                         <!-- Breakfast -->
@@ -185,7 +185,7 @@
                         <a href="{{ route('contactdetails.edit', $hotel->id) }}" class="btn btn-secondary px-4">Previous</a>
                         <button type="submit" class="btn btn-primary px-4">Save and Add More Rooms</button>
 
-                        <a href="{{ route('hotels.rates', $hotel->id) }}" class="btn btn-primary px-4">Save and Next</a>
+                        <a href="{{ route('hotels.rates', $hotel->id) }}" class="btn btn-primary px-4">Next</a>
                      </div>
                   </form>
                </div>
@@ -207,8 +207,9 @@
                         <th>No of Rooms</th>
                         <th>Weekday Price</th>
                         <th>Weekend Price</th>
+                        <th>Varient Price</th>
                         <th>Extra Bed</th>
-                        <th>Child Cot</th>
+                        
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -219,6 +220,7 @@
                         <td>{{ $room->no_of_room }}</td>
                         <td>{{ $room->weekday_price }}</td>
                         <td>{{ $room->weekend_price }}</td>
+                        <td>{{ $room->varient_price }}</td>
                         <td>
                            @if($room->extra_bed === 1)
                               <span class="badge bg-success">Available</span>
@@ -226,13 +228,7 @@
                               <span class="badge bg-danger">Not Available</span>
                            @endif
                         </td>
-                        <td>
-                           @if($room->child_cot === 1)
-                              <span class="badge bg-success">Available</span>
-                           @else
-                              <span class="badge bg-danger">Not Available</span>
-                           @endif
-                        </td>
+                        
 
                         <td>
                            <a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -460,18 +456,7 @@
 <!-- Add checkbox contents -->
 
 <script>
-
-   let totalRoomOptions = {};
    
-   const totalRoomElement = document.getElementById("total_rooms");
-
-   totalRoomElement.addEventListener('change', () => {
-      const totalRoomsValue = totalRoomElement.value;
-    
-    // Now `totalRoomsValue` holds the value of the "total_rooms" field
-      console.log(totalRoomsValue);
-   });
-
    const baseWeekdayPrice = document.getElementById('base-weekday-price');
    const baseWeekendPrice = document.getElementById('base-weekend-price');
 
@@ -502,9 +487,7 @@
                    
                    <div class="mb-3 col-md-3">
                        <label for="${bedType}-no-rooms${counter}" class="form-label"><strong>No. of Rooms</strong></label>
-                        <select name="no_of_rooms[]" id="${bedType}-no-rooms${counter}" class="form-control">
-                        ${getRoomOptions(totalRoomOptions[containerId])}
-                        </select>
+                       <input type="number" name="no_of_rooms[]" id="${bedType}-no-rooms${counter}" class="form-control" placeholder="Enter number of rooms">
                    </div>
                     <div class="mb-3 col-md-3">
                         <label for="${bedType}-max-occupancy${counter}" class="form-label"><strong>Maximum Occupancy</strong></label>
@@ -567,15 +550,6 @@
                track++;
          };
 
-         // Function to get options for the no_of_rooms field based on the total number of rooms
-         const getRoomOptions = (maxRooms) => {
-            let optionsHtml = '';
-            for (let i = 1; i <= maxRooms; i++) {
-               optionsHtml += `<option value="${i}">${i}</option>`;
-            }
-            return optionsHtml;
-         };
-
        // Event listeners for checkboxes
          const handleCheckboxChange = (e) => {
            const bedType = e.target.name;
@@ -585,34 +559,10 @@
            console.log("bed = ", fieldsContainerId);
            if (e.target.checked) {
                addFields(container, fieldsContainerId);
-               updateRoomOptions(container, parseInt(document.getElementById('total_rooms').value));
            } else {
                document.getElementById(fieldsContainerId).innerHTML = ''; // Clear fields if unchecked
-               updateRoomOptions(container, 0);
            }
        };
-
-       // Function to update room options based on total number of rooms
-         const updateRoomOptions = (containerId, totalRooms) => {
-            const bedType = containerId.split('-')[0];
-            const selectElements = document.querySelectorAll(`#${containerId} .no-of-rooms select`);
-
-               selectElements.forEach(select => {
-               select.innerHTML = getRoomOptions(totalRooms);
-            });
-         };
-
-         // Update room options on total number of rooms change
-            document.getElementById('total_rooms').addEventListener('input', function() {
-               const totalRoomInput = this.value;
-               document.querySelectorAll('.bed-fields').forEach(el => {
-                  const bedType = el.id.split('-')[0];
-                  totalRoomOptions[bedType] = parseInt(totalRoomInput);
-                  updateRoomOptions(`${bedType}-no-rooms${counter}`, totalRoomInput);
-               });
-            });
-
-
 
        // Attach initial event listeners to existing checkboxes
        const checkboxes = document.querySelectorAll('.bed-type-checkbox');
@@ -734,20 +684,21 @@
                
    });
 
-   
-   // Initialize event listeners on load
-   window.onload = function() {
-      document.querySelectorAll('.bed-type-checkbox').forEach(el => {
-        el.addEventListener('change', handleCheckboxChange);
-      });
-
-      const totalRoomInput = document.getElementById('total_rooms').value;
-      document.querySelectorAll('.bed-fields').forEach(el => {
-         const bedType = el.id.split('-')[0];
-         totalRoomOptions[bedType] = parseInt(totalRoomInput);
-         updateRoomOptions(`${bedType}-no-rooms${counter}`, totalRoomInput);
-      });
-   };
+   //Handle dynamically added food fields
+   // $(document).on('change', '#add_more_checkboxes select[name$="[]"]', function () {
+   //  const meal = $(this).attr('name').replace('[]', '');
+   //  const optionsId1 = `${meal}-type-options`;
+   //  const optionsId2 = `${meal}-price-options`;
+   //  const optionsContainer1 = $(this).closest('.existing-fields').find(`#${optionsId1}`);
+   //  const optionsContainer2 = $(this).closest('.existing-fields').find(`#${optionsId2}`);
+   //  if (this.value === '1') {
+   //      optionsContainer1.show();
+   //      optionsContainer2.show();
+   //  } else {
+   //      optionsContainer1.hide().find('input, select').val('');
+   //      optionsContainer2.hide().find('input, select').val('');
+   //  }
+   // });
 
 </script>
 
@@ -778,7 +729,7 @@
             varientPrice.className = 'col-md-3 mb-3';
             varientPrice.id = 'varient_price';
             varientPrice.innerHTML = `
-                <label for="varient_price" class="form-label"><strong>Variance Price</strong><span class="text-danger">*</span></label>
+                <label for="varient_price" class="form-label"><strong>Variant Price</strong><span class="text-danger">*</span></label>
                 <input name="varient_price" id="varient_price_input" class="form-control" placeholder="Enter Variance Price" required>
             `;
 

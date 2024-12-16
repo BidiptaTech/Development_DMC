@@ -581,7 +581,7 @@ class HotelController extends Controller
             'hotel_id' => $request->id,
             'rate_id' => $rateId,
             'event_type' => $request->event_type,
-            'price' => $request->price,
+            'price' => $request->price??0,
             'weekday_price' => $request->weekday_price ? $request->weekday_price : 0.00,
             'weekend_price' => $request->weekend_price ? $request->weekend_price : 0.00,
             'start_date' => $request->start_date,

@@ -78,6 +78,7 @@ Route::group(['middleware' => ['auth']], function () {
         
         Route::post('updateroom', [HotelController::class, 'updateroom'])->name('room.update');
         Route::delete('deleteroom/{id}', [HotelController::class, 'deleteroom'])->name('rooms.destroy');
+        Route::get('/editcontacts/{hotel}', [HotelController::class, 'editcontacts'])->name('contactdetails.edit');
     });
 
         // authentication check for manager (route can access admin & manager)
