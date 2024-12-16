@@ -155,10 +155,10 @@ class HotelController extends Controller
     public function details(Request $request)
     {
         $id = $request->query('id');
-        $hotel = Hotel::with('category', 'rooms')->where('status', 1)->where('id', $id)
+        $hotel = Hotel::with('category', 'rooms.beds')->where('status', 1)->where('id', $id)
             ->orderBy('id', 'desc')
             ->first();
-        
+
         if ($hotel) {
             // Country and Tax Calculation
             $country = $hotel->country;
@@ -179,52 +179,62 @@ class HotelController extends Controller
                 $facility_names = Facility::whereIn('facilityId', $facility_ids)->pluck('name')->toArray();
             }
 
+            // Fetch all applicable rates for optimization
+            $currentDate = Carbon::today();
+            $rates = Rate::whereDate('start_date', '<=', $currentDate)
+                ->whereDate('end_date', '>=', $currentDate)
+                ->orderByRaw("CASE
+                    WHEN event_type = 'Blackout Date' THEN 1
+                    WHEN event_type = 'Fair Date' THEN 2
+                    WHEN event_type = 'Season' THEN 3
+                    ELSE 4 END")
+                ->get();
+
             // Initialize base price to a high value for comparison
             $base_price = PHP_INT_MAX;
             $room_data = [];
-            $bed_data=[];
             $weekend_days = json_decode($hotel->weekend_days) ?? [];
             $today = Carbon::now()->format('l');
 
             foreach ($hotel->rooms as $rooms) {
+                // Reset bed data for each room
+                $bed_data = [];
+
                 // Weekday or Weekend price calculation
                 $price = in_array($today, $weekend_days) ? $rooms->weekend_price : $rooms->weekday_price;
-                $base_price = min($base_price, $price);
-                //price variying with event
-                $currentDate = Carbon::today();
-                $rate = Rate::whereDate('start_date', '<=', $currentDate)
-                    ->whereDate('end_date', '>=', $currentDate)
-                    ->orderByRaw("CASE
-                        WHEN event_type = 'Blackout Date' THEN 1
-                        WHEN event_type = 'Fair Date' THEN 2
-                        WHEN event_type = 'Season' THEN 3
-                        ELSE 4 END")
-                    ->first();
-                if($rate && $rate->event_type == "Blackout Date"){
-                    $price = $rate->price;
-                }elseif($rate && $rate->event_type == "Fair Date"){
-                    $price = $price + (int)$rate->price;
-                }elseif($rate && $rate->event_type == "Season"){
-                    $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
-                }else{
-                    $price = $price;
+
+                // Apply rate adjustments
+                foreach ($rates as $rate) {
+                    if ($rate->event_type == "Blackout Date") {
+                        $price = $rate->price; // Override price completely
+                        break; // Blackout dates take precedence
+                    } elseif ($rate->event_type == "Fair Date") {
+                        $price = $price + (int)$rate->price;
+                    } elseif ($rate->event_type == "Season") {
+                        $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
+                    }
                 }
 
-            foreach($rooms->beds as $bed){
-                $bed_data[] = [
-                    'id' => $rooms->id,
-                    'bed_type' => $bed->bed_type,
-                    'bed_image' => json_decode($bed->image) ?? [],
-                    'bed_type' => $bed->bed_type,
-                    'king_bed_max_occupancy' => $bed->king_bed_max_occupancy,
-                    'king_ed_adult_count' => $bed->king_ed_adult_count,
-                    'king_bed_child_count' => $bed->king_bed_child_count,
-                    'king_bed_extra_bed' => $bed->king_bed_extra_bed,
-                    'king_bed_extra_bed_price' => $bed->king_bed_extra_bed_price,
-                    'king_bed_ay_cot' => $bed->king_bed_ay_cot,
-                    'king_bed_ay_cot_price' => $bed->king_bed_ay_cot_price,
-                ];
-            }
+                // Update base price for the hotel
+                $base_price = min($base_price, $price);
+
+                // Process beds for the room
+                foreach ($rooms->beds as $bed) {
+                    $bed_data[] = [
+                        'id' => $rooms->id,
+                        'bed_type' => $bed->bed_type,
+                        'bed_image' => json_decode($bed->image) ?? [],
+                        'king_bed_max_occupancy' => $bed->king_bed_max_occupancy,
+                        'king_ed_adult_count' => $bed->king_ed_adult_count,
+                        'king_bed_child_count' => $bed->king_bed_child_count,
+                        'king_bed_extra_bed' => $bed->king_bed_extra_bed,
+                        'king_bed_extra_bed_price' => $bed->king_bed_extra_bed_price,
+                        'king_bed_ay_cot' => $bed->king_bed_ay_cot,
+                        'king_bed_ay_cot_price' => $bed->king_bed_ay_cot_price,
+                    ];
+                }
+
+                // Prepare room data
                 $room_data[] = [
                     'id' => $rooms->id,
                     'room_type' => $rooms->room_type,
@@ -247,14 +257,14 @@ class HotelController extends Controller
 
             // Handle case where no rooms exist
             if ($base_price === PHP_INT_MAX) {
-                $base_price = 0; 
+                $base_price = 0;
             }
 
             // Hotel List Response
             $hotel_list = [
                 'id' => $hotel->id,
                 'hotel_name' => $hotel->name,
-                'category' => $hotel->category->name ?? 'N/A', // Fallback for missing category
+                'category' => $hotel->category->name ?? 'N/A',
                 'location' => $hotel->address ?? '',
                 'price' => $base_price,
                 'tax_amount' => ($base_price * $country_tax / 100),
@@ -277,7 +287,6 @@ class HotelController extends Controller
             ], 404);
         }
     }
-
 
 
     // public function roomLists(Request $request)
