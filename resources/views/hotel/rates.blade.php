@@ -120,7 +120,7 @@
                         <th>End Date</th>
                         <th>Event Name</th>
                         <th>Event Type</th>
-                        <th>Price</th>
+                        <th>Price/Surcharge</th>
                         <th>Weekday Price</th>
                         <th>Weekend Price</th>
                         <th>Action</th>
