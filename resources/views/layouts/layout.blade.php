@@ -4,6 +4,7 @@
 <html lang="en">
 <head>
     @include('layouts.header')  <!-- Include header content here -->
+    @yield('styles')   <!-- Include header content here -->
 </head>
 <body>
     <div class="wrapper">

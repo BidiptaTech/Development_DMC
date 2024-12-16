@@ -21,7 +21,7 @@
                         </div>
                     </div>
                     <div class="card-body p-4">
-                        <form id="hotelForm" method="POST" action="{{ route('hotels.update', $hotel->id) }}" enctype="multipart/form-data">
+                        <form id="hotelForm" method="POST" action="{{ route('hotels.update', $hotel->hotel_unique_id) }}" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="row">

@@ -62,10 +62,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/roomType/toggle', [RoomTypeController::class, 'toggle'])->name('roomType.toggle');
         
         Route::resource('hotels', HotelController::class);
+        Route::get('calender/{hotel}', [HotelController::class, 'calender'])->name('hotels.calender');
         Route::get('/hotels/{hotel}/contact', [HotelController::class, 'hotelcontacts'])->name('hotels.contact');
         Route::post('/updatecontacts', [HotelController::class, 'updatecontacts'])->name('hotels.createcontacts');
         Route::get('/hotels/{hotel}/room', [HotelController::class, 'hotelrooms'])->name('hotels.room');
-        Route::get('hotels/calender', [HotelController::class, 'calender'])->name('hotels.calender');
 
         Route::get('/hotels/{hotel}/rates', [HotelController::class, 'hotelrates'])->name('hotels.rates');
         Route::post('storerates', [HotelController::class, 'storerates'])->name('storerates');
