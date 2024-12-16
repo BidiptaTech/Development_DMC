@@ -238,7 +238,7 @@ class HotelController extends Controller
             'hotel_status' => 'required',
         ]);
 
-        $hotel = Hotel::findOrFail($id);
+        $hotel = Hotel::where('hotel_id', $id)->first();
         $storage_file = $hotel->main_image;
         if ($request->hasFile('main_image')) {
             $image = $request->file('main_image');
