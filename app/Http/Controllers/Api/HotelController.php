@@ -181,14 +181,14 @@ class HotelController extends Controller
 
             // Fetch all applicable rates for optimization
             $currentDate = Carbon::today();
-            $rates = Rate::whereDate('start_date', '<=', $currentDate)
+            $rate = Rate::whereDate('start_date', '<=', $currentDate)
                 ->whereDate('end_date', '>=', $currentDate)
                 ->orderByRaw("CASE
                     WHEN event_type = 'Blackout Date' THEN 1
                     WHEN event_type = 'Fair Date' THEN 2
                     WHEN event_type = 'Season' THEN 3
                     ELSE 4 END")
-                ->get();
+                ->first();
 
             // Initialize base price to a high value for comparison
             $base_price = PHP_INT_MAX;
@@ -202,17 +202,13 @@ class HotelController extends Controller
 
                 // Weekday or Weekend price calculation
                 $price = in_array($today, $weekend_days) ? $rooms->weekend_price : $rooms->weekday_price;
-
-                // Apply rate adjustments
-                foreach ($rates as $rate) {
-                    if ($rate->event_type == "Blackout Date") {
-                        $price = $rate->price; // Override price completely
-                        break; // Blackout dates take precedence
-                    } elseif ($rate->event_type == "Fair Date") {
-                        $price = $price + (int)$rate->price;
-                    } elseif ($rate->event_type == "Season") {
-                        $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
-                    }
+                if ($rate->event_type == "Blackout Date") {
+                    $price = $rate->price; // Override price completely
+                    break; // Blackout dates take precedence
+                } elseif ($rate->event_type == "Fair Date") {
+                    $price = $price + (int)$rate->price;
+                } elseif ($rate->event_type == "Season") {
+                    $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
                 }
 
                 // Update base price for the hotel
@@ -269,6 +265,8 @@ class HotelController extends Controller
                 'price' => $base_price,
                 'tax_amount' => ($base_price * $country_tax / 100),
                 'total_base_amount' => $base_price + ($base_price * $country_tax / 100),
+                'event_name' => $rate->event,
+                'event_type' => $rate->event_type,
                 'image' => $hotel->main_image ?? '',
                 'site_image' => $site_image,
                 'cancellation' => $hotel->cancellation_type ?? 'No cancellation policy',
