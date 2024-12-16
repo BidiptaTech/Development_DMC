@@ -245,24 +245,22 @@ class HotelController extends Controller
                     'number_of_room' => $rooms->no_of_room,
                     'price' => $price,
                     'breakfast' => $rooms->breakfast,
-                    'breakfast_type' => $rooms->breakfast_type,
+                    'breakfast_type' => $rooms->breakfast_type == "0" ? 'Buffet' : 'Setbuffet',
                     'breakfast_price' => $rooms->breakfast_price,
                     'lunch' => $rooms->lunch,
-                    'lunch_type' => $rooms->lunch_type,
+                    'lunch_type' => $rooms->lunch_type == "0" ? 'Buffet' : 'Setbuffet',
                     'lunch_price' => $rooms->lunch_price,
                     'dinner' => $rooms->dinner,
-                    'dinner_type' => $rooms->dinner_type,
+                    'dinner_type' => $rooms->dinner_type == "0" ? 'Buffet' : 'Setbuffet',
                     'dinner_price' => $rooms->dinner_price,
                     'variant_price' => $rooms->variant_price,
                     'bed_details' => $bed_data,
                 ];
             }
-
             // Handle case where no rooms exist
             if ($base_price === PHP_INT_MAX) {
                 $base_price = 0;
             }
-
             // Hotel List Response
             $hotel_list = [
                 'id' => $hotel->id,
