@@ -97,7 +97,7 @@
                             <div class="mb-3 row">
                                 <label for="markup_price" class="col-sm-3 col-form-label">Markup Price</label>
                                 <div class="col-sm-9">
-                                    <input type="markup_price" class="form-control" id="markup_price" name="markup_price" placeholder="Choose Password" required>
+                                    <input type="markup_price" class="form-control" id="markup_price" name="markup_price" placeholder="Enter Price" required>
                                 </div>
                             </div>
 
