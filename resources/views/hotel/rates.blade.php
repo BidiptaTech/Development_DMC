@@ -50,7 +50,7 @@
                               <!-- Price -->
                               <div class="col-md-3 mb-3" id="price">
                                  <label for="price" class="form-label"><strong>Price</strong></label><span class="text-danger">*</span>
-                                 <input type="number" class="form-control" name="price" placeholder="Enter Price" required>
+                                 <input type="number" class="form-control" name="price" placeholder="Enter Price">
                               </div>
 
                                <!-- Weekday -->
@@ -98,7 +98,7 @@
                      <div class="d-flex gap-3">
                         <a href="{{ route('hotels.room', $hotel->id) }}" class="btn btn-secondary px-4">Previous</a>
                         <button type="submit" class="btn btn-primary px-4">Save and Add More Events</button>
-                        <a href="{{ route('hotels.index') }}" class="btn btn-success px-4">Save and Next</a>
+                        <a href="{{ route('hotels.calender', $hotel->hotel_unique_id) }}" class="btn btn-success px-4">Next</a>
                      </div>
                   </form>
                </div>
@@ -121,6 +121,8 @@
                         <th>Event Name</th>
                         <th>Event Type</th>
                         <th>Price</th>
+                        <th>Weekday Price</th>
+                        <th>Weekend Price</th>
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -132,6 +134,8 @@
                         <td>{{ $rate->event }}</td>
                         <td>{{ $rate->event_type }}</td>
                         <td>{{ $rate->price }}</td>
+                        <td>{{ $rate->weekday_price }}</td>
+                        <td>{{ $rate->weekend_price }}</td>
 
                         <td>
                            <a href="{{ route('rates.edit', ['id' => $rate->rate_id, 'hotel_id' => $hotel->id]) }}" class="btn btn-warning btn-sm">Edit</a>
