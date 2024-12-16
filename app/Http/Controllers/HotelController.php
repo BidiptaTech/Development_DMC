@@ -442,6 +442,8 @@ class HotelController extends Controller
     */
     public function storeroom(Request $request)
     {
+
+        
         $request->validate([
 
         // 'room_type' => 'required|string|max:255',
@@ -498,7 +500,7 @@ class HotelController extends Controller
         $room->is_complete = 1;
         $room->room_id = $roomId;
         $room->save();
-        dd(12);
+        
 
         // Validate the incoming request data
         $validated = $request->validate([
@@ -511,6 +513,7 @@ class HotelController extends Controller
             'king_bed_extra_bed_price' => 'nullable|numeric',
             'king_bed_baby_cot' => 'nullable|boolean',
             'king_bed_baby_cot_price' => 'nullable|numeric',
+            'king_bed_type' => 'nullable',
             'queen_bed_no_of_rooms' => 'nullable|integer',
             'queen_bed_max_occupancy' => 'nullable|integer',
             'queen_bed_adult_count' => 'nullable|integer',
@@ -519,6 +522,7 @@ class HotelController extends Controller
             'queen_bed_extra_bed_price' => 'nullable|numeric',
             'queen_bed_baby_cot' => 'nullable|boolean',
             'queen_bed_baby_cot_price' => 'nullable|numeric',
+            'queen_bed_type' => 'nullable',
             'twin_bed_no_of_rooms' => 'nullable|integer',
             'twin_bed_max_occupancy' => 'nullable|integer',
             'twin_bed_adult_count' => 'nullable|integer',
@@ -527,8 +531,9 @@ class HotelController extends Controller
             'twin_bed_extra_bed_price' => 'nullable|numeric',
             'twin_bed_baby_cot' => 'nullable|boolean',
             'twin_bed_baby_cot_price' => 'nullable|numeric',
+            'twin_bed_type' => 'nullable',
         ]);
-
+        dd($request->all());
         $lastBed = Bed::withTrashed()->orderBy('id', 'desc')->first();
         $bed_max_id = $lastBed->bedId ?? 0;
         $bedId = CommonHelper::createId($bed_max_id);
@@ -542,7 +547,8 @@ class HotelController extends Controller
         
         $bed = new Bed();
 
-        $bed->king_bed_no_of_rooms = $validated['king_bed_no_of_rooms'] ?? 0;
+        $bed->king_bed_type = $validated['king_bed_type'];
+        $bed->king_bed_no_of_rooms = $validated['king_bed_no_Of_rooms'] ?? 0;
         $bed->king_bed_max_occupancy = $validated['king_bed_max_occupancy'] ?? 0;
         $bed->king_bed_adult_count = $validated['king_bed_adult_count'] ?? 0;
         $bed->king_bed_child_count = $validated['king_bed_child_count'] ?? 0;
@@ -551,7 +557,8 @@ class HotelController extends Controller
         $bed->king_bed_baby_cot = $validated['king_bed_baby_cot'] ?? false;
         $bed->king_bed_baby_cot_price = $validated['king_bed_baby_cot_price'] ?? 0.00;
 
-        $bed->queen_bed_no_of_rooms = $validated['queen_bed_no_of_rooms'] ?? 0;
+        $bed->queen_bed_type = $validated['queen_bed_type'];
+        $bed->queen_bed_no_of_rooms = $validated['queen_bed_no_Of_rooms'] ?? 0;
         $bed->queen_bed_max_occupancy = $validated['queen_bed_max_occupancy'] ?? 0;
         $bed->queen_bed_adult_count = $validated['queen_bed_adult_count'] ?? 0;
         $bed->queen_bed_child_count = $validated['queen_bed_child_count'] ?? 0;
@@ -560,7 +567,8 @@ class HotelController extends Controller
         $bed->queen_bed_baby_cot = $validated['queen_bed_baby_cot'] ?? false;
         $bed->queen_bed_baby_cot_price = $validated['queen_bed_baby_cot_price'] ?? 0.00;
 
-        $bed->twin_bed_no_of_rooms = $validated['twin_bed_no_of_rooms'] ?? 0;
+        $bed->twin_bed_type = $validated['twin_bed_type'];
+        $bed->twin_bed_no_of_rooms = $validated['twin_bed_no_Of_rooms'] ?? 0;
         $bed->twin_bed_max_occupancy = $validated['twin_bed_max_occupancy'] ?? 0;
         $bed->twin_bed_adult_count = $validated['twin_bed_adult_count'] ?? 0;
         $bed->twin_bed_child_count = $validated['twin_bed_child_count'] ?? 0;

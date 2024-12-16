@@ -142,21 +142,21 @@
 
                         <!-- Bed types -->
                         <div>
-                           <input type="checkbox" id="king-bed" class="bed-type-checkbox" name="king_bed" value="king_bed">
+                           <input type="checkbox" id="king-bed" class="bed-type-checkbox" name="king_bed_type" value="King_bed">
                            <label for="king-bed">King Bed</label>
                            <hr>
                        </div>
                        <div name="king_bed" class="insert_king_bed_fields bed-fields" id="king-bed-fields"></div>
                        
                        <div>
-                           <input type="checkbox" id="queen-bed" class="bed-type-checkbox" name="queen_bed" value="queen_bed">
+                           <input type="checkbox" id="queen-bed" class="bed-type-checkbox" name="queen_bed_type" value="Queen_bed">
                            <label for="queen-bed">Queen Bed</label>
                            <hr>
                        </div>
                        <div name="queen_bed" class="insert_queen_bed_fields bed-fields" id="queen-bed-fields"></div>
                        
                        <div>
-                           <input type="checkbox" id="twin-bed" class="bed-type-checkbox" name="twin-bed" value="twin_bed">
+                           <input type="checkbox" id="twin-bed" class="bed-type-checkbox" name="twin-bed_type" value="Twin_bed">
                            <label for="twin-bed">Twin Bed</label>
                            <hr>
                        </div>

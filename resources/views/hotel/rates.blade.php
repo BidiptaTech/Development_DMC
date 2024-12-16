@@ -97,7 +97,7 @@
                      <!-- Submit Buttons -->
                      <div class="d-flex gap-3">
                         <a href="{{ route('hotels.room', $hotel->id) }}" class="btn btn-secondary px-4">Previous</a>
-                        <button type="submit" class="btn btn-primary px-4">Save and Add More Rooms</button>
+                        <button type="submit" class="btn btn-primary px-4">Save and Add More Events</button>
                         <a href="{{ route('hotels.index') }}" class="btn btn-success px-4">Save and Next</a>
                      </div>
                   </form>
