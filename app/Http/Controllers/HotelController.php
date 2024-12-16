@@ -765,15 +765,17 @@ class HotelController extends Controller
         $rate_dates = [];
         foreach ($rates as $rate) {
             $rate_dates[] = [
-                'id' => $rate->id,
+                'id' => $rate->rate_id,
+                'event' => $rate->event,     
+                'event_type' => $rate->event_type,     
+                'price' => $rate->price,     
                 'start_date' => $rate->start_date, 
                 'end_date' => $rate->end_date,     
+                'weekday_price' => $rate->weekday_price,     
+                'weekend_price' => $rate->weekend_price,     
             ];
         }
         return view('hotel.calender', compact('hotel', 'rate_dates', 'year'));
     }
-
-
-    
 
 }
