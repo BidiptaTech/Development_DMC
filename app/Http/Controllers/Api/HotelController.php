@@ -204,18 +204,18 @@ class HotelController extends Controller
             $today = Carbon::now()->format('l');
 
             foreach ($hotel->rooms as $rooms) {
-                // Reset bed data for each room
                 $bed_data = [];
-
                 // Weekday or Weekend price calculation
                 $price = in_array($today, $weekend_days) ? $rooms->weekend_price : $rooms->weekday_price;
-                if ($rate->event_type == "Blackout Date") {
-                    $price = $rate->price; // Override price completely
-                    break; // Blackout dates take precedence
-                } elseif ($rate->event_type == "Fair Date") {
-                    $price = $price + (int)$rate->price;
-                } elseif ($rate->event_type == "Season") {
-                    $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
+                if($rate){
+                    if ($rate->event_type == "Blackout Date") {
+                        $price = $rate->price; // Override price completely
+                        break; // Blackout dates take precedence
+                    } elseif ($rate->event_type == "Fair Date") {
+                        $price = $price + (int)$rate->price;
+                    } elseif ($rate->event_type == "Season") {
+                        $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
+                    }
                 }
 
                 // Update base price for the hotel
@@ -272,8 +272,8 @@ class HotelController extends Controller
                 'price' => $base_price,
                 'tax_amount' => ($base_price * $country_tax / 100),
                 'total_base_amount' => $base_price + ($base_price * $country_tax / 100),
-                'event_name' => $rate->event,
-                'event_type' => $rate->event_type,
+                'event_name' => $rate->event ?? '',
+                'event_type' => $rate->event_type ??'',
                 'image' => $hotel->main_image ?? '',
                 'site_image' => $site_image,
                 'cancellation' => $hotel->cancellation_type ?? 'No cancellation policy',

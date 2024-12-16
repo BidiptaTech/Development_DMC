@@ -25,6 +25,5 @@
 <script src="{{ asset('assets/vendor/fullcalendar/index.global.min.js') }}"></script>
 <script src="{{ asset('assets/js/pages/apps-calendar.js') }}"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
-
+    
 
