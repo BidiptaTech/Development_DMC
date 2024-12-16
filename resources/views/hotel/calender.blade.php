@@ -55,100 +55,124 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const calendarEl = document.getElementById('calendar');
-    const prices = {
-        '2024-12-19': 100,
-        '2025-01-10': 120,
-        '2025-02-24': 90,
-        '2024-12-31': 150,
-        '2024-12-25': 300,
-    };
+        const calendarEl = document.getElementById('calendar');
 
-    const blackoutDates = {
-        '2024-12-25': 'Christmas Blackout',
-        '2024-12-31': 'New Year Blackout',
-    };
+        // Convert the PHP array to a JavaScript object
+        const rateDates = @json($rate_dates); // This contains the rate data
+        const prices = {};
+        const blackoutDates = {};
+        const fairDates = {};
+        const seasonDates = {};
 
-    const fairDates = {
-        '2025-01-10': 'Winter Fair',
-        '2025-02-24': 'Spring Fair',
-    };
-
-    const seasonDates = {
-        '2024-12-10': 'Winter Season',
-        '2024-12-19': 'Holiday Season',
-    };
-
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'en',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth',
-        },
-        validRange: {
-            start: '2024-01-01',
-            end: '2025-12-31',
-        },
-        dayCellDidMount: function (info) {
-            // Convert the date to YYYY-MM-DD format for IST
-            const istDate = new Date(info.date.getTime() + 5.5 * 60 * 60 * 1000); // Add 5.5 hours to adjust to IST
-            const dateStr = istDate.toISOString().split('T')[0];
-            const cell = info.el;
-
-            // Default values for price and event
-            let price = prices[dateStr] || null;
-            let eventName = null;
-            let eventClass = '';
-
-            // Priority logic: blackoutDates > fairDates > seasonDates > base price
-            if (blackoutDates[dateStr]) {
-                eventName = blackoutDates[dateStr];
-                eventClass = 'event-blackout';
-            } else if (fairDates[dateStr]) {
-                eventName = fairDates[dateStr];
-                eventClass = 'event-fair';
-            } else if (seasonDates[dateStr]) {
-                eventName = seasonDates[dateStr];
-                eventClass = 'event-season';
+        // Populate prices and event types based on rate data
+        rateDates.forEach(rate => {
+            const startDate = new Date(rate.start_date);
+            const endDate = new Date(rate.end_date);
+            
+            // Ensure to compare dates by stripping the time part
+            const dateStr = date => date.toISOString().split('T')[0]; 
+            
+            // Iterate over the date range
+            while (startDate <= endDate) {
+                const dateKey = dateStr(startDate); // Get formatted date as key
+                
+                // Handle BlackoutDates
+                if (rate.event_type === 'Blackout Date') {
+                    blackoutDates[dateKey] = rate.event;
+                    // blackoutDates[dateKey] = rate.price;
+                } 
+                // Handle FairDates
+                else if (rate.event_type === 'Fair Date') {
+                    fairDates[dateKey] = rate.event;
+                    // blackoutDates[dateKey] = rate.price;
+                } 
+                // Handle Season (with weekday and weekend prices)
+                else if (rate.event_type === 'Season') {
+                    if (isWeekend(startDate)) {
+                        prices[dateKey] = rate.weekend_price;  // Apply weekend price
+                    } else {
+                        prices[dateKey] = rate.weekday_price;  // Apply weekday price
+                    }
+                    seasonDates[dateKey] = rate.event;
+                }
+                
+                // Move to the next date
+                startDate.setDate(startDate.getDate() + 1);
             }
+        });
 
-            // Apply event-specific class
-            if (eventClass) {
-                cell.classList.add(eventClass);
-            }
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'en',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth',
+            },
+            validRange: {
+                start: '2024-01-01',
+                end: '2025-12-31',
+            },
+            dayCellDidMount: function (info) {
+                const cell = info.el;
+                const dateStr = info.date.toISOString().split('T')[0]; 
 
-            // Display the event name if available
-            if (eventName) {
-                const eventNameElement = document.createElement('div');
-                eventNameElement.className = 'event-name';
-                eventNameElement.textContent = eventName;
-                cell.appendChild(eventNameElement);
-            }
+                let price = prices[dateStr] || null;
+                let eventName = null;
+                let eventClass = '';
 
-            // Display the price
-            if (price) {
-                const priceElement = document.createElement('div');
-                priceElement.className = 'price-container';
-                priceElement.textContent = `₹${price}`;
-                cell.appendChild(priceElement);
-            }
+                if (blackoutDates[dateStr]) {
+                    eventName = blackoutDates[dateStr];
+                    eventClass = 'event-blackout';
+                } else if (fairDates[dateStr]) {
+                    eventName = fairDates[dateStr];
+                    eventClass = 'event-fair';
+                } else if (seasonDates[dateStr]) {
+                    eventName = seasonDates[dateStr];
+                    eventClass = 'event-season';
+                }
 
-            // Highlight past dates
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // Reset time to midnight in local time
-            if (info.date < today) {
-                cell.classList.add('fc-day-past');
-            }
-        },
-        height: 'auto',
-        aspectRatio: 1.5,
+                // Apply event-specific class
+                if (eventClass) {
+                    cell.classList.add(eventClass);
+                }
+
+                // Display the event name if available
+                if (eventName) {
+                    const eventNameElement = document.createElement('div');
+                    eventNameElement.className = 'event-name';
+                    eventNameElement.textContent = eventName;
+                    cell.appendChild(eventNameElement);
+                }
+
+                // Display the price if available
+                if (price) {
+                    const priceElement = document.createElement('div');
+                    priceElement.className = 'price-container';
+                    priceElement.textContent = `₹${price}`;
+                    cell.appendChild(priceElement);
+                }
+
+                // Highlight past dates
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); 
+                if (info.date < today) {
+                    cell.classList.add('fc-day-past');
+                }
+            },
+            height: 'auto',
+            aspectRatio: 1.5,
+        });
+
+        calendar.render();
+
+        // Helper function to check if a date is a weekend (Saturday/Sunday)
+        function isWeekend(date) {
+            const day = date.getDay();
+            return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
+        }
     });
+</script>
 
-    calendar.render();
-});
 
-    </script>
-
-    @endsection
+@endsection
