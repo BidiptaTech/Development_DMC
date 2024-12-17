@@ -486,11 +486,14 @@
                <div class="row">
                    
                    <div class="mb-3 col-md-3">
-                       <label for="${bedType}-no-rooms${counter}" class="form-label"><strong>No. of Rooms</strong></label>
+                       <label for="${bedType}-no-rooms${counter}" class="form-label"><strong>No. of Rooms</strong><span class="text-danger">*</span></label>
                        <input type="number" name="no_of_rooms[]" id="${bedType}-no-rooms${counter}" class="form-control" placeholder="Enter number of rooms">
+                        @error('${bedType}_adult_count')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
                    </div>
                     <div class="mb-3 col-md-3">
-                        <label for="${bedType}-max-occupancy${counter}" class="form-label"><strong>Maximum Occupancy</strong></label>
+                        <label for="${bedType}-max-occupancy${counter}" class="form-label"><strong>Maximum Occupancy</strong><span class="text-danger">*</span></label>
                         <input type="number" name="max_occupancy[]" id="${bedType}-occupancy${counter}" class="form-control" placeholder="Enter maximum occupancy">
                     </div>
                     <div class="col-md-3 mb-3">

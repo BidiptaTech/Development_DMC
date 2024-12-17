@@ -466,8 +466,8 @@ class HotelController extends Controller
         'end_date.*' => 'nullable|date|after:start_date',
         ]);
 
-         // Validate the incoming request data
-         $request->validate([
+        // Validate the incoming Bed data
+        $request->validate([
             'no_of_rooms.*' => 'required|integer|min:1',
             'max_occupancy.*' => 'required|integer|min:1',
             'adult_count.*' => 'nullable|integer|min:0',
@@ -478,7 +478,7 @@ class HotelController extends Controller
             'baby_cot_price.*' => 'nullable|numeric|min:0',
         ]);
 
-        //dd($request->all());
+        dd($request->all());
 
 
         $lastRoom = Room::withTrashed()->orderBy('id', 'desc')->first();
@@ -515,39 +515,37 @@ class HotelController extends Controller
         $room->save();
         
 
-       
-        $lastBed = Bed::withTrashed()->orderBy('bed_id', 'desc')->first();
-        $bed_max_id = $lastBed->bed_id ?? 0;
-        $bedId = CommonHelper::createId($bed_max_id);
-        while (Bed::where('bed_id', $bedId)->exists()) {
-            $bedId = CommonHelper::createId($bedId);
+        if($request->no_of_rooms){
+            $lastBed = Bed::withTrashed()->orderBy('bed_id', 'desc')->first();
+            $bed_max_id = $lastBed->bed_id ?? 0;
+            $bedId = CommonHelper::createId($bed_max_id);
+            while (Bed::where('bed_id', $bedId)->exists()) {
+                $bedId = CommonHelper::createId($bedId);
+            }
+
+            $lastRoomId = Room::latest()->value('room_id');
+            
+            $bedData = [];
+
+            foreach ($request->no_of_rooms as $key => $no_of_rooms) {
+                $bedData[] = [
+                    'room_type' => $request->bed_type[$key],
+                    'no_of_rooms' => $no_of_rooms,
+                    'max_occupancy' => $request->max_occupancy[$key],
+                    'adult_count' => $request->adult_count[$key] ?? 0,
+                    'child_count' => $request->child_count[$key] ?? 0,
+                    'extra_bed' => $request->extra_bed[$key] ?? null,
+                    'extra_bed_price' => $request->extra_bed_price[$key] ?? null,
+                    'baby_cot' => $request->baby_cot[$key] ?? null,
+                    'baby_cot_price' => $request->baby_cot_price[$key] ?? null,
+                    'room_id' => $lastRoomId,
+                    'bed_id' => $bedId,
+                    'is_active' => $request->hotel_status,
+                ];
+            }
+            // Perform bulk insert
+            Bed::insert($bedData);
         }
-
-        $lastRoomId = Room::latest()->value('room_id');
-
-        // Create a new RoomBed instance and save to database
-        
-        $bedData = [];
-
-        foreach ($request->no_of_rooms as $key => $no_of_rooms) {
-            $bedData[] = [
-                'room_type' => $request->bed_type[$key],
-                'no_of_rooms' => $no_of_rooms,
-                'max_occupancy' => $request->max_occupancy[$key],
-                'adult_count' => $request->adult_count[$key] ?? 0,
-                'child_count' => $request->child_count[$key] ?? 0,
-                'extra_bed' => $request->extra_bed[$key] ?? null,
-                'extra_bed_price' => $request->extra_bed_price[$key] ?? null,
-                'baby_cot' => $request->baby_cot[$key] ?? null,
-                'baby_cot_price' => $request->baby_cot_price[$key] ?? null,
-                'room_id' => $lastRoomId,
-                'bed_id' => $bedId,
-                'is_active' => $request->hotel_status,
-            ];
-        }
-        
-        // Perform bulk insert
-        Bed::insert($bedData);
         
         if ($room->save()) {
             return redirect()->back()
