@@ -30,7 +30,7 @@
                         <!-- Room Type -->
                         <div class="col-md-3 mb-3" id="base_room_type" style="display: none;">
                            <label for="room_type" class="form-label"><strong>Base Room Type</strong><span class="text-danger">*</span></label>
-                           <input name="base_room_type" class="form-control" placeholder="Enter Base Room Type"></input>
+                           <input type="text" name="base_room_type" class="form-control" placeholder="Enter Base Room Type"></input>
                            @error('room_type')
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
@@ -38,9 +38,9 @@
 
                         <!-- Number of Rooms -->
                         <div class="col-md-3 mb-3">
-                           <label for="no_of_room" class="form-label"><strong>No of Rooms</strong><span class="text-danger">*</span></label>
-                           <input type="number" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms">
-                           @error('base_no_of_room')
+                           <label for="no_of_room" class="form-label"><strong>Total No of Rooms</strong><span class="text-danger">*</span></label>
+                           <input type="number" class="form-control" name="total_no_of_room" placeholder="Enter Number of Rooms" id="total_rooms">
+                           @error('total_no_of_room')
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
                         </div>
@@ -57,10 +57,10 @@
                        </div>
 
                        <!-- dimension -->
-                       <div class="mb-3 col-md-3" id="dimension">
+                        <div class="mb-3 col-md-3" id="dimension">
                            <label for="weekend_price" class="form-label"><strong>Dimension</strong></label>
                            <input type="text" name="dimension" class="form-control" placeholder="length x breadth">
-                       </div>
+                        </div>
 
                         <!-- Breakfast -->
                         <div class="mb-3 col-md-3">
@@ -148,27 +148,25 @@
 
                         <!-- Bed types -->
                         <div>
-                           <input type="checkbox" id="king-bed" class="bed-type-checkbox" name="king_bed" value="king_bed">
+                           <input type="checkbox" id="king-bed" class="bed-type-checkbox" name="bed_type[]" value="King_bed">
                            <label for="king-bed">King Bed</label>
                            <hr>
                        </div>
                        <div name="king_bed" class="insert_king_bed_fields bed-fields" id="king-bed-fields"></div>
                        
                        <div>
-                           <input type="checkbox" id="queen-bed" class="bed-type-checkbox" name="queen_bed" value="queen_bed">
+                           <input type="checkbox" id="queen-bed" class="bed-type-checkbox" name="bed_type[]" value="Queen_bed">
                            <label for="queen-bed">Queen Bed</label>
                            <hr>
                        </div>
                        <div name="queen_bed" class="insert_queen_bed_fields bed-fields" id="queen-bed-fields"></div>
                        
                        <div>
-                           <input type="checkbox" id="twin-bed" class="bed-type-checkbox" name="twin-bed" value="twin_bed">
+                           <input type="checkbox" id="twin-bed" class="bed-type-checkbox" name="bed_type[]" value="Twin_bed">
                            <label for="twin-bed">Twin Bed</label>
                            <hr>
                        </div>
                        <div name="twin_bed" class="insert_twin_bed_fields bed-fields" id="twin-bed-fields"></div>
-
-                       
                         
                      </div>
 
@@ -187,7 +185,7 @@
                         <a href="{{ route('contactdetails.edit', $hotel->id) }}" class="btn btn-secondary px-4">Previous</a>
                         <button type="submit" class="btn btn-primary px-4">Save and Add More Rooms</button>
 
-                        <a href="{{ route('hotels.rates', $hotel->id) }}" class="btn btn-primary px-4">Save and Next</a>
+                        <a href="{{ route('hotels.rates', $hotel->id) }}" class="btn btn-primary px-4">Next</a>
                      </div>
                   </form>
                </div>
@@ -209,8 +207,9 @@
                         <th>No of Rooms</th>
                         <th>Weekday Price</th>
                         <th>Weekend Price</th>
+                        <th>Varient Price</th>
                         <th>Extra Bed</th>
-                        <th>Child Cot</th>
+                        
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -221,6 +220,7 @@
                         <td>{{ $room->no_of_room }}</td>
                         <td>{{ $room->weekday_price }}</td>
                         <td>{{ $room->weekend_price }}</td>
+                        <td>{{ $room->varient_price }}</td>
                         <td>
                            @if($room->extra_bed === 1)
                               <span class="badge bg-success">Available</span>
@@ -228,13 +228,7 @@
                               <span class="badge bg-danger">Not Available</span>
                            @endif
                         </td>
-                        <td>
-                           @if($room->child_cot === 1)
-                              <span class="badge bg-success">Available</span>
-                           @else
-                              <span class="badge bg-danger">Not Available</span>
-                           @endif
-                        </td>
+                        
 
                         <td>
                            <a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -274,6 +268,7 @@
         document.getElementById('deleteForm').action = action;
     }
 </script>
+
 <script>
    function setDeleteForm(action) {
            const test = document.getElementById('deleteForm').action = action;
@@ -491,16 +486,16 @@
                <div class="row">
                    
                    <div class="mb-3 col-md-3">
-                       <label for="${bedType}-no-rooms" class="form-label"><strong>No. of Rooms</strong></label>
-                       <input type="number" name="${bedType}_no_Of_rooms" id="${bedType}-no-rooms${counter}" class="form-control" placeholder="Enter number of rooms">
+                       <label for="${bedType}-no-rooms${counter}" class="form-label"><strong>No. of Rooms</strong></label>
+                       <input type="number" name="no_of_rooms[]" id="${bedType}-no-rooms${counter}" class="form-control" placeholder="Enter number of rooms">
                    </div>
                     <div class="mb-3 col-md-3">
-                        <label for="${bedType}-max-occupancy" class="form-label"><strong>Maximum Occupancy</strong></label>
-                        <input type="number" name="${bedType}_max_occupancy" id="${bedType}-occupancy${counter}" class="form-control" placeholder="Enter maximum occupancy">
+                        <label for="${bedType}-max-occupancy${counter}" class="form-label"><strong>Maximum Occupancy</strong></label>
+                        <input type="number" name="max_occupancy[]" id="${bedType}-occupancy${counter}" class="form-control" placeholder="Enter maximum occupancy">
                     </div>
                     <div class="col-md-3 mb-3">
-                           <label for="adult" class="form-label"><strong>Adults</strong><span class="text-danger">*</span></label>
-                           <select id="${bedType}-adult${counter}" class="form-control" name="${bedType}_adult_count" disabled>
+                           <label for="${bedType}-adult${counter}" class="form-label"><strong>Adults</strong><span class="text-danger">*</span></label>
+                           <select id="${bedType}-adult${counter}" class="form-control" name="adult_count[]" disabled>
                               <option value="">Select Adults</option>
                            </select>
                            @error('${bedType}_adult_count')
@@ -508,8 +503,8 @@
                            @enderror
                         </div>
                         <div class="col-md-3 mb-3">
-                           <label for="child" class="form-label"><strong>Children</strong><span class="text-danger">*</span></label>
-                           <select id="${bedType}-child${counter}" class="form-control" name="${bedType}_child_count" disabled>
+                           <label for=""${bedType}-child${counter}" class="form-label"><strong>Children</strong><span class="text-danger">*</span></label>
+                           <select id="${bedType}-child${counter}" class="form-control" name="child_count[]" disabled>
                               <option value="">Select Children</option>
                            </select>
                            @error('${bedType}_child_count')
@@ -519,7 +514,7 @@
 
                         <div class="col-md-3 mb-3">
                            <label for="${bedType}-extra-bed" class="form-label"><strong>Extra Bed</strong><span class="text-danger">*</span></label>
-                           <select name="${bedType}_extra_bed" id="${bedType}-extra-bed${counter}" class="form-control"
+                           <select name="extra_bed[]" id="${bedType}-extra-bed${counter}" class="form-control"
                               onchange="togglePriceField('${bedType}-extra-bed${counter}', '${bedType}-extra-bed-price${counter}')">
                               <option value="">Select One</option>
                               <option value="1">Yes</option>
@@ -527,12 +522,12 @@
                            </select>
                         </div>
                         <div class="col-md-3 mb-3 ${bedType}-extra-bed-price${counter}" style="display: none;">
-                            <label for="${bedType}-extra-bed-price" class="form-label"><strong>Extra Bed Price</strong><span class="text-danger">*</span></label>
-                            <input type="number" name="${bedType}_extra_bed_price" id="${bedType}-extra-bed-price${counter}" class="form-control" placeholder="Enter Price">
+                            <label for="${bedType}-extra-bed-price${counter}" class="form-label"><strong>Extra Bed Price</strong><span class="text-danger">*</span></label>
+                            <input type="number" name="extra_bed_price[]" id="${bedType}-extra-bed-price${counter}" class="form-control" placeholder="Enter Price">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="${bedType}-baby-cot" class="form-label"><strong>Baby Cot</strong><span class="text-danger">*</span></label>
-                            <select name="${bedType}_baby_cot" id="${bedType}-baby-cot${counter}" class="form-control"
+                            <select name="baby_cot[]" id="${bedType}-baby-cot${counter}" class="form-control"
                               onchange="togglePriceField('${bedType}-baby-cot${counter}', '${bedType}-baby-cot-price${counter}')">
                                  <option value="">Select One</option>
                                  <option value="1">Yes</option>
@@ -541,7 +536,7 @@
                         </div>
                         <div class="col-md-3 mb-3 ${bedType}-baby-cot-price${counter}" style="display: none;">
                             <label for="${bedType}-baby-cot-price" class="form-label"><strong>Baby Cot Price</strong><span class="text-danger">*</span></label>
-                            <input type="number" name="${bedType}_baby_cot_price" id="${bedType}-baby-cot-price${counter}" class="form-control" placeholder="Enter Price">
+                            <input type="number" name="baby_cot_price[]" id="${bedType}-baby-cot-price${counter}" class="form-control" placeholder="Enter Price">
                         </div>
                         <hr>
                      </div>`;
@@ -563,8 +558,7 @@
            const fieldsContainerId = `${container}-fields`;
            console.log("bed = ", fieldsContainerId);
            if (e.target.checked) {
-            
-               addFields(bedType, fieldsContainerId);
+               addFields(container, fieldsContainerId);
            } else {
                document.getElementById(fieldsContainerId).innerHTML = ''; // Clear fields if unchecked
            }
@@ -575,7 +569,6 @@
        checkboxes.forEach((checkbox) => {
            checkbox.addEventListener('change', handleCheckboxChange);
        });
-
 
         // Function to attach listeners to dynamically added fields
          const attachOccupancyListeners = (occupancyId, adultId, childId) => {
@@ -623,8 +616,6 @@
        };
 
        //handle dynamically created
-
- 
 
     $('#add_more_checkboxes').on('input', '.varient-price', function (event) {
         const varientPriceInput = event.target; // Get the input element
@@ -738,7 +729,7 @@
             varientPrice.className = 'col-md-3 mb-3';
             varientPrice.id = 'varient_price';
             varientPrice.innerHTML = `
-                <label for="varient_price" class="form-label"><strong>Variance Price</strong><span class="text-danger">*</span></label>
+                <label for="varient_price" class="form-label"><strong>Variant Price</strong><span class="text-danger">*</span></label>
                 <input name="varient_price" id="varient_price_input" class="form-control" placeholder="Enter Variance Price" required>
             `;
 

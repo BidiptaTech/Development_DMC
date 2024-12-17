@@ -62,6 +62,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/roomType/toggle', [RoomTypeController::class, 'toggle'])->name('roomType.toggle');
         
         Route::resource('hotels', HotelController::class);
+        Route::get('calender/{hotel}', [HotelController::class, 'calender'])->name('hotels.calender');
         Route::get('/hotels/{hotel}/contact', [HotelController::class, 'hotelcontacts'])->name('hotels.contact');
         Route::post('/updatecontacts', [HotelController::class, 'updatecontacts'])->name('hotels.createcontacts');
         Route::get('/hotels/{hotel}/room', [HotelController::class, 'hotelrooms'])->name('hotels.room');
@@ -77,6 +78,7 @@ Route::group(['middleware' => ['auth']], function () {
         
         Route::post('updateroom', [HotelController::class, 'updateroom'])->name('room.update');
         Route::delete('deleteroom/{id}', [HotelController::class, 'deleteroom'])->name('rooms.destroy');
+        Route::get('/editcontacts/{hotel}', [HotelController::class, 'editcontacts'])->name('contactdetails.edit');
     });
 
         // authentication check for manager (route can access admin & manager)

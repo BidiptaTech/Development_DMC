@@ -203,7 +203,7 @@ class HotelController extends Controller
     {
         $facilities = Facility::all();
         $categories = Category::where('category_type', 1)->get();
-        $hotel = Hotel::findOrFail($id);
+        $hotel = Hotel::where('hotel_unique_id',$id)->first();
         $cancellation_data = json_decode($hotel->cancellation_data, true) ?? [];
         $entry_data = json_decode($hotel->port_of_entry, true) ?? [];
         $exit_data = json_decode($hotel->port_of_exit, true) ?? [];
@@ -238,7 +238,7 @@ class HotelController extends Controller
             'hotel_status' => 'required',
         ]);
 
-        $hotel = Hotel::findOrFail($id);
+        $hotel = Hotel::where('hotel_unique_id', $id)->first();
         $storage_file = $hotel->main_image;
         if ($request->hasFile('main_image')) {
             $image = $request->file('main_image');
@@ -442,12 +442,13 @@ class HotelController extends Controller
     */
     public function storeroom(Request $request)
     {
+        
         $request->validate([
 
-        // 'room_type' => 'required|string|max:255',
-        // 'no_of_room' => 'required|integer|min:1',
-        // 'weekday_price' => 'required|numeric|min:0',
-        // 'weekend_price' => 'required|numeric|min:0',
+        'room_type' => 'nullable|string',
+        'no_of_room' => 'nullable|integer',
+        'weekday_price' => 'nullable|numeric',
+        'weekend_price' => 'nullable|numeric',
         'breakfast' => 'required|boolean',
         'breakfast_type' => 'nullable|string|max:255',
         'breakfast_price' => 'nullable|numeric|min:0',
@@ -465,7 +466,20 @@ class HotelController extends Controller
         'end_date.*' => 'nullable|date|after:start_date',
         ]);
 
-        
+         // Validate the incoming request data
+         $request->validate([
+            'no_of_rooms.*' => 'required|integer|min:1',
+            'max_occupancy.*' => 'required|integer|min:1',
+            'adult_count.*' => 'nullable|integer|min:0',
+            'child_count.*' => 'nullable|integer|min:0',
+            'extra_bed.*' => 'nullable|boolean',
+            'extra_bed_price.*' => 'nullable|numeric|min:0',
+            'baby_cot.*' => 'nullable|boolean',
+            'baby_cot_price.*' => 'nullable|numeric|min:0',
+        ]);
+
+        //dd($request->all());
+
 
         $lastRoom = Room::withTrashed()->orderBy('id', 'desc')->first();
         $room_max_id = $lastRoom->room_id ?? 0;
@@ -475,11 +489,10 @@ class HotelController extends Controller
         }
         
         $room = new Room(); 
-       
         
         $room->hotel_id = $request->id;
         $room->room_type = $request->base_room_type ? $request->base_room_type : $request->room_type;
-        $room->no_of_room = $request->no_of_room;
+        $room->no_of_room = $request->total_no_of_room;
         $room->weekday_price = $request->base_weekday_price ? $request->base_weekday_price : $request->weekday_price;
         $room->weekend_price = $request->base_weekend_price ? $request->base_weekend_price : $request->weekend_price;
         $room->varient_price = $request->varient_price??0;
@@ -502,39 +515,11 @@ class HotelController extends Controller
         $room->save();
         
 
-        // Validate the incoming request data
-        $validated = $request->validate([
-            
-            'king_bed_no_of_rooms' => 'nullable|integer',
-            'king_bed_max_occupancy' => 'nullable|integer',
-            'king_bed_adult_count' => 'nullable|integer',
-            'king_bed_child_count' => 'nullable|integer',
-            'king_bed_extra_bed' => 'nullable|boolean',
-            'king_bed_extra_bed_price' => 'nullable|numeric',
-            'king_bed_baby_cot' => 'nullable|boolean',
-            'king_bed_baby_cot_price' => 'nullable|numeric',
-            'queen_bed_no_of_rooms' => 'nullable|integer',
-            'queen_bed_max_occupancy' => 'nullable|integer',
-            'queen_bed_adult_count' => 'nullable|integer',
-            'queen_bed_child_count' => 'nullable|integer',
-            'queen_bed_extra_bed' => 'nullable|boolean',
-            'queen_bed_extra_bed_price' => 'nullable|numeric',
-            'queen_bed_baby_cot' => 'nullable|boolean',
-            'queen_bed_baby_cot_price' => 'nullable|numeric',
-            'twin_bed_no_of_rooms' => 'nullable|integer',
-            'twin_bed_max_occupancy' => 'nullable|integer',
-            'twin_bed_adult_count' => 'nullable|integer',
-            'twin_bed_child_count' => 'nullable|integer',
-            'twin_bed_extra_bed' => 'nullable|boolean',
-            'twin_bed_extra_bed_price' => 'nullable|numeric',
-            'twin_bed_baby_cot' => 'nullable|boolean',
-            'twin_bed_baby_cot_price' => 'nullable|numeric',
-        ]);
-
-        $lastBed = Bed::withTrashed()->orderBy('id', 'desc')->first();
-        $bed_max_id = $lastBed->bedId ?? 0;
+       
+        $lastBed = Bed::withTrashed()->orderBy('bed_id', 'desc')->first();
+        $bed_max_id = $lastBed->bed_id ?? 0;
         $bedId = CommonHelper::createId($bed_max_id);
-        while (Bed::where('bedId', $bedId)->exists()) {
+        while (Bed::where('bed_id', $bedId)->exists()) {
             $bedId = CommonHelper::createId($bedId);
         }
 
@@ -542,38 +527,27 @@ class HotelController extends Controller
 
         // Create a new RoomBed instance and save to database
         
-        $bed = new Bed();
+        $bedData = [];
 
-        $bed->king_bed_no_of_rooms = $validated['king_bed_no_of_rooms'] ?? 0;
-        $bed->king_bed_max_occupancy = $validated['king_bed_max_occupancy'] ?? 0;
-        $bed->king_bed_adult_count = $validated['king_bed_adult_count'] ?? 0;
-        $bed->king_bed_child_count = $validated['king_bed_child_count'] ?? 0;
-        $bed->king_bed_extra_bed = $validated['king_bed_extra_bed'] ?? false;
-        $bed->king_bed_extra_bed_price = $validated['king_bed_extra_bed_price'] ?? 0.00;
-        $bed->king_bed_baby_cot = $validated['king_bed_baby_cot'] ?? false;
-        $bed->king_bed_baby_cot_price = $validated['king_bed_baby_cot_price'] ?? 0.00;
-
-        $bed->queen_bed_no_of_rooms = $validated['queen_bed_no_of_rooms'] ?? 0;
-        $bed->queen_bed_max_occupancy = $validated['queen_bed_max_occupancy'] ?? 0;
-        $bed->queen_bed_adult_count = $validated['queen_bed_adult_count'] ?? 0;
-        $bed->queen_bed_child_count = $validated['queen_bed_child_count'] ?? 0;
-        $bed->queen_bed_extra_bed = $validated['queen_bed_extra_bed'] ?? false;
-        $bed->queen_bed_extra_bed_price = $validated['queen_bed_extra_bed_price'] ?? 0.00;
-        $bed->queen_bed_baby_cot = $validated['queen_bed_baby_cot'] ?? false;
-        $bed->queen_bed_baby_cot_price = $validated['queen_bed_baby_cot_price'] ?? 0.00;
-
-        $bed->twin_bed_no_of_rooms = $validated['twin_bed_no_of_rooms'] ?? 0;
-        $bed->twin_bed_max_occupancy = $validated['twin_bed_max_occupancy'] ?? 0;
-        $bed->twin_bed_adult_count = $validated['twin_bed_adult_count'] ?? 0;
-        $bed->twin_bed_child_count = $validated['twin_bed_child_count'] ?? 0;
-        $bed->twin_bed_extra_bed = $validated['twin_bed_extra_bed'] ?? false;
-        $bed->twin_bed_extra_bed_price = $validated['twin_bed_extra_bed_price'] ?? 0.00;
-        $bed->twin_bed_baby_cot = $validated['twin_bed_baby_cot'] ?? false;
-        $bed->twin_bed_baby_cot_price = $validated['twin_bed_baby_cot_price'] ?? 0.00;
-        $bed->bedId = $bedId;
-        $bed->room_id = $lastRoomId;
-
-        $bed->save();
+        foreach ($request->no_of_rooms as $key => $no_of_rooms) {
+            $bedData[] = [
+                'room_type' => $request->bed_type[$key],
+                'no_of_rooms' => $no_of_rooms,
+                'max_occupancy' => $request->max_occupancy[$key],
+                'adult_count' => $request->adult_count[$key] ?? 0,
+                'child_count' => $request->child_count[$key] ?? 0,
+                'extra_bed' => $request->extra_bed[$key] ?? null,
+                'extra_bed_price' => $request->extra_bed_price[$key] ?? null,
+                'baby_cot' => $request->baby_cot[$key] ?? null,
+                'baby_cot_price' => $request->baby_cot_price[$key] ?? null,
+                'room_id' => $lastRoomId,
+                'bed_id' => $bedId,
+                'is_active' => $request->hotel_status,
+            ];
+        }
+        
+        // Perform bulk insert
+        Bed::insert($bedData);
         
         if ($room->save()) {
             return redirect()->back()
@@ -607,7 +581,7 @@ class HotelController extends Controller
             'hotel_id' => $request->id,
             'rate_id' => $rateId,
             'event_type' => $request->event_type,
-            'price' => $request->price,
+            'price' => $request->price??0,
             'weekday_price' => $request->weekday_price ? $request->weekday_price : 0.00,
             'weekend_price' => $request->weekend_price ? $request->weekend_price : 0.00,
             'start_date' => $request->start_date,
@@ -668,8 +642,6 @@ class HotelController extends Controller
         $beds = Bed::where('is_active', 1)->get();
         return view('hotel.editroom', compact('room','beds'));
     }
-
-
 
     /*
     * Update Room Details .
@@ -777,4 +749,33 @@ class HotelController extends Controller
         }  
     }
     
+    /*
+    * Hotel Calender Details.
+    * Date 16-12-2024
+    */
+    public function calender($id, $year = null)
+    {
+        $hotel = Hotel::where('hotel_unique_id', $id)->first();
+        if (!$hotel) {
+            return redirect()->back()->with('error', 'Hotel not found!');
+        }
+        $hotelId = $hotel->hotel_unique_id;
+        $year = $year ?? now()->year;
+        $rates = Rate::where('hotel_id', $hotelId)->get();
+        $rate_dates = [];
+        foreach ($rates as $rate) {
+            $rate_dates[] = [
+                'id' => $rate->rate_id,
+                'event' => $rate->event,     
+                'event_type' => $rate->event_type,     
+                'price' => $rate->price,     
+                'start_date' => $rate->start_date, 
+                'end_date' => $rate->end_date,     
+                'weekday_price' => $rate->weekday_price,     
+                'weekend_price' => $rate->weekend_price,     
+            ];
+        }
+        return view('hotel.calender', compact('hotel', 'rate_dates', 'year'));
+    }
+
 }

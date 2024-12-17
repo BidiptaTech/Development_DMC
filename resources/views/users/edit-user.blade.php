@@ -161,11 +161,11 @@
                             <div class="row">
                                 <label class="col-sm-3 col-form-label"></label>
                                 <div class="col-sm-9">
-                                    <div class="d-md-flex d-grid align-items-center gap-3">
+                                    <div class="d-md-flex d-grid align-items-center gap-1">
                                         <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                                             <button type="submit" class="btn btn-primary">Submit</button>
+                                            <button type="reset" class="btn btn-secondary px-4">Reset</button>
                                         </div>
-                                        <button type="reset" class="btn btn-secondary px-4">Reset</button>
                                     </div>
                                 </div>
                             </div>
