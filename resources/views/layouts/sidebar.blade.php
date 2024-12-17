@@ -62,7 +62,7 @@
                                 <span class="menu-text">Hotel</span>
                             </a>
                         </li>   
-                        <li class="side-nav-item">
+                        <!-- <li class="side-nav-item">
                             <a href="{{ route('roomType.index') }}" class="side-nav-link">
                                 <span class="menu-text">Room Type</span>
                             </a>
@@ -71,7 +71,7 @@
                             <a href="{{ route('beds.index') }}" class="side-nav-link">
                                 <span class="menu-text">Beds</span>
                             </a>
-                        </li>           
+                        </li>            -->
                     </ul>
                 </div>
             </li>
