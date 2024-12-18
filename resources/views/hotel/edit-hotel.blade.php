@@ -55,7 +55,7 @@
                                     <select id="category_type" name="category_type" class="form-control" required>
                                         <option value="">Select Category Type</option>
                                         @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}" {{ old('category_type', $hotel->cat_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                            <option value="{{ $category->category_id }}" {{ old('category_type', $hotel->cat_id) == $category->category_id ? 'selected' : '' }}>{{ $category->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('category_type')
