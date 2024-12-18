@@ -424,7 +424,7 @@ class HotelController extends Controller
     public function hotelrooms($hotelId){
         $hotel = Hotel::findOrFail($hotelId);
         $roomtypes = RoomType::where('status', 1)->get();
-        $hotel->rooms = Room::where('hotel_id', $hotelId)->get();
+        $rooms = Room::where('hotel_id', $hotelId)->get();
         $beds = Bed::where('is_active', 1)->get();
         return view('hotel.rooms', compact('hotel','rooms','roomtypes','beds'));
     }
