@@ -74,7 +74,7 @@
             <div class="col-lg-12 col-md-10 col-sm-12">
                 <div class="card">
                     <div class="card-body p-1">
-                        <h2 class="text-center my-4">Yearly Calendar</h2>
+                        <h2 class="text-center my-4">Monthly Calendar</h2>
 
                         <!-- Color Legend -->
                         <div class="color-legend">
