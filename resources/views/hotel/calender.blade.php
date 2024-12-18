@@ -2,39 +2,71 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-bs5/2.1.8/dataTables.bootstrap5.min.css" integrity="sha512-9d9bjYZUo25k3MPAMpx+OUyvGQcbJe8qGOUJilgowXEPc0lNCVoe+zHZX8HszzkDJEUynZeF648jP9JLX1Pi7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
 <style>
-        .fc-day-past {
-            background-color: #f0f0f0;
-            color: #ccc;
-        }
+    /* Blackout dates: Red with white text */
+    .event-blackout {
+        background-color: rgba(255, 0, 0, 0.7); /* Darker red */
+        color: #8B0000; /* Dark red text */
+    }
 
-        .event-blackout {
-            background-color: #f8d7da !important;
-            color: #842029 !important;
-        }
+    /* Fair dates: Orange with black text */
+    .event-fair {
+        background-color: rgba(255, 165, 0, 0.7); /* Darker orange */
+        color: #FF8C00; /* Dark orange text */
+    }
 
-        .event-fair {
-            background-color: #fff3cd !important;
-            color: #856404 !important;
-        }
+    /* Season dates: Green with black text */
+    .event-season {
+        background-color: rgba(34, 139, 34, 0.7); /* Darker green */
+        color: #228B22; /* Dark green text */
+    }
 
-        .event-season {
-            background-color: #d1e7dd !important;
-            color: #0f5132 !important;
-        }
+    /* Weekends: Lighter Yellow with black text */
+    .fc-day-sun,
+    .fc-day-sat {
+        background-color: rgba(255, 215, 0, 0.3); /* Lighter yellow */
+        color: #FFD700; /* Gold text */
+    }
 
-        .price-container {
-            font-weight: bold;
-            color: #000;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
+    /* Base dates with price */
+    .price-container {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 5px;
+        text-align: center;
+    }
 
-        .event-name {
-            font-size: 0.8em;
-            color: #333;
-            margin-top: 2px;
-        }
-    </style>
+    /* Event names */
+    .event-name {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333; /* Dark color for better readability */
+        text-align: center;
+        margin-top: 3px;
+    }
+
+    /* Styling for past dates */
+    .fc-day-past {
+        background-color: rgba(169, 169, 169, 0.3); /* Light gray */
+        color: #696969; /* Dim gray text */
+    }
+
+    /* Color legend styling */
+    .color-legend {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 15px;
+    }
+    .color-box {
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+    }
+    .color-text {
+        margin-left: 10px;
+        line-height: 30px;
+    }
+</style>
+
 @section('content')
 <div class="page-content">
     <div class="page-container">
@@ -43,6 +75,27 @@
                 <div class="card">
                     <div class="card-body p-1">
                         <h2 class="text-center my-4">Yearly Calendar</h2>
+
+                        <!-- Color Legend -->
+                        <div class="color-legend">
+                            <div>
+                                <div class="color-box" style="background-color: rgba(255, 0, 0, 0.7);"></div>
+                                <span class="color-text">Blackout Date</span>
+                            </div>
+                            <div>
+                                <div class="color-box" style="background-color: rgba(255, 165, 0, 0.7);"></div>
+                                <span class="color-text">Fair Date</span>
+                            </div>
+                            <div>
+                                <div class="color-box" style="background-color: rgba(34, 139, 34, 0.7);"></div>
+                                <span class="color-text">Season Date</span>
+                            </div>
+                            <div>
+                                <div class="color-box" style="background-color: rgba(255, 215, 0, 0.3);"></div>
+                                <span class="color-text">Weekend</span>
+                            </div>
+                        </div>
+
                         <div id="calendar"></div>
                     </div>
                 </div>
@@ -55,124 +108,101 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const calendarEl = document.getElementById('calendar');
+    const calendarEl = document.getElementById('calendar');
+    const rateDates = @json($rate_dates); 
+    const weekendDays = @json($weekend_days); 
+    const weekdayBasePrice = @json($weekday_base_price); 
+    const weekendBasePrice = @json($weekend_base_price); 
 
-        // Convert the PHP array to a JavaScript object
-        const rateDates = @json($rate_dates); // This contains the rate data
-        const prices = {};
-        const blackoutDates = {};
-        const fairDates = {};
-        const seasonDates = {};
+    function adjustDateToTimezone(dateStr, country) {
+        const date = new Date(dateStr); 
+        let adjustedDate;
+        if (country === 'INDIA') {
+            adjustedDate = new Date(date.setHours(date.getHours() + 5, date.getMinutes() + 30)); 
+        } else if (country === 'SINGAPORE') {
+            adjustedDate = new Date(date.setHours(date.getHours() + 8));
+        } else {
+            adjustedDate = date;
+        }
 
-        // Populate prices and event types based on rate data
-        rateDates.forEach(rate => {
-            const startDate = new Date(rate.start_date);
-            const endDate = new Date(rate.end_date);
-            
-            // Ensure to compare dates by stripping the time part
-            const dateStr = date => date.toISOString().split('T')[0]; 
-            
-            // Iterate over the date range
-            while (startDate <= endDate) {
-                const dateKey = dateStr(startDate); // Get formatted date as key
-                
-                // Handle BlackoutDates
+        return adjustedDate.toISOString().split('T')[0]; 
+    }
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'en',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth',
+        },
+        validRange: {
+            start: '2024-01-01',
+            end: '2025-12-31',
+        },
+        dayCellDidMount: function (info) {
+            const cell = info.el;
+            let price = null;
+            let eventName = null;
+            let eventClass = '';
+            const dateStr = adjustDateToTimezone(info.date.toISOString().split('T')[0], 'INDIA'); // Adjust to India timezone
+
+            const day = info.date.getDay(); // 0 = Sunday, 6 = Saturday
+            const isWeekend = weekendDays.includes(day);
+            if (rateDates[dateStr]) {
+                const rate = rateDates[dateStr];
+                price = rate.price;
+                eventName = rate.event;
+
                 if (rate.event_type === 'Blackout Date') {
-                    blackoutDates[dateKey] = rate.event;
-                    // blackoutDates[dateKey] = rate.price;
-                } 
-                // Handle FairDates
-                else if (rate.event_type === 'Fair Date') {
-                    fairDates[dateKey] = rate.event;
-                    // blackoutDates[dateKey] = rate.price;
-                } 
-                // Handle Season (with weekday and weekend prices)
-                else if (rate.event_type === 'Season') {
-                    if (isWeekend(startDate)) {
-                        prices[dateKey] = rate.weekend_price;  // Apply weekend price
-                    } else {
-                        prices[dateKey] = rate.weekday_price;  // Apply weekday price
-                    }
-                    seasonDates[dateKey] = rate.event;
-                }
-                
-                // Move to the next date
-                startDate.setDate(startDate.getDate() + 1);
-            }
-        });
-
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'en',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth',
-            },
-            validRange: {
-                start: '2024-01-01',
-                end: '2025-12-31',
-            },
-            dayCellDidMount: function (info) {
-                const cell = info.el;
-                const dateStr = info.date.toISOString().split('T')[0]; 
-
-                let price = prices[dateStr] || null;
-                let eventName = null;
-                let eventClass = '';
-
-                if (blackoutDates[dateStr]) {
-                    eventName = blackoutDates[dateStr];
                     eventClass = 'event-blackout';
-                } else if (fairDates[dateStr]) {
-                    eventName = fairDates[dateStr];
+                } else if (rate.event_type === 'Fair Date') {
                     eventClass = 'event-fair';
-                } else if (seasonDates[dateStr]) {
-                    eventName = seasonDates[dateStr];
+                } else if (rate.event_type === 'Season') {
                     eventClass = 'event-season';
                 }
+            } else {
+                price = isWeekend ? weekendBasePrice : weekdayBasePrice;
+            }
 
-                // Apply event-specific class
-                if (eventClass) {
-                    cell.classList.add(eventClass);
+            // Apply event color if event exists; otherwise, apply weekend color if it's a weekend
+            if (eventClass) {
+                cell.classList.add(eventClass);
+            } else if (isWeekend) {
+                // Apply lighter weekend color if there's no event
+                cell.classList.add('fc-day-sun', 'fc-day-sat');
+            }
+
+            // Display event name and price in larger font and centered
+            if (eventName) {
+                const eventNameElement = document.createElement('div');
+                eventNameElement.className = 'event-name';
+                eventNameElement.textContent = eventName;
+                cell.appendChild(eventNameElement);
+            }
+            if (price) {
+                const priceElement = document.createElement('div');
+                priceElement.className = 'price-container';
+                priceElement.textContent = `₹${price}`;
+                cell.appendChild(priceElement);
+            }
+        },
+        height: 'auto',
+        aspectRatio: 1.5,
+        // Show 30 days at a time
+        views: {
+            dayGridMonth: {
+                visibleRange: function (currentDate) {
+                    const startDate = currentDate;
+                    const endDate = new Date(currentDate);
+                    endDate.setDate(startDate.getDate() + 29); // 30-day view
+                    return { start: startDate, end: endDate };
                 }
-
-                // Display the event name if available
-                if (eventName) {
-                    const eventNameElement = document.createElement('div');
-                    eventNameElement.className = 'event-name';
-                    eventNameElement.textContent = eventName;
-                    cell.appendChild(eventNameElement);
-                }
-
-                // Display the price if available
-                if (price) {
-                    const priceElement = document.createElement('div');
-                    priceElement.className = 'price-container';
-                    priceElement.textContent = `₹${price}`;
-                    cell.appendChild(priceElement);
-                }
-
-                // Highlight past dates
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); 
-                if (info.date < today) {
-                    cell.classList.add('fc-day-past');
-                }
-            },
-            height: 'auto',
-            aspectRatio: 1.5,
-        });
-
-        calendar.render();
-
-        // Helper function to check if a date is a weekend (Saturday/Sunday)
-        function isWeekend(date) {
-            const day = date.getDay();
-            return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
+            }
         }
     });
+
+    calendar.render();
+    });
 </script>
-
-
 @endsection

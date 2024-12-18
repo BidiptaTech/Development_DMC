@@ -24,8 +24,8 @@ class TourController extends Controller
             'check_out' => 'required|string',
         ]);
         
-        $checkInTime = Carbon::createFromFormat('d/m/Y, h:ia', $request->check_in);
-        $checkOutTime = Carbon::createFromFormat('d/m/Y, h:ia', $request->check_out);
+        $checkInTime = Carbon::createFromFormat('d/m/Y', $request->check_in);
+        $checkOutTime = Carbon::createFromFormat('d/m/Y', $request->check_out);
         $tour = new Tour();
         $tour->destination = $request->destination;  
         $tour->adult = $request->adult;  

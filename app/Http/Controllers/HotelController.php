@@ -12,6 +12,7 @@ use App\Models\Setting;
 use App\Models\Category;
 use App\Models\RoomType;
 use App\Models\Bed;
+use Carbon\Carbon;
 use App\Helpers\CommonHelper;
 use Illuminate\Support\Facades\Storage;
 use Auth; 
@@ -423,7 +424,7 @@ class HotelController extends Controller
     public function hotelrooms($hotelId){
         $hotel = Hotel::findOrFail($hotelId);
         $roomtypes = RoomType::where('status', 1)->get();
-        $rooms = Room::where('hotel_id', $hotelId)->get();
+        $hotel->rooms = Room::where('hotel_id', $hotelId)->get();
         $beds = Bed::where('is_active', 1)->get();
         return view('hotel.rooms', compact('hotel','rooms','roomtypes','beds'));
     }
@@ -431,7 +432,7 @@ class HotelController extends Controller
     public function hotelrates($hotelId){
         
         $hotel = Hotel::findOrFail($hotelId);
-        $rooms = Room::where('hotel_id', $hotelId)->get();
+        $hotel->rooms = Room::where('hotel_id', $hotelId)->get();
         $rates = Rate::all();
         return view('hotel.rates', compact('hotel','rooms','rates'));
     }
@@ -755,27 +756,99 @@ class HotelController extends Controller
     */
     public function calender($id, $year = null)
     {
-        $hotel = Hotel::where('hotel_unique_id', $id)->first();
+        $hotel = Hotel::with('category', 'rooms.beds')
+            ->where('status', 1)
+            ->where('hotel_unique_id', $id)
+            ->first();
+
         if (!$hotel) {
             return redirect()->back()->with('error', 'Hotel not found!');
         }
+
         $hotelId = $hotel->hotel_unique_id;
         $year = $year ?? now()->year;
-        $rates = Rate::where('hotel_id', $hotelId)->get();
-        $rate_dates = [];
-        foreach ($rates as $rate) {
-            $rate_dates[] = [
-                'id' => $rate->rate_id,
-                'event' => $rate->event,     
-                'event_type' => $rate->event_type,     
-                'price' => $rate->price,     
-                'start_date' => $rate->start_date, 
-                'end_date' => $rate->end_date,     
-                'weekday_price' => $rate->weekday_price,     
-                'weekend_price' => $rate->weekend_price,     
-            ];
-        }
-        return view('hotel.calender', compact('hotel', 'rate_dates', 'year'));
-    }
+        $weekend_days = json_decode($hotel->weekend_days) ?? []; // Weekend days
+        $room = $hotel->rooms->first();
 
+        $weekday_base_price = $room->weekday_price ?? 0;
+        $weekend_base_price = $room->weekend_price ?? 0;
+
+        // Get all rates, ordered by priority
+        $rates = Rate::where('hotel_id', $hotelId)
+            ->orderByRaw("
+                CASE 
+                    WHEN event_type = 'Blackout Date' THEN 1
+                    WHEN event_type = 'Fair Date' THEN 2
+                    WHEN event_type = 'Season' THEN 3
+                    ELSE 4
+                END
+            ")
+            ->orderBy('start_date')
+            ->get();
+
+        $rate_dates = [];
+        $base_prices = [];
+
+        // Generate base prices for all days of the year
+        $startOfYear = Carbon::create($year, 1, 1);
+        $endOfYear = Carbon::create($year, 12, 31);
+        while ($startOfYear->lte($endOfYear)) {
+            $dayName = $startOfYear->format('l');
+            $base_prices[$startOfYear->toDateString()] = in_array($dayName, $weekend_days)
+                ? $weekend_base_price
+                : $weekday_base_price;
+
+            $startOfYear->addDay();
+        }
+
+        foreach ($rates as $rate) {
+            $startDate = Carbon::parse($rate->start_date);
+            $endDate = Carbon::parse($rate->end_date);
+
+            while ($startDate->lte($endDate)) {
+                $currentDate = $startDate->toDateString();
+                $price = $base_prices[$currentDate] ?? 0; 
+                if (!isset($rate_dates[$currentDate])) {
+                    if ($rate->event_type == "Blackout Date") {
+                        $price = $rate->price;
+                        $shiftedDate = Carbon::parse($currentDate)->toDateString(); 
+                        $rate_dates[$shiftedDate] = [
+                            'id' => $rate->rate_id,
+                            'event' => $rate->event,
+                            'event_type' => $rate->event_type,
+                            'price' => $price,
+                            'date' => $shiftedDate,
+                        ];
+                    } elseif ($rate->event_type == "Fair Date" && !isset($rate_dates[$currentDate])) {
+                        $price += $rate->price;
+                        $shiftedDate = Carbon::parse($currentDate)->toDateString();  
+                        $rate_dates[$shiftedDate] = [
+                            'id' => $rate->rate_id,
+                            'event' => $rate->event,
+                            'event_type' => $rate->event_type,
+                            'price' => $price,
+                            'date' => $shiftedDate,
+                        ];
+                    } elseif ($rate->event_type == "Season" && !isset($rate_dates[$currentDate])) {
+                        $price = in_array($startDate->format('l'), $weekend_days)
+                            ? $rate->weekend_price
+                            : $rate->weekday_price;
+                        $shiftedDate = Carbon::parse($currentDate)->toDateString();  
+                        $rate_dates[$shiftedDate] = [
+                            'id' => $rate->rate_id,
+                            'event' => $rate->event,
+                            'event_type' => $rate->event_type,
+                            'price' => $price,
+                            'date' => $shiftedDate,
+                        ];
+                    }
+                }
+
+                $startDate->addDay(1);  // Keep the original loop for date iteration
+            }
+        }
+
+
+        return view('hotel.calender', compact('hotel', 'rate_dates', 'year', 'weekend_days', 'weekday_base_price', 'weekend_base_price'));
+    }
 }
