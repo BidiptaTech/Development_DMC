@@ -34,7 +34,7 @@ class TourController extends Controller
         $tour->check_in_time = $checkInTime;  
         $tour->check_out_time = $checkOutTime; 
         $tour->save(); 
-        return response()->json(['message' => 'Tour created successfully'], 201);
+        return response()->json(['message' => 'Tour created successfully','tour_id' => $tour->unique_tour_id], 201);
     }
 
     
