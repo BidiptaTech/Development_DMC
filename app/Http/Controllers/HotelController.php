@@ -443,32 +443,30 @@ class HotelController extends Controller
     */
     public function storeroom(Request $request)
     {
-        
         $request->validate([
-
-        'room_type' => 'nullable|string',
-        'no_of_room' => 'nullable|integer',
-        'weekday_price' => 'nullable|numeric',
-        'weekend_price' => 'nullable|numeric',
-        'breakfast' => 'required|boolean',
-        'breakfast_type' => 'nullable|string|max:255',
-        'breakfast_price' => 'nullable|numeric|min:0',
-        'lunch' => 'required|boolean',
-        'lunch_type' => 'nullable|string|max:255',
-        'lunch_price' => 'nullable|numeric|min:0',
-        'dinner' => 'required|boolean',
-        'dinner_type' => 'nullable|string|max:255',
-        'dinner_price' => 'nullable|numeric|min:0',
-        'breakfast_included' => 'required|boolean',
-        'event.*' => 'nullable|string|max:255',
-        'event_type.*' => 'nullable|string|max:255',
-        'price.*' => 'nullable|numeric|min:0',
-        'start_date.*' => 'nullable|date',
-        'end_date.*' => 'nullable|date|after:start_date',
+            'room_type' => 'nullable|string',
+            'no_of_room' => 'nullable|integer',
+            'weekday_price' => 'nullable|numeric',
+            'weekend_price' => 'nullable|numeric',
+            'breakfast' => 'required|boolean',
+            'breakfast_type' => 'nullable|string|max:255',
+            'breakfast_price' => 'nullable|numeric|min:0',
+            'lunch' => 'required|boolean',
+            'lunch_type' => 'nullable|string|max:255',
+            'lunch_price' => 'nullable|numeric|min:0',
+            'dinner' => 'required|boolean',
+            'dinner_type' => 'nullable|string|max:255',
+            'dinner_price' => 'nullable|numeric|min:0',
+            'breakfast_included' => 'required|boolean',
+            'event.*' => 'nullable|string|max:255',
+            'event_type.*' => 'nullable|string|max:255',
+            'price.*' => 'nullable|numeric|min:0',
+            'start_date.*' => 'nullable|date',
+            'end_date.*' => 'nullable|date|after:start_date',
         ]);
 
-         // Validate the incoming request data
-         $request->validate([
+        // Validate room data
+        $request->validate([
             'no_of_rooms.*' => 'required|integer|min:1',
             'max_occupancy.*' => 'required|integer|min:1',
             'adult_count.*' => 'nullable|integer|min:0',
@@ -479,24 +477,34 @@ class HotelController extends Controller
             'baby_cot_price.*' => 'nullable|numeric|min:0',
         ]);
 
-        //dd($request->all());
-
-
+        // Generate room ID
         $lastRoom = Room::withTrashed()->orderBy('id', 'desc')->first();
         $room_max_id = $lastRoom->room_id ?? 0;
         $roomId = CommonHelper::createId($room_max_id);
         while (Room::where('room_id', $roomId)->exists()) {
             $roomId = CommonHelper::createId($roomId);
         }
-        
-        $room = new Room(); 
-        
+
+        // Handle image paths
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $pathData = CommonHelper::image_path('file_storage', $image);
+                if (!empty($pathData['master_value'])) {
+                    $imagePaths[] = $pathData['master_value'];
+                }
+            }
+        }
+        $imagePathsJson = json_encode($imagePaths);
+
+        // Create and save the room
+        $room = new Room();
         $room->hotel_id = $request->id;
         $room->room_type = $request->base_room_type ? $request->base_room_type : $request->room_type;
         $room->no_of_room = $request->total_no_of_room;
         $room->weekday_price = $request->base_weekday_price ? $request->base_weekday_price : $request->weekday_price;
         $room->weekend_price = $request->base_weekend_price ? $request->base_weekend_price : $request->weekend_price;
-        $room->varient_price = $request->varient_price??0;
+        $room->varient_price = $request->varient_price ?? 0;
 
         $room->breakfast = $request->breakfast;
         $room->breakfast_type = $request->breakfast_type;
@@ -510,13 +518,13 @@ class HotelController extends Controller
         $room->dinner_type = $request->dinner_type;
         $room->dinner_price = $request->dinner_price;
         $room->breakfast_included = $request->breakfast_included;
-       
+
         $room->status = $request->hotel_status;
         $room->room_id = $roomId;
+        $room->images = $imagePathsJson;
         $room->save();
-        
 
-       
+        // Handle bed data (check if data is available for each room)
         $lastBed = Bed::withTrashed()->orderBy('bed_id', 'desc')->first();
         $bed_max_id = $lastBed->bed_id ?? 0;
         $bedId = CommonHelper::createId($bed_max_id);
@@ -525,37 +533,39 @@ class HotelController extends Controller
         }
 
         $lastRoomId = Room::latest()->value('room_id');
-
-        // Create a new RoomBed instance and save to database
-        
         $bedData = [];
 
-        foreach ($request->no_of_rooms as $key => $no_of_rooms) {
-            $bedData[] = [
-                'room_type' => $request->bed_type[$key],
-                'no_of_rooms' => $no_of_rooms,
-                'max_occupancy' => $request->max_occupancy[$key],
-                'adult_count' => $request->adult_count[$key] ?? 0,
-                'child_count' => $request->child_count[$key] ?? 0,
-                'extra_bed' => $request->extra_bed[$key] ?? null,
-                'extra_bed_price' => $request->extra_bed_price[$key] ?? null,
-                'baby_cot' => $request->baby_cot[$key] ?? null,
-                'baby_cot_price' => $request->baby_cot_price[$key] ?? null,
-                'room_id' => $lastRoomId,
-                'bed_id' => $bedId,
-                'is_active' => $request->hotel_status,
-            ];
+        // Check if room data arrays are not empty before using them in foreach
+        if (isset($request->no_of_rooms) && is_array($request->no_of_rooms)) {
+            foreach ($request->no_of_rooms as $key => $no_of_rooms) {
+                // Ensure data is not null or empty
+                $bedData[] = [
+                    'room_type' => isset($request->bed_type[$key]) ? $request->bed_type[$key] : '',
+                    'no_of_rooms' => $no_of_rooms,
+                    'max_occupancy' => isset($request->max_occupancy[$key]) ? $request->max_occupancy[$key] : 1,
+                    'adult_count' => isset($request->adult_count[$key]) ? $request->adult_count[$key] : 0,
+                    'child_count' => isset($request->child_count[$key]) ? $request->child_count[$key] : 0,
+                    'extra_bed' => isset($request->extra_bed[$key]) ? $request->extra_bed[$key] : null,
+                    'extra_bed_price' => isset($request->extra_bed_price[$key]) ? $request->extra_bed_price[$key] : null,
+                    'baby_cot' => isset($request->baby_cot[$key]) ? $request->baby_cot[$key] : null,
+                    'baby_cot_price' => isset($request->baby_cot_price[$key]) ? $request->baby_cot_price[$key] : null,
+                    'room_id' => $lastRoomId,
+                    'bed_id' => $bedId,
+                    'is_active' => $request->hotel_status,
+                ];
+            }
         }
-        
-        // Perform bulk insert
-        Bed::insert($bedData);
-        
+
+        // Perform bulk insert if bed data exists
+        if (!empty($bedData)) {
+            Bed::insert($bedData);
+        }
+
+        // Return response based on room save result
         if ($room->save()) {
-            return redirect()->back()
-                ->with('success', 'Room details saved successfully!');
+            return redirect()->back()->with('success', 'Room details saved successfully!');
         } else {
-            return redirect()->back()
-                ->with('error', 'An error occurred while saving the room details.');
+            return redirect()->back()->with('error', 'An error occurred while saving the room details.');
         }
     }
 
@@ -663,7 +673,16 @@ class HotelController extends Controller
         $id = $request->id;
         $room_id = Room::where('id', $id)->first();
         $room = Room::where('room_id',$room_id->room_id)->first();
-
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $pathData = CommonHelper::image_path('file_storage', $image);
+                if (!empty($pathData['master_value'])) {
+                    $imagePaths[] = $pathData['master_value'];
+                }
+            }
+        }
+        $imagePathsJson = json_encode($imagePaths);
         // Update the room details
         $room->room_type = $request->base_room_type ? $request->base_room_type : $request->room_type;
         $room->no_of_room = $request->no_of_room;
@@ -679,6 +698,7 @@ class HotelController extends Controller
         $room->child_cot = $request->child_cot;
         $room->child_cot_price = $request->child_cot_price;
         $room->status = $request->hotel_status;
+        $room->images = $imagePathsJson ?? $request->images;
         $room->is_complete = 1;
         $room->save();
 
