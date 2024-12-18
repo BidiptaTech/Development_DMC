@@ -751,7 +751,7 @@ class HotelController extends Controller
     }
     
     /*
-    * Hotel Calender Details.
+    * Hotel Calender Monthly Details.
     * Date 16-12-2024
     */
     public function calender($id, $year = null)
@@ -850,5 +850,13 @@ class HotelController extends Controller
 
 
         return view('hotel.calender', compact('hotel', 'rate_dates', 'year', 'weekend_days', 'weekday_base_price', 'weekend_base_price'));
+    }
+
+    /*
+    * Hotel Yearly Calender Details.
+    * Date 18-12-2024
+    */
+    public function yearlycalender(){
+        return view('hotel.fullcalender');
     }
 }

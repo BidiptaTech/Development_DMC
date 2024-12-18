@@ -108,101 +108,105 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const calendarEl = document.getElementById('calendar');
-    const rateDates = @json($rate_dates); 
-    const weekendDays = @json($weekend_days); 
-    const weekdayBasePrice = @json($weekday_base_price); 
-    const weekendBasePrice = @json($weekend_base_price); 
+        const calendarEl = document.getElementById('calendar');
+        const rateDates = @json($rate_dates);  // Data coming from backend
+        const weekendDays = [0, 6];  // Weekend days: Sunday (0) and Saturday (6)
+        const weekdayBasePrice = @json($weekday_base_price);  // Minimum weekday base price
+        const weekendBasePrice = @json($weekend_base_price);  // Minimum weekend base price
 
-    function adjustDateToTimezone(dateStr, country) {
-        const date = new Date(dateStr); 
-        let adjustedDate;
-        if (country === 'INDIA') {
-            adjustedDate = new Date(date.setHours(date.getHours() + 5, date.getMinutes() + 30)); 
-        } else if (country === 'SINGAPORE') {
-            adjustedDate = new Date(date.setHours(date.getHours() + 8));
-        } else {
-            adjustedDate = date;
-        }
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'en',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth',
+            },
+            validRange: {
+                start: '2024-01-01',
+                end: '2025-12-31',
+            },
+            dayCellDidMount: function (info) {
+                const cell = info.el;
+                let price = null;
+                let eventName = null;
+                let eventClass = '';
 
-        return adjustedDate.toISOString().split('T')[0]; 
-    }
+                // Original date from FullCalendar
+                const originalDate = info.date;
+                const originalDateStr = originalDate.toISOString().split('T')[0]; // 'YYYY-MM-DD'
 
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'en',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth',
-        },
-        validRange: {
-            start: '2024-01-01',
-            end: '2025-12-31',
-        },
-        dayCellDidMount: function (info) {
-            const cell = info.el;
-            let price = null;
-            let eventName = null;
-            let eventClass = '';
-            const dateStr = adjustDateToTimezone(info.date.toISOString().split('T')[0], 'INDIA'); // Adjust to India timezone
+                // Shift the event date by one day (adjust event related data only)
+                const shiftedDate = new Date(originalDate);
+                shiftedDate.setDate(shiftedDate.getDate() + 1); // Shift by 1 day
+                const shiftedDateStr = shiftedDate.toISOString().split('T')[0]; // Get the shifted date
 
-            const day = info.date.getDay(); // 0 = Sunday, 6 = Saturday
-            const isWeekend = weekendDays.includes(day);
-            if (rateDates[dateStr]) {
-                const rate = rateDates[dateStr];
-                price = rate.price;
-                eventName = rate.event;
+                console.log("Original Date from Calendar: ", originalDateStr);
+                console.log("Shifted Date for Event: ", shiftedDateStr);
 
-                if (rate.event_type === 'Blackout Date') {
-                    eventClass = 'event-blackout';
-                } else if (rate.event_type === 'Fair Date') {
-                    eventClass = 'event-fair';
-                } else if (rate.event_type === 'Season') {
-                    eventClass = 'event-season';
+                // Check if the shifted date has any events from the backend data
+                if (rateDates[shiftedDateStr]) {
+                    const rate = rateDates[shiftedDateStr];
+                    price = rate.price;
+                    eventName = rate.event;
+
+                    // Assign event color based on event type
+                    if (rate.event_type === 'Blackout Date') {
+                        eventClass = 'event-blackout';
+                    } else if (rate.event_type === 'Fair Date') {
+                        eventClass = 'event-fair';
+                    } else if (rate.event_type === 'Season') {
+                        eventClass = 'event-season';
+                    }
+                } else {
+                    // Assign default price based on whether it's a weekend or weekday (original date)
+                    const day = originalDate.getDay(); // 0 = Sunday, 6 = Saturday
+                    const isWeekend = weekendDays.includes(day);
+                    price = isWeekend ? weekendBasePrice : weekdayBasePrice;
                 }
-            } else {
-                price = isWeekend ? weekendBasePrice : weekdayBasePrice;
-            }
 
-            // Apply event color if event exists; otherwise, apply weekend color if it's a weekend
-            if (eventClass) {
-                cell.classList.add(eventClass);
-            } else if (isWeekend) {
-                // Apply lighter weekend color if there's no event
-                cell.classList.add('fc-day-sun', 'fc-day-sat');
-            }
+                // Apply event color if event exists; otherwise, apply weekend color if it's a weekend (based on original date)
+                if (eventClass) {
+                    cell.classList.add(eventClass); // Apply event color class for shifted date
+                } else if (price) {
+                    // Apply a lighter color for weekends without events
+                    const day = originalDate.getDay();
+                    if (day === 0 || day === 6) { // Sunday or Saturday
+                        cell.classList.add('fc-day-sun', 'fc-day-sat');
+                    }
+                }
 
-            // Display event name and price in larger font and centered
-            if (eventName) {
-                const eventNameElement = document.createElement('div');
-                eventNameElement.className = 'event-name';
-                eventNameElement.textContent = eventName;
-                cell.appendChild(eventNameElement);
-            }
-            if (price) {
-                const priceElement = document.createElement('div');
-                priceElement.className = 'price-container';
-                priceElement.textContent = `₹${price}`;
-                cell.appendChild(priceElement);
-            }
-        },
-        height: 'auto',
-        aspectRatio: 1.5,
-        // Show 30 days at a time
-        views: {
-            dayGridMonth: {
-                visibleRange: function (currentDate) {
-                    const startDate = currentDate;
-                    const endDate = new Date(currentDate);
-                    endDate.setDate(startDate.getDate() + 29); // 30-day view
-                    return { start: startDate, end: endDate };
+                // Display event name and price in the cell if available
+                if (eventName) {
+                    const eventNameElement = document.createElement('div');
+                    eventNameElement.className = 'event-name';
+                    eventNameElement.textContent = eventName;
+                    cell.appendChild(eventNameElement);
+                }
+                if (price) {
+                    const priceElement = document.createElement('div');
+                    priceElement.className = 'price-container';
+                    priceElement.textContent = `₹${price}`;
+                    cell.appendChild(priceElement);
+                }
+            },
+            height: 'auto',
+            aspectRatio: 1.5,
+            // Show 30 days at a time
+            views: {
+                dayGridMonth: {
+                    visibleRange: function (currentDate) {
+                        const startDate = currentDate;
+                        const endDate = new Date(currentDate);
+                        endDate.setDate(startDate.getDate() + 29); // 30-day view
+                        return { start: startDate, end: endDate };
+                    }
                 }
             }
-        }
-    });
+        });
 
-    calendar.render();
+        calendar.render();
     });
 </script>
+
 @endsection
