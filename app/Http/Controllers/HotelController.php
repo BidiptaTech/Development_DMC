@@ -432,7 +432,7 @@ class HotelController extends Controller
     public function hotelrates($hotelId){
         
         $hotel = Hotel::findOrFail($hotelId);
-        $hotel->rooms = Room::where('hotel_id', $hotelId)->get();
+        $rooms = Room::where('hotel_id', $hotelId)->get();
         $rates = Rate::all();
         return view('hotel.rates', compact('hotel','rooms','rates'));
     }
