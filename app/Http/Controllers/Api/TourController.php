@@ -24,8 +24,9 @@ class TourController extends Controller
             'check_out' => 'required|string',
         ]);
         
-        $checkInTime = Carbon::createFromFormat('d/m/Y, h:ia', $request->check_in);
-        $checkOutTime = Carbon::createFromFormat('d/m/Y, h:ia', $request->check_out);
+        $checkInTime = Carbon::createFromFormat('d/m/Y', $request->check_in);
+        $checkOutTime = Carbon::createFromFormat('d/m/Y', $request->check_out);
+        
         $tour = new Tour();
         $tour->destination = $request->destination;  
         $tour->adult = $request->adult;  
@@ -34,8 +35,16 @@ class TourController extends Controller
         $tour->check_in_time = $checkInTime;  
         $tour->check_out_time = $checkOutTime; 
         $tour->save(); 
-        return response()->json(['message' => 'Tour created successfully'], 201);
+
+        // Refresh to ensure `unique_tour_id` is populated
+        $tour->refresh();
+
+        return response()->json([
+            'message' => 'Tour created successfully',
+            'tour_id' => $tour->unique_tour_id, // Should now be populated
+        ], 201);
     }
+
 
     
 }

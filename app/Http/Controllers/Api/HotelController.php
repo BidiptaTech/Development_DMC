@@ -130,7 +130,7 @@ class HotelController extends Controller
                 }
 
                 $hotel_list[] = [
-                    'id' => $hotel->id,
+                    'id' => $hotel->hotel_unique_id,
                     'hotel_name' => $hotel->name ?? '',
                     'category' => $hotel->category->name ?? '',
                     'location' => $hotel->address ?? '',
@@ -162,7 +162,7 @@ class HotelController extends Controller
     public function details(Request $request)
     {
         $id = $request->query('id');
-        $hotel = Hotel::with('category', 'rooms.beds')->where('status', 1)->where('id', $id)
+        $hotel = Hotel::with('category', 'rooms.beds')->where('status', 1)->where('hotel_unique_id', $id)
             ->orderBy('id', 'desc')
             ->first();
 
@@ -200,6 +200,7 @@ class HotelController extends Controller
             // Initialize base price to a high value for comparison
             $base_price = PHP_INT_MAX;
             $room_data = [];
+            $price_date = [];
             $weekend_days = json_decode($hotel->weekend_days) ?? [];
             $today = Carbon::now()->format('l');
 
@@ -224,7 +225,8 @@ class HotelController extends Controller
                 // Process beds for the room
                 foreach ($rooms->beds as $bed) {
                     $bed_data[] = [
-                        'id' => $rooms->id,
+                        'bed_id' => $bed->bed_id,
+                        'room_id' => $rooms->room_id,
                         'bed_type' => $bed->bed_type,
                         'bed_image' => json_decode($bed->image) ?? [],
                         'king_bed_max_occupancy' => $bed->king_bed_max_occupancy,
@@ -237,33 +239,49 @@ class HotelController extends Controller
                     ];
                 }
 
-                // Prepare room data
+                $meal_type = ['Room_only', 'Room+Bf', 'Room+bf+lunch', 'Room+bf+dinner', 'all_meal'];
+                    $price_date = []; 
+                foreach ($meal_type as $key => $meal) {
+                    $price = $base_price;
+                    if ($key == 1 && $rooms->breakfast) { 
+                        $price += $rooms->breakfast_price;
+                    } elseif ($key == 2 && $rooms->breakfast && $rooms->lunch) { 
+                        $price += $rooms->breakfast_price + $rooms->lunch_price;
+                    } elseif ($key == 3 && $rooms->breakfast && $rooms->dinner) { 
+                        $price += $rooms->breakfast_price + $rooms->dinner_price;
+                    } elseif ($key == 4 && $rooms->breakfast && $rooms->lunch && $rooms->dinner) { 
+                        $price += $rooms->breakfast_price + $rooms->lunch_price + $rooms->dinner_price;
+                    }
+                    if (
+                        ($key == 0) || 
+                        ($key == 1 && $rooms->breakfast) || 
+                        ($key == 2 && $rooms->breakfast && $rooms->lunch) ||
+                        ($key == 3 && $rooms->breakfast && $rooms->dinner) ||
+                        ($key == 4 && $rooms->breakfast && $rooms->lunch && $rooms->dinner)
+                    ) {
+                        $price_date[] = [
+                            'id' => $key + 1, 
+                            'name' => $meal,
+                            'price' => $price,
+                        ];
+                    }
+                }
+
                 $room_data[] = [
-                    'id' => $rooms->id,
+                    'room_id' => $rooms->room_id,
                     'room_type' => $rooms->room_type,
                     'room_image' => json_decode($rooms->images) ?? [],
                     'number_of_room' => $rooms->no_of_room,
-                    'price' => $price,
-                    'breakfast' => $rooms->breakfast,
-                    'breakfast_type' => $rooms->breakfast_type == "0" ? 'Buffet' : 'Setbuffet',
-                    'breakfast_price' => $rooms->breakfast_price,
-                    'lunch' => $rooms->lunch,
-                    'lunch_type' => $rooms->lunch_type == "0" ? 'Buffet' : 'Setbuffet',
-                    'lunch_price' => $rooms->lunch_price,
-                    'dinner' => $rooms->dinner,
-                    'dinner_type' => $rooms->dinner_type == "0" ? 'Buffet' : 'Setbuffet',
-                    'dinner_price' => $rooms->dinner_price,
-                    'variant_price' => $rooms->variant_price,
+                    'variant_price' => $rooms->variant_price ?? 0,
+                    'price' => $price_date,
                     'bed_details' => $bed_data,
                 ];
             }
-            // Handle case where no rooms exist
             if ($base_price === PHP_INT_MAX) {
                 $base_price = 0;
             }
-            // Hotel List Response
             $hotel_list = [
-                'id' => $hotel->id,
+                'id' => $hotel->hotel_unique_id,
                 'hotel_name' => $hotel->name,
                 'category' => $hotel->category->name ?? 'N/A',
                 'location' => $hotel->address ?? '',
@@ -274,10 +292,11 @@ class HotelController extends Controller
                 'event_type' => $rate->event_type ??'',
                 'image' => $hotel->main_image ?? '',
                 'site_image' => $site_image,
-                'cancellation' => $hotel->cancellation_type ?? 'No cancellation policy',
+                'free_cancellation' => $hotel->cancellation_type ?? 'No cancellation policy',
                 'cancellation_charge' => json_decode($hotel->cancellation_data) ?? [],
                 'entry_port' => json_decode($hotel->port_of_entry) ?? [],
                 'exit_port' => json_decode($hotel->port_of_exit) ?? [],
+                'other_port' => json_decode($hotel->other) ?? [],
                 'facilities' => $facility_names,
                 'status' => $hotel->status,
                 'room_data' => $room_data,

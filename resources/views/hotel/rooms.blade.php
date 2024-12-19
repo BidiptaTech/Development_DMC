@@ -136,6 +136,16 @@
                                <input type="number" name="dinner_price" id="dinner_price" class="form-control" placeholder="Enter price">
                            </div>
                        </div>
+
+                       <div class="mb-3 col-md-4">
+                           <label for="images" class="form-label"><strong>Additional Images</strong></label>
+                           <div id="drop-area" class="form-control" style="padding: 20px; border: 2px dashed #007bff; text-align: center;">
+                              Drag & Drop your files here or click to upload.
+                              <input type="file" id="images" name="images[]" multiple style="display: none;">
+                           </div>
+                           <div id="preview-container" class="mt-3 d-flex flex-wrap gap-2" style="max-width: 100%; overflow-x: auto; white-space: nowrap;"></div>
+                        </div>
+
                         <div class="form-check form-switch">
                            <label for="breakfast_included" class="form-label"><strong>Breakfast included</strong></label>
                            <span style="color: red; font-weight: bold;">*</span>
@@ -1002,10 +1012,124 @@
         }
     });
 </script>
-
 <script>
-      
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('images');
+    const previewContainer = document.getElementById('preview-container');
+    let fileCounter = 0; // Track total uploaded files
+    const MAX_VISIBLE_IMAGES = 3; // Show up to 3 images
 
+    // Open file picker on click
+    dropArea.addEventListener('click', () => fileInput.click());
+
+    // Handle drag events
+    dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.style.backgroundColor = '#e3f2fd';
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+        dropArea.style.backgroundColor = 'white';
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.style.backgroundColor = 'white';
+        handleFiles(e.dataTransfer.files);
+    });
+
+    // Handle file input change
+    fileInput.addEventListener('change', () => {
+        handleFiles(fileInput.files);
+    });
+
+    // Process and display files
+    function handleFiles(files) {
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    fileCounter++;
+                    addImagePreview(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert(`${file.name} is not a valid image file.`);
+            }
+        });
+    }
+
+    // Add image preview with limited visibility and a "more" badge
+    function addImagePreview(imageSrc) {
+        const imageWrapper = document.createElement('div');
+        imageWrapper.style.position = 'relative';
+        imageWrapper.style.width = '70px';
+        imageWrapper.style.height = '70px';
+        imageWrapper.style.margin = '5px';
+        imageWrapper.style.overflow = 'hidden';
+        imageWrapper.style.borderRadius = '5px';
+        imageWrapper.style.display = fileCounter > MAX_VISIBLE_IMAGES ? 'none' : 'inline-block';
+
+        const img = document.createElement('img');
+        img.src = imageSrc;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = '×';
+        deleteButton.style.position = 'absolute';
+        deleteButton.style.top = '2px';
+        deleteButton.style.right = '2px';
+        deleteButton.style.background = 'rgba(255, 0, 0, 0.8)';
+        deleteButton.style.color = 'white';
+        deleteButton.style.border = 'none';
+        deleteButton.style.borderRadius = '50%';
+        deleteButton.style.cursor = 'pointer';
+        deleteButton.style.width = '20px';
+        deleteButton.style.height = '20px';
+        deleteButton.style.fontSize = '12px';
+        deleteButton.style.lineHeight = '16px';
+        deleteButton.addEventListener('click', () => {
+            previewContainer.removeChild(imageWrapper);
+            fileCounter--;
+            updateMoreBadge();
+        });
+
+        imageWrapper.appendChild(img);
+        imageWrapper.appendChild(deleteButton);
+        previewContainer.appendChild(imageWrapper);
+
+        updateMoreBadge();
+    }
+
+    // Create and update "+X more" badge
+    function updateMoreBadge() {
+        // Remove any existing badge
+        const existingBadge = document.getElementById('more-badge');
+        if (existingBadge) existingBadge.remove();
+
+        if (fileCounter > MAX_VISIBLE_IMAGES) {
+            const moreBadge = document.createElement('div');
+            moreBadge.id = 'more-badge';
+            moreBadge.textContent = `+${fileCounter - MAX_VISIBLE_IMAGES} more`;
+            moreBadge.style.margin = '5px';
+            moreBadge.style.padding = '5px 10px';
+            moreBadge.style.backgroundColor = '#007bff';
+            moreBadge.style.color = 'white';
+            moreBadge.style.borderRadius = '5px';
+            moreBadge.style.cursor = 'pointer';
+            moreBadge.style.fontSize = '12px';
+            moreBadge.style.textAlign = 'center';
+            moreBadge.addEventListener('click', () => {
+                // Show all hidden images
+                const hiddenImages = previewContainer.querySelectorAll('div[style*="display: none"]');
+                hiddenImages.forEach(img => img.style.display = 'inline-block');
+                moreBadge.remove(); // Remove badge after revealing all
+            });
+            previewContainer.appendChild(moreBadge);
+        }
+    }
 </script>
 
 @endsection
