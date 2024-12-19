@@ -188,7 +188,7 @@ class HotelController extends Controller
                 // 'conference_data' => json_encode($conferenceData),
                 'cancellation_data' => json_encode($cancellationData),
                 'images' => json_encode($imagePaths),
-                'facilities' => $imagesData,
+                'facilities' => json_encode($imagesData),
                 'port_of_entry' => json_encode($portOfEntryData),
                 'port_of_exit' => json_encode($portOfExitData),
                 'others' => json_encode($portOfOtherData),
