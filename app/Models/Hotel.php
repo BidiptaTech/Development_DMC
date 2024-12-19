@@ -15,7 +15,7 @@ class Hotel extends Model
 
     public function rooms()
     {
-        return $this->hasMany(Room::class, 'hotel_id'); // Assuming `hotel_id` is the foreign key in the `rooms` table
+        return $this->hasMany(Room::class, 'hotel_id', 'hotel_unique_id');
     }
 
     public function category()
