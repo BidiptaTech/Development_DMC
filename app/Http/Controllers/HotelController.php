@@ -45,6 +45,8 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
+        $facilities = json_decode($request->facilities_data, true);
+        dd($facilities);
         $uniqueId = uniqid('', true);
         $unique_id = substr($uniqueId, -16);
 
@@ -66,6 +68,10 @@ class HotelController extends Controller
             'hotel_status' => 'required|integer',
             'main_image' => 'nullable|image',
             'images.*' => 'nullable|image',
+            'facilities' => 'required|array', // Validate that 'facilities' is an array
+            'facilities.*' => 'required|integer|exists:facilities,id', // Ensure each facility is valid
+            'facility_image' => 'nullable|array', // Validate 'facility_image' as an array
+            'facility_image.*' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
             $imagePath = null;
@@ -523,15 +529,16 @@ class HotelController extends Controller
         $room->room_id = $roomId;
         $room->images = $imagePathsJson;
         $room->save();
+        
 
-        // Handle bed data (check if data is available for each room)
-        $lastBed = Bed::withTrashed()->orderBy('bed_id', 'desc')->first();
-        $bed_max_id = $lastBed->bed_id ?? 0;
-        $bedId = CommonHelper::createId($bed_max_id);
-        while (Bed::where('bed_id', $bedId)->exists()) {
-            $bedId = CommonHelper::createId($bedId);
-        }
-
+        if($request->no_of_rooms){
+            $lastBed = Bed::withTrashed()->orderBy('bed_id', 'desc')->first();
+            $bed_max_id = $lastBed->bed_id ?? 0;
+            $bedId = CommonHelper::createId($bed_max_id);
+            while (Bed::where('bed_id', $bedId)->exists()) {
+                $bedId = CommonHelper::createId($bedId);
+            }
+        }   
         $lastRoomId = Room::latest()->value('room_id');
         $bedData = [];
 

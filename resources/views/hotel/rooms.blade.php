@@ -466,15 +466,34 @@
 <!-- Add checkbox contents -->
 
 <script>
+
+   const totalRooms = document.getElementById('total_rooms');
+      let total_no_of_room = 0;
+      let count = 0;
+      let rooms_no = 0;
+      let kingbeds = 0;
+      let queenbeds = 0;
+      let twinbeds = 0;
+      let king_rooms_no = 0;
+      let queen_rooms_no = 0;
+      let twin_rooms_no = 0;
+
+
+
+      
    
    const baseWeekdayPrice = document.getElementById('base-weekday-price');
    const baseWeekendPrice = document.getElementById('base-weekend-price');
+
+      
+   
+   
 
    //Function to toggle visibility of price fields
    const togglePriceField = (dropdownId, priceFieldClass) => {
       const dropdown = document.getElementById(dropdownId);
       const priceField = document.querySelector(`.${priceFieldClass}`);
-    
+   
       if (dropdown && priceField) {
          priceField.style.display = dropdown.value === "1" ? "block" : "none";
       }
@@ -482,30 +501,215 @@
 
 
    document.addEventListener('DOMContentLoaded', () => {
-       
+
+      totalRooms.addEventListener('input', function() {
+         const kingBedInput = document.getElementById('king-bed');
+         const queenBedInput = document.getElementById('queen-bed');
+         const twinBedInput = document.getElementById('twin-bed');
+         count = totalRooms.value;
+         king_rooms_no = 0;
+         queen_rooms_no = 0;
+         twin_rooms_no = 0;
+         if (kingBedInput && kingBedInput.checked) {
+            kingBed('king-bed');
+         }
+         if (queenBedInput && queenBedInput.checked) {
+            queenBed('queen-bed');
+         }
+         if (twinBedInput && twinBedInput.checked) {
+            twinBed('twin-bed');
+         }
+      });
+
       let track = 0;
       let counter = 0;
       let checkboxCounter = 0
       let delCounter = 0;
-         // Function to add checkbox fields dynamically
+
+      //** Start of dynamic Room Counts */
+
+
+      function clearValue(bedType){
+         if(bedType == 'king-bed'){
+            king_rooms_no = 0;
+         }
+         else if(bedType == 'queen-bed'){
+
+            queen_rooms_no = 0;
+         }
+         else if(bedType == 'twin-bed'){
+            twin_rooms_no = 0;
+         }
+      }
+
+      function kingBed(bedType){
+         const currentBed = document.getElementById(`${bedType}-no-rooms`);
+         currentBed.innerHTML = `<option value="">Select a value</option>`;
+         if(queen_rooms_no==0 && twin_rooms_no ==0){
+               king_rooms_no = count;
+         }
+            
+            else if(queen_rooms_no != 0 && twin_rooms_no != 0){
+               king_rooms_no = count - (queen_rooms_no + twin_rooms_no);
+            }
+            else if(queen_rooms_no != 0 && twin_rooms_no == 0){
+               king_rooms_no = count-queen_rooms_no;
+            }
+            else if(queen_rooms_no == 0 && twin_rooms_no != 0){
+               king_rooms_no = count-twin_rooms_no;
+            }
+            
+            
+            for (let i = 0; i <= king_rooms_no; i++) {
+               const option = document.createElement('option');
+               option.value = i;
+               option.innerHTML = i;
+               currentBed.appendChild(option);
+            }
+            console.log('Checkbox was checked.');
+
+         currentBed.addEventListener('change', function () {
+            const selectedValue = currentBed.value;
+            const totalRooms = parseInt(total_no_of_room, 10) || 0;
+            const selectValue = parseInt(selectedValue, 10) || 0;
+            king_rooms_no = selectValue;
+
+            console.log(`Selected value: ${count} --- ${king_rooms_no}`);
+
+            const queenBedElement = document.getElementById('queen-bed-no-rooms');
+            const twinBedElement = document.getElementById('twin-bed-no-rooms');
+            queen_rooms_no = 0;
+            twin_rooms_no = 0;
+
+            if(queenBedElement){
+               
+               console.log("queen bed exist");
+               queenBed('queen-bed')
+            }
+            if(twinBedElement){
+               
+               twinBed('twin-bed')
+            }
+            
+         });
+         
+      }
+
+      function queenBed(bedType){
+         const currentBed = document.getElementById(`${bedType}-no-rooms`);
+            currentBed.innerHTML = `<option value="">Select a value</option>`;
+
+            if(twin_rooms_no==0 && king_rooms_no ==0){
+               queen_rooms_no = count;
+            }
+            
+            else if(king_rooms_no != 0 && twin_rooms_no != 0){
+               queen_rooms_no = count - (king_rooms_no + twin_rooms_no);
+            }
+            else if(king_rooms_no != 0 && twin_rooms_no == 0){
+               queen_rooms_no = count - king_rooms_no;
+            }
+            else if(king_rooms_no == 0 && twin_rooms_no != 0){
+               queen_rooms_no = count - twin_rooms_no;
+            }
+            
+            
+            for (let i = 0; i <= queen_rooms_no; i++) {
+               const option = document.createElement('option');
+               option.value = i;
+               option.innerHTML = i;
+               currentBed.appendChild(option);
+            }
+            console.log('Checkbox was checked.');
+
+         currentBed.addEventListener('change', function () {
+            const selectedValue = currentBed.value;
+            const totalRooms = parseInt(total_no_of_room, 10) || 0;
+            const selectValue = parseInt(selectedValue, 10) || 0;
+            queen_rooms_no = selectValue;
+            console.log(`Selected value: ${count}`);
+            // You can perform any action with the selected value here
+            const bedElement = document.getElementById('twin-bed-no-rooms');
+            if(bedElement){
+               twin_rooms_no = 0;
+               console.log("twin bed exist");
+               twinBed('twin-bed')
+            }
+         });
+         
+      }
+
+      function twinBed(bedType){
+         const currentBed = document.getElementById(`${bedType}-no-rooms`);
+         currentBed.innerHTML = `<option value="">Select a value</option>`; 
+            
+            if(queen_rooms_no==0 && king_rooms_no ==0){
+               twin_rooms_no = count;
+            }
+            
+            else if(queen_rooms_no != 0 && king_rooms_no != 0){
+               twin_rooms_no = count - (queen_rooms_no + king_rooms_no);
+            }
+            else if(queen_rooms_no != 0 && king_rooms_no == 0){
+               twin_rooms_no = count-queen_rooms_no;
+            }
+            else if(queen_rooms_no == 0 && king_rooms_no != 0){
+               twin_rooms_no = count-king_rooms_no;
+            }
+            
+            
+            for (let i = 0; i <= twin_rooms_no; i++) {
+               const option = document.createElement('option');
+               option.value = i;
+               option.innerHTML = i;
+               currentBed.appendChild(option);
+            }
+            console.log('Checkbox was checked.');
+
+         currentBed.addEventListener('change', function () {
+            const selectedValue = currentBed.value;
+            const totalRooms = parseInt(total_no_of_room, 10) || 0;
+            const selectValue = parseInt(selectedValue, 10) || 0;
+            twin_rooms_no = selectValue;
+            console.log(`Selected value: ${count}`);
+            // You can perform any action with the selected value here
+         });
+      }
+
+      const updateRoomCounts = () => {
+         const remainingRooms = totalRoomCount - (king_rooms_no + queen_rooms_no + twin_rooms_no);
+         return Math.max(remainingRooms, 0);
+  };
+      
+
+      /***End of dynamic room counts  ***/
+
+
+      // Function to add checkbox fields dynamically
          const addFields = (bedType, containerId) => {
             counter=counter+1;
+            console.log("Bed type from add fields = ", bedType);
          
             const container = document.getElementById(containerId);
             container.innerHTML = `
                <div class="row">
                    
                    <div class="mb-3 col-md-3">
-                       <label for="${bedType}-no-rooms${counter}" class="form-label"><strong>No. of Rooms</strong></label>
-                       <input type="number" name="no_of_rooms[]" id="${bedType}-no-rooms${counter}" class="form-control" placeholder="Enter number of rooms">
+                       <label for="${bedType}-no-rooms" class="form-label"><strong>No. of Rooms</strong><span class="text-danger">*</span></label>
+                       <select type="number" name="no_of_rooms[]" id="${bedType}-no-rooms" class="form-control" placeholder="Enter number of rooms">
+                           <option> Select a value </option>
+                       </select>
+                        @error('${bedType}_adult_count')
+                           <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
                    </div>
                     <div class="mb-3 col-md-3">
-                        <label for="${bedType}-max-occupancy${counter}" class="form-label"><strong>Maximum Occupancy</strong></label>
-                        <input type="number" name="max_occupancy[]" id="${bedType}-occupancy${counter}" class="form-control" placeholder="Enter maximum occupancy">
+                        <label for="${bedType}-max-occupancy" class="form-label"><strong>Maximum Occupancy</strong><span class="text-danger">*</span></label>
+                        <input type="number" name="max_occupancy[]" id="${bedType}-occupancy" class="form-control" placeholder="Enter maximum occupancy">
                     </div>
                     <div class="col-md-3 mb-3">
-                           <label for="${bedType}-adult${counter}" class="form-label"><strong>Adults</strong><span class="text-danger">*</span></label>
-                           <select id="${bedType}-adult${counter}" class="form-control" name="adult_count[]" disabled>
+                           <label for="${bedType}-adult" class="form-label"><strong>Adults</strong><span class="text-danger">*</span></label>
+                           <select id="${bedType}-adult" class="form-control" name="adult_count[]" disabled>
                               <option value="">Select Adults</option>
                            </select>
                            @error('${bedType}_adult_count')
@@ -513,8 +717,8 @@
                            @enderror
                         </div>
                         <div class="col-md-3 mb-3">
-                           <label for=""${bedType}-child${counter}" class="form-label"><strong>Children</strong><span class="text-danger">*</span></label>
-                           <select id="${bedType}-child${counter}" class="form-control" name="child_count[]" disabled>
+                           <label for=""${bedType}-child" class="form-label"><strong>Children</strong><span class="text-danger">*</span></label>
+                           <select id="${bedType}-child" class="form-control" name="child_count[]" disabled>
                               <option value="">Select Children</option>
                            </select>
                            @error('${bedType}_child_count')
@@ -524,39 +728,39 @@
 
                         <div class="col-md-3 mb-3">
                            <label for="${bedType}-extra-bed" class="form-label"><strong>Extra Bed</strong><span class="text-danger">*</span></label>
-                           <select name="extra_bed[]" id="${bedType}-extra-bed${counter}" class="form-control"
-                              onchange="togglePriceField('${bedType}-extra-bed${counter}', '${bedType}-extra-bed-price${counter}')">
+                           <select name="extra_bed[]" id="${bedType}-extra-bed" class="form-control"
+                              onchange="togglePriceField('${bedType}-extra-bed', '${bedType}-extra-bed-price')">
                               <option value="">Select One</option>
                               <option value="1">Yes</option>
                               <option value="0">No</option>
                            </select>
                         </div>
-                        <div class="col-md-3 mb-3 ${bedType}-extra-bed-price${counter}" style="display: none;">
-                            <label for="${bedType}-extra-bed-price${counter}" class="form-label"><strong>Extra Bed Price</strong><span class="text-danger">*</span></label>
-                            <input type="number" name="extra_bed_price[]" id="${bedType}-extra-bed-price${counter}" class="form-control" placeholder="Enter Price">
+                        <div class="col-md-3 mb-3 ${bedType}-extra-bed-price" style="display: none;">
+                            <label for="${bedType}-extra-bed-price" class="form-label"><strong>Extra Bed Price</strong><span class="text-danger">*</span></label>
+                            <input type="number" name="extra_bed_price[]" id="${bedType}-extra-bed-price" class="form-control" placeholder="Enter Price">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="${bedType}-baby-cot" class="form-label"><strong>Baby Cot</strong><span class="text-danger">*</span></label>
-                            <select name="baby_cot[]" id="${bedType}-baby-cot${counter}" class="form-control"
-                              onchange="togglePriceField('${bedType}-baby-cot${counter}', '${bedType}-baby-cot-price${counter}')">
+                            <select name="baby_cot[]" id="${bedType}-baby-cot" class="form-control"
+                              onchange="togglePriceField('${bedType}-baby-cot', '${bedType}-baby-cot-price')">
                                  <option value="">Select One</option>
                                  <option value="1">Yes</option>
                                  <option value="0">No</option>
                               </select>
                         </div>
-                        <div class="col-md-3 mb-3 ${bedType}-baby-cot-price${counter}" style="display: none;">
+                        <div class="col-md-3 mb-3 ${bedType}-baby-cot-price" style="display: none;">
                             <label for="${bedType}-baby-cot-price" class="form-label"><strong>Baby Cot Price</strong><span class="text-danger">*</span></label>
-                            <input type="number" name="baby_cot_price[]" id="${bedType}-baby-cot-price${counter}" class="form-control" placeholder="Enter Price">
+                            <input type="number" name="baby_cot_price[]" id="${bedType}-baby-cot-price" class="form-control" placeholder="Enter Price">
                         </div>
                         <hr>
                      </div>`;
 
                 // Attach event listeners for Extra Bed and Baby Cot
-                  const extraBedSelect = document.getElementById(`${bedType}-extra-bed${counter}`);
-                  const extraBedPriceField = document.querySelector(`.${bedType}-extra-bed-price${counter}`);
-                  const babyCotSelect = document.getElementById(`${bedType}-baby-cot${counter}`);
-                  const babyCotPriceField = document.querySelector(`.${bedType}-baby-cot-price${counter}`);
-               attachOccupancyListeners(`${bedType}-occupancy${counter}`, `${bedType}-adult${counter}`, `${bedType}-child${counter}`);
+                  const extraBedSelect = document.getElementById(`${bedType}-extra-bed`);
+                  const extraBedPriceField = document.querySelector(`.${bedType}-extra-bed-price`);
+                  const babyCotSelect = document.getElementById(`${bedType}-baby-cot`);
+                  const babyCotPriceField = document.querySelector(`.${bedType}-baby-cot-price`);
+               attachOccupancyListeners(`${bedType}-occupancy`, `${bedType}-adult`, `${bedType}-child`);
                track++;
          };
 
@@ -567,10 +771,30 @@
 
            const fieldsContainerId = `${container}-fields`;
            console.log("bed = ", fieldsContainerId);
+
            if (e.target.checked) {
                addFields(container, fieldsContainerId);
-           } else {
+
+               if(container === 'king-bed'){
+                  const kingBedType = document.getElementById('king-bed-no-rooms');
+                     
+                     kingBed(container);
+               }
+
+               else if(container === 'queen-bed'){
+                  const queenBedType = document.getElementById('queen-bed-no-rooms');
+                     queenBed(container);                  
+               }
+
+               else if(container === 'twin-bed'){
+                  const twinBedType = document.getElementById('twin-bed-no-rooms');
+                     twinBed(container);
+               }
+
+           } 
+           else {
                document.getElementById(fieldsContainerId).innerHTML = ''; // Clear fields if unchecked
+               clearValue(container);
            }
        };
 
