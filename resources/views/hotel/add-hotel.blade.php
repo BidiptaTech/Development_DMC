@@ -44,7 +44,7 @@
                                     <label for="input35" class="form-label"><strong>Hotel Name</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="input35" name="name" placeholder="Enter Hotel Name" required>
+                                    <input type="text" class="form-control" id="input35" name="name" placeholder="Enter Hotel Name" >
                                     @error('name')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -54,7 +54,7 @@
                                     <label for="category_type" class="form-label"><strong>Category Type</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <select id="category_type" name="category_type" class="form-control" required>
+                                    <select id="category_type" name="category_type" class="form-control" >
                                         <option value="">Select Category Type</option>
                                         @forelse ($categories as $category)
                                             <option value="{{ $category->category_id }}">{{ $category->name }}</option>
@@ -71,7 +71,7 @@
                                     <label for="phone" class="form-label"><strong>Phone</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone" required>
+                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone" >
                                     @error('phone')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -81,7 +81,7 @@
                                     <label for="email" class="form-label"><strong>Email</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email" required>
+                                    <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email" >
                                     @error('email')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -90,7 +90,7 @@
                                 <!-- Address -->
                                 <div class="mb-3 col-md-4">
                                     <label for="address" class="form-label"><strong>Address</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter Address" required>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter Address" >
                                     @error('address')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -101,7 +101,7 @@
                                     <label for="city" class="form-label"><strong>City</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="city" name="city" placeholder="Enter City" required>
+                                    <input type="text" class="form-control" id="city" name="city" placeholder="Enter City" >
                                     @error('city')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -112,7 +112,7 @@
                                     <label for="state" class="form-label"><strong>State/Provision</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="state" name="state" placeholder="Enter State" required>
+                                    <input type="text" class="form-control" id="state" name="state" placeholder="Enter State" >
                                     @error('state')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -123,7 +123,7 @@
                                     <label for="country" class="form-label"><strong>Country</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="country" name="country" placeholder="Enter Country" required>
+                                    <input type="text" class="form-control" id="country" name="country" placeholder="Enter Country" >
                                     @error('country')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -134,7 +134,7 @@
                                     <label for="pincode" class="form-label"><strong>Postal Code</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="number" class="form-control" id="pincode" name="pincode" placeholder="Enter Postal Code" required>
+                                    <input type="number" class="form-control" id="pincode" name="pincode" placeholder="Enter Postal Code" >
                                     @error('pincode')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -165,7 +165,7 @@
                                     <label for="main_image" class="form-label"><strong>Banner Image</strong>
                                         <span style="color: red; font-weight: bold;">*</span>
                                     </label>
-                                    <input type="file" class="form-control" id="main_image" name="main_image" required>
+                                    <input type="file" class="form-control" id="main_image" name="main_image" >
                                     @error('main_image')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -205,7 +205,7 @@
 
                                 <div class="mb-3 col-md-4">
                                     <label for="weekend_days" class="form-label"><strong>Weekend Days</strong></label>
-                                    <select name="weekend_days[]" id="weekend_days" class="form-control" multiple required>
+                                    <select name="weekend_days[]" id="weekend_days" class="form-control" multiple >
                                         <option value="Saturday">Saturday</option>
                                         <option value="Sunday">Sunday</option>
                                         <option value="Friday">Friday</option>
@@ -219,7 +219,7 @@
 
                                 <div class="mb-3 col-md-4">
                                     <label for="hotel_owner_company_name" class="form-label"><strong>Hotel Owner Company Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <input type="text" class="form-control" id="hotel_owner_company_name" name="hotel_owner_company_name" placeholder="Enter Hotel Owner Company Name" required>
+                                    <input type="text" class="form-control" id="hotel_owner_company_name" name="hotel_owner_company_name" placeholder="Enter Hotel Owner Company Name" >
                                     @error('hotel_owner_company_name')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -227,7 +227,7 @@
 
                                 <div class="mb-3 col-md-4">
                                     <label for="management_comp_name" class="form-label"><strong>Management Company Name</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <input type="text" class="form-control" id="management_comp_name" name="management_comp_name" placeholder="Enter Management Company Name" required>
+                                    <input type="text" class="form-control" id="management_comp_name" name="management_comp_name" placeholder="Enter Management Company Name" >
                                     @error('management_comp_name')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -258,7 +258,7 @@
                                 <!-- Description -->
                                 <div class="mb-3 col-md-4">
                                     <label for="description" class="form-label"><strong>Description</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description" required></textarea>
+                                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description" ></textarea>
                                     @error('description')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -478,7 +478,7 @@
                             <hr>
                             <div class="mb-3 col-md-4">
                                 <label for="conference" class="form-label"><strong>Conference Room</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                <select name="conference" id="conference" class="form-control" required>
+                                <select name="conference" id="conference" class="form-control" >
                                     <option value="">Select an option</option>
                                     <option value="0">Not Available</option>
                                     <option value="1">Available</option>
@@ -509,7 +509,7 @@
                             <hr>
                             <div class="mb-3 col-md-4">
                                 <label for="cancellation_type" class="form-label"><strong>Cancellation Type</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                <select name="cancellation_type" id="cancellation_type" class="form-control" required>
+                                <select name="cancellation_type" id="cancellation_type" class="form-control" >
                                     <option value="">Select an option</option>
                                     <option value="0">Free</option>
                                     <option value="1">Chargeable</option>
@@ -535,7 +535,7 @@
                             <div class="form-check form-switch">
                                 <label for="hotel_status" class="form-label"><strong>Status</strong><span style="color: red; font-weight: bold;">*</span></label>
                                 <input type="hidden" name="hotel_status" value="0">
-                                <input class="form-check-input" name="hotel_status" type="checkbox" id="hotel_status" value="1" required>
+                                <input class="form-check-input" name="hotel_status" type="checkbox" id="hotel_status" value="1" >
                                 <label class="form-check-label"></label>
                             </div>
 

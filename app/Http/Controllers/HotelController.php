@@ -51,11 +51,8 @@ class HotelController extends Controller
         foreach ($facilities as $index => $facilityId) {
             if (isset($facilityImages[$index])) {
                 $images = $facilityImages[$index]; // Get the images for the current facility
-                
-                // Store images and keep track of their paths
                 $imagePaths = [];
                 foreach ($images as $image) {
-                    // Store the image (example using Laravel's `store` method to save the image)
                     $imagePath = $image->store('facility_images'); // Store images in the 'facility_images' folder
                     $imagePaths[] = $imagePath; // Add the path to the imagePaths array
                 }
@@ -65,6 +62,7 @@ class HotelController extends Controller
                 ];
             }
         }
+        dd($imagesData);
 
         $uniqueId = uniqid('', true);
         $unique_id = substr($uniqueId, -16);
@@ -87,8 +85,6 @@ class HotelController extends Controller
             'hotel_status' => 'required|integer',
             'main_image' => 'nullable|image',
             'images.*' => 'nullable|image',
-            'facilities' => 'required|array', // Validate that 'facilities' is an array
-            'facilities.*' => 'required|integer|exists:facilities,id', // Ensure each facility is valid
             'facility_image' => 'nullable|array', // Validate 'facility_image' as an array
             'facility_image.*' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -188,7 +184,8 @@ class HotelController extends Controller
                 // 'conference_data' => json_encode($conferenceData),
                 'cancellation_data' => json_encode($cancellationData),
                 'images' => json_encode($imagePaths),
-                'facilities' => json_encode($imagesData),
+                'facilities' => json_encode($facilities),
+                'facilities_images' => json_encode($imagesData),
                 'port_of_entry' => json_encode($portOfEntryData),
                 'port_of_exit' => json_encode($portOfExitData),
                 'others' => json_encode($portOfOtherData),
@@ -271,7 +268,7 @@ class HotelController extends Controller
             $storage_file = CommonHelper::image_path('file_storage', $image);
         }
 
-        $imagePaths = json_decode($hotel->images, true) ?: []; // Existing images, default to empty array
+        $imagePaths = []; 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $pathData = CommonHelper::image_path('file_storage', $image);
@@ -363,7 +360,7 @@ class HotelController extends Controller
             'policies' => $request->input('policies'),
             'management_comp_name' => $request->input('management_comp_name'),
             'status' => $request->input('hotel_status'),
-            'images' => json_encode($imagePaths),
+            'images' => json_encode($imagePaths) ?? $hotel->images,
             'facilities' => json_encode($request->facilities),
             'port_of_entry' => !empty($portOfEntryData) ? json_encode($portOfEntryData) : $hotel->port_of_entry,
             'port_of_exit' => json_encode($portOfExitData) ?? $hotel->port_of_exit,
