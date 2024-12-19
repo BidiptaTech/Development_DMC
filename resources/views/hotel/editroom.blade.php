@@ -743,6 +743,21 @@
     let fileCounter = 0; // Track total uploaded files
     const MAX_VISIBLE_IMAGES = 3; // Show up to 3 images
 
+    // Simulated saved images (replace with actual data from the backend)
+    const savedImages = [
+        'https://example.com/image1.jpg',
+        'https://example.com/image2.jpg',
+        'https://example.com/image3.jpg'
+    ];
+
+    // Initialize saved images
+    window.addEventListener('DOMContentLoaded', () => {
+        savedImages.forEach(imageUrl => {
+            addImagePreview(imageUrl, true);
+        });
+        updateMoreBadge();
+    });
+
     // Open file picker on click
     dropArea.addEventListener('click', () => fileInput.click());
 
@@ -783,8 +798,8 @@
         });
     }
 
-    // Add image preview with limited visibility and a "more" badge
-    function addImagePreview(imageSrc) {
+    // Add image preview
+    function addImagePreview(imageSrc, isSaved = false) {
         const imageWrapper = document.createElement('div');
         setImageWrapperStyles(imageWrapper);
 
@@ -792,12 +807,14 @@
         img.src = imageSrc;
         setImageStyles(img);
 
-        const deleteButton = createDeleteButton(imageWrapper);
-        imageWrapper.appendChild(img);
-        imageWrapper.appendChild(deleteButton);
-        previewContainer.appendChild(imageWrapper);
+        if (!isSaved) {
+            const deleteButton = createDeleteButton(imageWrapper);
+            imageWrapper.appendChild(deleteButton);
+        }
 
-        updateMoreBadge();
+        imageWrapper.dataset.saved = isSaved;
+        previewContainer.appendChild(imageWrapper);
+        fileCounter++;
     }
 
     // Set image wrapper styles
@@ -876,5 +893,6 @@
         return moreBadge;
     }
 </script>
+
 
 @endsection
