@@ -24,7 +24,7 @@ class HotelController extends Controller
     */
     public function index(Request $request)
     {
-        $hotels = Hotel::orderBy('id','DESC')->paginate(5);
+        $hotels = Hotel::orderBy('id','DESC')->get();
         return view('hotel.hotels',compact('hotels'));
     }
 
@@ -45,8 +45,27 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
-        $facilities = json_decode($request->facilities_data, true);
-        dd($facilities);
+        $facilities = $request->facilities;
+        $facilityImages = $request->facility_images;
+        $imagesData = [];
+        foreach ($facilities as $index => $facilityId) {
+            if (isset($facilityImages[$index])) {
+                $images = $facilityImages[$index]; // Get the images for the current facility
+                
+                // Store images and keep track of their paths
+                $imagePaths = [];
+                foreach ($images as $image) {
+                    // Store the image (example using Laravel's `store` method to save the image)
+                    $imagePath = $image->store('facility_images'); // Store images in the 'facility_images' folder
+                    $imagePaths[] = $imagePath; // Add the path to the imagePaths array
+                }
+                $imagesData[] = [
+                    'facility_id' => $facilityId,
+                    'images' => $imagePaths, // Array of image paths for this facility
+                ];
+            }
+        }
+
         $uniqueId = uniqid('', true);
         $unique_id = substr($uniqueId, -16);
 
@@ -169,7 +188,7 @@ class HotelController extends Controller
                 // 'conference_data' => json_encode($conferenceData),
                 'cancellation_data' => json_encode($cancellationData),
                 'images' => json_encode($imagePaths),
-                'facilities' => json_encode($request->input('facilities')),
+                'facilities' => $imagesData,
                 'port_of_entry' => json_encode($portOfEntryData),
                 'port_of_exit' => json_encode($portOfExitData),
                 'others' => json_encode($portOfOtherData),
