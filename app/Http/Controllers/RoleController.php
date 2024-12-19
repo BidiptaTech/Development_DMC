@@ -39,7 +39,7 @@ class RoleController extends Controller
         if (!Auth::user()->can('view roles')) {
             abort(403, 'You do not have permission to access this page.');
         }else{
-            $roles = Role::where('user_type', '>=', $this->auth_user->user_type)->orderBy('id','DESC')->paginate(3);
+            $roles = Role::where('user_type', '>=', $this->auth_user->user_type)->orderBy('id','DESC')->get();
             return view('roles.index',compact('roles'))
             ->with('i', ($request->input('page', 1) - 1) * 3);
         }
