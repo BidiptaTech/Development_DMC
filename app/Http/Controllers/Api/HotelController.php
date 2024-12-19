@@ -238,7 +238,7 @@ class HotelController extends Controller
                     ];
                 }
 
-                $meal_type = ['Room_only', 'Room+Bf', 'Room+bf+lunch', 'Room+bf+dinner', 'all_meal'];
+                $meal_type = ['Room_only', 'Room_with_Bf', 'Room_with_bf_&_lunch', 'Room_with_bf-&_dinner', 'All_meal'];
                     $price_date = []; 
                 foreach ($meal_type as $key => $meal) {
                     $price = $base_price;

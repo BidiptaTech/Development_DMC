@@ -45,24 +45,27 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
-        $facilities = $request->facilities;
-        $facilityImages = $request->facility_images;
+        $facilities = $request->facilities ?? []; // Ensure it's an array
+        $facilityImages = $request->facility_images ?? []; // Ensure it's an array
         $imagesData = [];
-        foreach ($facilities as $index => $facilityId) {
-            if (isset($facilityImages[$index])) {
-                $images = $facilityImages[$index]; // Get the images for the current facility
-                $imagePaths = [];
-                foreach ($images as $image) {
-                    $imagePath = $image->store('facility_images'); // Store images in the 'facility_images' folder
-                    $imagePaths[] = $imagePath; // Add the path to the imagePaths array
+        if (!empty($facilities) && is_array($facilities)) {
+            foreach ($facilities as $index => $facilityId) {
+                if (isset($facilityImages[$index]) && is_array($facilityImages[$index])) {
+                    $images = $facilityImages[$index]; // Get the images for the current facility
+                    $imagePaths = [];
+                    foreach ($images as $image) {
+                        if ($image->isValid()) { // Check if the image is valid
+                            $imagePath = $image->store('facility_images'); // Store images in the 'facility_images' folder
+                            $imagePaths[] = $imagePath; // Add the path to the imagePaths array
+                        }
+                    }
+                    $imagesData[] = [
+                        'facility_id' => $facilityId,
+                        'images' => $imagePaths, // Array of image paths for this facility
+                    ];
                 }
-                $imagesData[] = [
-                    'facility_id' => $facilityId,
-                    'images' => $imagePaths, // Array of image paths for this facility
-                ];
             }
         }
-        dd($imagesData);
 
         $uniqueId = uniqid('', true);
         $unique_id = substr($uniqueId, -16);
