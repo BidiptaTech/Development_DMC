@@ -660,16 +660,16 @@ class HotelController extends Controller
     */
     public function updateroom(Request $request)
     {
-        $request->validate([
-            'room_type' => 'required',
-            'max_capacity' => 'required',
-            'no_of_room' => 'required',
-            'weekday_price' => 'required',
-            'weekend_price' => 'required',
-            'hotel_status' => 'required',
-            'extra_bed' => 'required',
-            'child_cot' => 'required',
-        ]);
+        // $request->validate([
+        //     'room_type' => 'required',
+        //     'max_capacity' => 'required',
+        //     'no_of_room' => 'required',
+        //     'weekday_price' => 'required',
+        //     'weekend_price' => 'required',
+        //     'hotel_status' => 'required',
+        //     'extra_bed' => 'required',
+        //     'child_cot' => 'required',
+        // ]);
         $id = $request->id;
         $room_id = Room::where('id', $id)->first();
         $room = Room::where('room_id',$room_id->room_id)->first();
@@ -698,7 +698,7 @@ class HotelController extends Controller
         $room->child_cot = $request->child_cot;
         $room->child_cot_price = $request->child_cot_price;
         $room->status = $request->hotel_status;
-        $room->images = $imagePathsJson ?? $request->images;
+        $room->images = $imagePathsJson ?? $room->images;
         $room->is_complete = 1;
         $room->save();
 
