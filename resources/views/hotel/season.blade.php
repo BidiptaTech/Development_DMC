@@ -14,7 +14,7 @@
             <div class="card">
                <div class="card-header text-white" style="background-color: #8e44ad;">
                   <div class="d-flex justify-content-between align-items-center">
-                     <h5 class="mb-0">Add Pricing Details</h5>
+                     <h5 class="mb-0">Add Seasons</h5>
                      <a href="javascript:history.back()" class="btn btn-sm btn-outline-light">
                         <i class="mdi mdi-arrow-left"></i> Back
                      </a>
@@ -25,27 +25,16 @@
                   <form id="hotelForm" method="POST" action="{{ route('storerates') }}" enctype="multipart/form-data">
                      @csrf
                      <input type="hidden" class="form-control" name="id" value="{{ $hotel->hotel_unique_id }}">
-
-                    
                      <hr>
                      <div id="hotelRatesContainer">
                         <div class="hotel-rate-form">
                            <div class="row">
-                              <!-- Event Name -->
+                              <!-- Season Name -->
                               <div class="col-md-3 mb-3">
-                                 <label for="event" class="form-label"><strong>Event Name</strong><span class="text-danger">*</span></label>
+                                 <label for="event" class="form-label"><strong>Season Name</strong><span class="text-danger">*</span></label>
                                  <input type="text" class="form-control" name="event" placeholder="Enter Event Name" required>
                               </div>
-                              <!-- Event Type -->
-                              <div class="col-md-3 mb-3">
-                                 <label for="event_type" class="form-label"><strong>Event Type</strong><span class="text-danger">*</span></label>
-                                 <select class="form-control" name="event_type" required>
-                                    <option value="">Select Event Type</option>
-                                    <option value="Fair Date">Fair Date</option>
-                                    <option value="Blackout Date">Blackout Date</option>
-                                    <option value="Season">Season</option>
-                                 </select>
-                              </div>
+                              
                               
                               <!-- Price -->
                               <div class="col-md-3 mb-3" id="price">
@@ -210,5 +199,6 @@
 
     });
 </script>
+
 
 @endsection

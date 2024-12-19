@@ -22,11 +22,13 @@
                </div>
                <x-alert />
                <div class="card-body">
-                  <form id="hotelForm" method="POST" action="{{ route('storerates') }}" enctype="multipart/form-data">
+                  <form id="hotelForm" method="POST" action="{{ route('rates.update') }}" enctype="multipart/form-data">
                      @csrf
-                     <input type="hidden" class="form-control" name="id" value="{{ $hotel->hotel_unique_id }}">
+                     
 
-                    
+                     <input value="{{$rate->rate_id}}" type="text" class="form-control" name="rate_id" hidden>
+                     <input value="{{$hotel->hotel_unique_id}}" type="text" class="form-control" name="hotel_id" hidden>
+
                      <hr>
                      <div id="hotelRatesContainer">
                         <div class="hotel-rate-form">
@@ -34,47 +36,47 @@
                               <!-- Event Name -->
                               <div class="col-md-3 mb-3">
                                  <label for="event" class="form-label"><strong>Event Name</strong><span class="text-danger">*</span></label>
-                                 <input type="text" class="form-control" name="event" placeholder="Enter Event Name" required>
+                                 <input value="{{$rate->event}}" type="text" class="form-control" name="event" placeholder="Enter Event Name" required>
                               </div>
                               <!-- Event Type -->
                               <div class="col-md-3 mb-3">
                                  <label for="event_type" class="form-label"><strong>Event Type</strong><span class="text-danger">*</span></label>
-                                 <select class="form-control" name="event_type" required>
+                                <select class="form-control" name="event_type" required>
                                     <option value="">Select Event Type</option>
-                                    <option value="Fair Date">Fair Date</option>
-                                    <option value="Blackout Date">Blackout Date</option>
-                                    <option value="Season">Season</option>
-                                 </select>
+                                    <option value="Fair Date" {{ $rate->event_type == "Fair Date" ? 'selected' : '' }}>Fair Date</option>
+                                    <option value="Blackout Date" {{ $rate->event_type == "Blackout Date" ? 'selected' : '' }}>Blackout Date</option>
+                                    <option value="Season" {{ $rate->event_type == "Season" ? 'selected' : '' }}>Season</option>
+                                </select>
                               </div>
                               
                               <!-- Price -->
                               <div class="col-md-3 mb-3" id="price">
                                  <label for="price" class="form-label"><strong>Price</strong></label><span class="text-danger">*</span>
-                                 <input type="number" class="form-control" name="price" placeholder="Enter Price">
+                                 <input value="{{$rate->price}}" type="number" class="form-control" name="price" placeholder="Enter Price" required>
                               </div>
 
                                <!-- Weekday -->
                               <div class="mb-3 col-md-3" id="base_weekday_price" style="display: none;">
                                  <label for="weekday_price" class="form-label"><strong>Base Weekday Price</strong></label>
-                                 <input type="number" name="weekday_price" class="form-control" placeholder="Enter Base weekday price">
+                                 <input value="{{$rate->weekday_price}}" type="number" name="weekday_price" class="form-control" placeholder="Enter Base weekday price">
                               </div>
 
                               <!-- Weekend Price -->
                               <div class="mb-3 col-md-3" id="base_weekend_price" style="display: none;">
                                     <label for="weekend_price" class="form-label"><strong>Base Weekend Price</strong></label>
-                                    <input type="number" name="weekend_price" class="form-control" placeholder="Enter Base weekend price">
+                                    <input value="{{$rate->weekend_price}}" type="number" name="weekend_price" class="form-control" placeholder="Enter Base weekend price">
                               </div>
 
                               <!-- Start Date -->
                               <div class="col-md-3 mb-3">
                                  <label for="start_date" class="form-label"><strong>Start Date</strong><span class="text-danger">*</span></label>
-                                 <input type="date" class="form-control" name="start_date" required>
+                                 <input value="{{$rate->start_date}}" type="date" class="form-control" name="start_date" required>
                               </div>
 
                               <!-- End Date -->
                               <div class="col-md-3 mb-3">
                                  <label for="end_date" class="form-label"><strong>End Date</strong><span class="text-danger">*</span></label>
-                                 <input type="date" class="form-control" name="end_date" required>
+                                 <input value="{{$rate->end_date}}" type="date" class="form-control" name="end_date" required>
                               </div>
                               <div class="col-md-3 mb-3 d-flex align-items-end">
                                  <button type="button" class="btn btn-danger remove-rate">Delete</button>
@@ -96,9 +98,9 @@
 
                      <!-- Submit Buttons -->
                      <div class="d-flex gap-3">
-                        <a href="{{ route('hotels.room', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
-                        <button type="submit" class="btn btn-primary px-4">Save and Add More Events</button>
-                        <a href="{{ route('hotels.calender', $hotel->hotel_unique_id) }}" class="btn btn-success px-4">Next</a>
+                        <a href="{{ route('hotels.rates', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
+                        <button type="submit" class="btn btn-primary px-4">Update Rates</button>
+                        
                      </div>
                   </form>
                </div>
@@ -106,48 +108,7 @@
          </div>
       </div>
 
-      <!-- Rates List -->
-      <div class="card">
-         <div class="card-header text-white bg-primary style="background-color: #e2b7f1;>
-            <h5 class="mb-0">Rooms of {{ $hotel->name }}</h5>
-         </div>
-         <div class="card-body">
-            <div class="table-responsive">
-               <table id="example2" class="table table-striped table-bordered">
-                  <thead class="table-dark">
-                     <tr>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Event Name</th>
-                        <th>Event Type</th>
-                        <th>Price/Surcharge</th>
-                        <th>Weekday Price</th>
-                        <th>Weekend Price</th>
-                        <th>Action</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     @foreach ($rates as $rate)
-                     <tr>
-                        <td>{{ $rate->start_date }}</td>
-                        <td>{{ $rate->end_date }}</td>
-                        <td>{{ $rate->event }}</td>
-                        <td>{{ $rate->event_type }}</td>
-                        <td>{{ $rate->price }}</td>
-                        <td>{{ $rate->weekday_price }}</td>
-                        <td>{{ $rate->weekend_price }}</td>
-
-                        <td>
-                           <a href="{{ route('rates.edit', ['id' => $rate->rate_id, 'hotel_id' => $hotel->hotel_unique_id]) }}" class="btn btn-warning btn-sm">Edit</a>
-                           
-                        </td>
-                     </tr>
-                     @endforeach
-                  </tbody>
-               </table>
-            </div>
-         </div>
-      </div>
+      
    </div>
 </div>
 @endsection
@@ -210,5 +171,6 @@
 
     });
 </script>
+
 
 @endsection

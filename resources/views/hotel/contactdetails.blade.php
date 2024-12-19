@@ -28,7 +28,7 @@
                     <div class="card-body p-4">
                         <form id="hotelForm" method="POST" action="{{ route('hotels.createcontacts') }}">
                             @csrf
-                            <input type="hidden" class="form-control" name="id" value="{{ $hotel->id }}">
+                            <input type="hidden" class="form-control" name="id" value="{{ $hotel->hotel_unique_id }}">
 
                             <div class="row g-4">
                                 <!-- Reservation Details -->
@@ -180,7 +180,7 @@
 
                             <!-- Action Buttons -->
                             <div class="d-flex justify-content-between mt-4">
-                                <a href="{{ route('hotels.edit', $hotel->id) }}" class="btn btn-secondary px-4" id="previousButton">Previous</a>
+                                <a href="{{ route('hotels.edit', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4" id="previousButton">Previous</a>
                                 <button type="submit" class="btn btn-primary px-4">Save and Next</button>
                             </div>
                         </form>

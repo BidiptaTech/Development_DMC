@@ -24,10 +24,9 @@
                <div class="card-body">
                   <form id="hotelForm" method="POST" action="{{ route('rates.update') }}" enctype="multipart/form-data">
                      @csrf
-                     
 
                      <input value="{{$rate->rate_id}}" type="text" class="form-control" name="rate_id" hidden>
-                     <input value="{{$hotel->id}}" type="text" class="form-control" name="hotel_id" hidden>
+                     <input value="{{$hotel->hotel_unique_id}}" type="text" class="form-control" name="hotel_id" hidden>
 
                      <hr>
                      <div id="hotelRatesContainer">
@@ -98,7 +97,7 @@
 
                      <!-- Submit Buttons -->
                      <div class="d-flex gap-3">
-                        <a href="{{ route('hotels.rates', $hotel->id) }}" class="btn btn-secondary px-4">Previous</a>
+                        <a href="{{ route('hotels.rates', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
                         <button type="submit" class="btn btn-primary px-4">Update Rates</button>
                         
                      </div>
@@ -107,8 +106,6 @@
             </div>
          </div>
       </div>
-
-      
    </div>
 </div>
 @endsection
