@@ -44,6 +44,8 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
+        $facilities = json_decode($request->facilities_data, true);
+        dd($request->all());
         $uniqueId = uniqid('', true);
         $unique_id = substr($uniqueId, -16);
 
@@ -65,6 +67,10 @@ class HotelController extends Controller
             'hotel_status' => 'required|integer',
             'main_image' => 'nullable|image',
             'images.*' => 'nullable|image',
+            'facilities' => 'required|array', // Validate that 'facilities' is an array
+            'facilities.*' => 'required|integer|exists:facilities,id', // Ensure each facility is valid
+            'facility_image' => 'nullable|array', // Validate 'facility_image' as an array
+            'facility_image.*' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
             $imagePath = null;

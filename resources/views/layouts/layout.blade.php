@@ -5,6 +5,7 @@
 <head>
     @include('layouts.header')  <!-- Include header content here -->
     @yield('styles')   <!-- Include header content here -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <div class="wrapper">
