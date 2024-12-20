@@ -196,7 +196,7 @@ class HotelController extends Controller
                 'is_complete' => 1,
             ]);
 
-            return redirect()->route('hotels.contact', ['hotel' => $hotel->id])
+            return redirect()->route('hotels.contact', ['hotel' => $hotel->hotel_unique_id])
                 ->with('success', 'Hotel created successfully');
     
     }
@@ -385,7 +385,7 @@ class HotelController extends Controller
     */
     public function destroy($id)
     {
-        $delete =Hotel::where('id', $id)->delete();
+        $delete =Hotel::where('hotel_unique_id', $id)->delete();
         $delete =Room::where('hotel_id', $id)->delete();
         return redirect()->route('hotels.index')
         ->with('success','Hotel deleted successfully');
@@ -639,7 +639,7 @@ class HotelController extends Controller
     */
     public function editrate($id, $hotelId){
         $rate = Rate::where('rate_id', $id)->first();
-        $hotel = Hotel::where('id', $hotelId)->first();
+        $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
         
         return view('hotel.edit-rate', compact('rate','hotel'));
     }
@@ -648,11 +648,11 @@ class HotelController extends Controller
      
         $rate_id = $request->rate_id;
         
-        $hotel = Hotel::where('id', $request->hotel_id)->first();
+        $hotel = Hotel::where('hotel_unique_id', $request->hotel_id)->first();
 
         $rate = Rate::where('rate_id', $rate_id)->first();
         $rate->event = $request->event;
-        $rate->event_type = $request->event_type;  // Correct assignment of 'event_type'
+        $rate->event_type = $request->event_type;
         $rate->price = $request->price;
         $rate->weekday_price = $request->weekday_price ? $request->weekday_price : 0.00;
         $rate->weekend_price = $request->weekend_price ? $request->weekend_price : 0.00;
@@ -734,6 +734,8 @@ class HotelController extends Controller
         $newRates = $request->event;
 
         // Remove rates not in the new request
+
+        /* 
         foreach ($existingRates as $existingRate) {
             if (!in_array($existingRate->event, $newRates)) {
                 $existingRate->delete();
@@ -776,6 +778,8 @@ class HotelController extends Controller
                 ]);
             }
         }
+
+        */
 
         return redirect()->route('hotels.room', ['hotel' => $room->hotel_id])
             ->with('success', 'Room details updated successfully!');
