@@ -61,9 +61,17 @@ class UserController extends Controller
             $countryCodes = User::countryCodes();
             $authUserType =  $this->auth_user->user_type; 
             $userTypes = array_filter(User::getUserTypes(), function($key) use ($authUserType) {
-                return $key >= $authUserType;
+                if($authUserType == 1){
+                    return $key >= $authUserType;
+                }else{
+                    return $key > $authUserType;
+                }
             }, ARRAY_FILTER_USE_KEY);
-            $roles = Role::where('user_type', '>=', $this->auth_user->user_type)->get();
+            if($authUserType == 1){
+                $roles = Role::where('user_type', '>=', $this->auth_user->user_type)->get();
+            }else{
+                $roles = Role::where('user_type', '>', $this->auth_user->user_type)->get();
+            }
             return view('users.add-user',compact('countryCodes', 'userTypes', 'roles', 'user_countryCode'));
         }
     }
@@ -130,10 +138,18 @@ class UserController extends Controller
             $users = User::find($id);
             $authUserType =  $this->auth_user->user_type; 
             $userTypes = array_filter(User::getUserTypes(), function($key) use ($authUserType) {
-                return $key >= $authUserType;
+                if($this->auth_user->user_type == 1){
+                    return $key >= $authUserType;
+                }else{
+                    return $key > $authUserType;
+                }
             }, ARRAY_FILTER_USE_KEY);
             $countryCodes = User::countryCodes();
+            if($this->auth_user->user_type == 1){
+            $roles = Role::where('user_type', '>', $this->auth_user->user_type)->get();
+            }else{
             $roles = Role::where('user_type', '>=', $this->auth_user->user_type)->get();
+            }
             return view('users.edit-user',compact('users','roles','userTypes','countryCodes'));
         }
     }
