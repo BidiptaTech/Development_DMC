@@ -232,21 +232,19 @@
                                     <div class="mt-3">
                                         <div class="image-slider-container" style="position: relative; overflow: hidden;">
                                         <div class="image-slider d-flex" style="transition: transform 0.5s ease;">
-                                            @if($hotel->images)
-                                                @foreach(json_decode($hotel->images, true) as $image)
-                                                    @if(is_string($image))
-                                                        <div class="col-md-4 mb-3" style="flex-shrink: 0; width: 33.33%;"> <!-- 3 images per row -->
-                                                            <a href="{{ $image }}" target="_blank" data-lightbox="hotel-images" data-title="Hotel Image">
-                                                                <img src="{{ $image }}" alt="Hotel Image" class="img-thumbnail" style="width: 100%; height: auto;">
-                                                            </a>
-                                                        </div>
-                                                    @else
-                                                        <p>Invalid image data found.</p>
-                                                    @endif
-                                                @endforeach
-                                            @else
-                                                <p>No images uploaded yet.</p>
-                                            @endif
+                                        @if(!empty($hotel_images) && is_array($hotel_images))
+                                            @foreach($hotel_images as $image)
+                                                @if(is_string($image))
+                                                    <div class="col-md-4 mb-3">
+                                                        <a href="{{ $image }}" target="_blank" data-lightbox="hotel-images" data-title="Hotel Image">
+                                                            <img src="{{ $image }}" alt="Hotel Image" class="img-thumbnail" style="width: 100%; height: auto;">
+                                                        </a>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <p>No images uploaded yet.</p>
+                                        @endif
                                         </div>
                                             <button class="slider-arrow left" onclick="moveSlide(-1)" type="button" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px 15px; font-size: 18px; cursor: pointer; border-radius: 50%;">&lt;</button>
                                             <button class="slider-arrow right" onclick="moveSlide(1)" type="button" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px 15px; font-size: 18px; cursor: pointer; border-radius: 50%;">&gt;</button>

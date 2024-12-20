@@ -237,7 +237,8 @@ class HotelController extends Controller
         $enable_port_of_entry = !empty($entry_data);
         $enable_port_of_exit = !empty($exit_data);
         $others_data = !empty($others);
-        return view('hotel.edit-hotel', compact('categories', 'hotel','facilities','entry_data','exit_data','enable_port_of_entry','enable_port_of_exit','others','others_data','cancellation_data'));
+        $hotel_images = $hotel->images ? json_decode($hotel->images, true) : [];
+        return view('hotel.edit-hotel', compact('categories', 'hotel','facilities','entry_data','exit_data','enable_port_of_entry','enable_port_of_exit','others','others_data','cancellation_data','hotel_images'));
     }
 
     /*
@@ -280,7 +281,8 @@ class HotelController extends Controller
                 }
             }
         }
-
+        $existingImages = $hotel->images ? json_decode($hotel->images, true) : [];
+        $img_path = array_merge($existingImages, $imagePaths);
         //Future Implement
         // if ($request->conference == 1) {
         //     $conferenceData = [];
@@ -363,7 +365,7 @@ class HotelController extends Controller
             'policies' => $request->input('policies'),
             'management_comp_name' => $request->input('management_comp_name'),
             'status' => $request->input('hotel_status'),
-            'images' => json_encode($imagePaths) ?? $hotel->images,
+            'images' => json_encode($img_path),
             'facilities' => json_encode($request->facilities),
             'port_of_entry' => !empty($portOfEntryData) ? json_encode($portOfEntryData) : $hotel->port_of_entry,
             'port_of_exit' => json_encode($portOfExitData) ?? $hotel->port_of_exit,
@@ -456,9 +458,15 @@ class HotelController extends Controller
 
     public function hotelrates($hotelId){
         $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
-        $rooms = Room::where('hotel_id', $hotelId)->get();
         $rates = Rate::all();
-        return view('hotel.rates', compact('hotel','rooms','rates'));
+        return view('hotel.rates', compact('hotel','rates'));
+    }
+
+    public function hotelseason($hotelId){
+        $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
+        $room = Room::where('hotel_id', $hotelId)->get()->first();
+        $rates = Rate::all();
+        return view('hotel.season', compact('hotel','room','rates'));
     }
 
     /*
@@ -556,13 +564,15 @@ class HotelController extends Controller
             while (Bed::where('bed_id', $bedId)->exists()) {
                 $bedId = CommonHelper::createId($bedId);
             }
-        }   
+        }
+
         $lastRoomId = Room::latest()->value('room_id');
         $bedData = [];
 
         // Check if room data arrays are not empty before using them in foreach
         if (isset($request->no_of_rooms) && is_array($request->no_of_rooms)) {
             foreach ($request->no_of_rooms as $key => $no_of_rooms) {
+                
                 // Ensure data is not null or empty
                 $bedData[] = [
                     'room_type' => isset($request->bed_type[$key]) ? $request->bed_type[$key] : '',
@@ -578,6 +588,7 @@ class HotelController extends Controller
                     'bed_id' => $bedId,
                     'is_active' => $request->hotel_status,
                 ];
+                $bedId++;
             }
         }
 
@@ -594,32 +605,65 @@ class HotelController extends Controller
         }
     }
 
+
+
     /**
      * store rates
      * 
      */
     public function storerates(Request $request){
 
-        $lastRoomId = Room::latest()->value('room_id');
-        $lastRate = Rate::withTrashed()->orderBy('rate_id', 'desc')->first();
-        if ($lastRate) {
-            $rateId = $lastRate->rate_id + 1;
-        } else {
-            $rateId = 1;
-        }
+        // Generate rate ID
+        $lastRate = Rate::withTrashed()->orderBy('created_at', 'desc')->first();
+        $rate_max_id = $lastRoom->rate_id ?? 0;
+        $rateId = CommonHelper::createId($rate_max_id);
         while (Rate::where('rate_id', $rateId)->exists()) {
-            $rateId++;  
+            $rateId = CommonHelper::createId($rateId);
         }
 
         $rate = Rate::create([
             'event' => $request->event,
-            'room_id' => $lastRoomId, 
-            'hotel_id' => $request->id,
+            'hotel_id' => $request->hotel_id,
             'rate_id' => $rateId,
             'event_type' => $request->event_type,
-            'price' => $request->price??0,
-            'weekday_price' => $request->weekday_price ? $request->weekday_price : 0.00,
-            'weekend_price' => $request->weekend_price ? $request->weekend_price : 0.00,
+            'price' => $request->price,
+            'weekday_price' => 0.00,
+            'weekend_price' => 0.00,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+        ]);
+
+        if ($rate->save()) {
+            return redirect()->back()
+                ->with('success', 'Rates details saved successfully!');
+        } else {
+            return redirect()->back()
+                ->with('error', 'An error occurred while saving the room details.');
+        }
+    }
+
+
+    /** store season details */
+
+    public function storeseason(Request $request){
+
+        $lastRate = Rate::withTrashed()->orderBy('rate_id', 'desc')->first();
+        // Generate rate ID
+        $lastRate = Rate::withTrashed()->orderBy('created_at', 'desc')->first();
+        $rate_max_id = $lastRoom->rate_id ?? 0;
+        $rateId = CommonHelper::createId($rate_max_id);
+        while (Rate::where('rate_id', $rateId)->exists()) {
+            $rateId = CommonHelper::createId($rateId);
+        }
+
+        $rate = Rate::create([
+            'event' => $request->event, 
+            'hotel_id' => $request->hotel_id,
+            'rate_id' => $rateId,
+            'event_type' => $request->event_type,
+            'price' => 0,
+            'weekday_price' => $request->weekday_price,
+            'weekend_price' => $request->weekend_price,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ]);
@@ -644,12 +688,26 @@ class HotelController extends Controller
         return view('hotel.edit-rate', compact('rate','hotel'));
     }
 
+    /*
+    * Edit Rate Details .
+    * Date 15-12-2024
+    */
+    public function editseason($id, $hotelId){
+        $rate = Rate::where('rate_id', $id)->first();
+        $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
+        
+        return view('hotel.edit-season', compact('rate','hotel'));
+    }
+
+    /*
+    * Edit Rates .
+    * Date 18-11-2024
+    */
     public function updaterates(Request $request){
      
         $rate_id = $request->rate_id;
         
         $hotel = Hotel::where('hotel_unique_id', $request->hotel_id)->first();
-
         $rate = Rate::where('rate_id', $rate_id)->first();
         $rate->event = $request->event;
         $rate->event_type = $request->event_type;
@@ -670,14 +728,42 @@ class HotelController extends Controller
     }
 
     /*
+    * Edit Seasons .
+    * Date 18-11-2024
+    */
+    public function updateseason(Request $request){
+
+        $rate_id = $request->rate_id;
+        $hotel = Hotel::where('hotel_unique_id', $request->hotel_id)->first();
+        $rate = Rate::where('rate_id', $rate_id)->first();
+        $rate->event = $request->event;
+        $rate->event_type = $request->event_type;
+        $rate->price = 0;
+        $rate->weekday_price = $request->weekday_price;
+        $rate->weekend_price = $request->weekend_price;
+        $rate->start_date = $request->start_date;
+        $rate->end_date = $request->end_date;
+
+        if ($rate->save()) {
+            $rates = Rate::all();
+            return view('hotel.rates', compact('hotel', 'rates'))
+                ->with('success', 'Rates details saved successfully!');
+        } else {
+            return redirect()->back()
+                ->with('error', 'An error occurred while saving the rate details.');
+        }
+    }
+
+
+    /*
     * Edit Room Details .
     * Date 18-11-2024
     */
 
     public function editroom(Request $request, $id){
         
-        $room = Room::with('rates')->where('room_id', $id)->first();
-        $beds = Bed::where('is_active', 1)->get();
+        $room = Room::where('room_id', $id)->first();
+        $beds = Bed::where('room_id', $room->room_id)->get();
         return view('hotel.editroom', compact('room','beds'));
     }
 
@@ -697,9 +783,9 @@ class HotelController extends Controller
         //     'extra_bed' => 'required',
         //     'child_cot' => 'required',
         // ]);
-        $id = $request->id;
-        $room_id = Room::where('id', $id)->first();
-        $room = Room::where('room_id',$room_id->room_id)->first();
+        
+        $room = Room::where('room_id',$request->room_id)->first();
+
         $imagePaths = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -711,27 +797,31 @@ class HotelController extends Controller
         }
         $imagePathsJson = json_encode($imagePaths);
         // Update the room details
+        
         $room->room_type = $request->base_room_type ? $request->base_room_type : $request->room_type;
-        $room->no_of_room = $request->no_of_room;
+        $room->no_of_room = $request->total_no_of_room;
         $room->weekday_price = $request->base_weekday_price ? $request->base_weekday_price : $request->weekday_price;
         $room->weekend_price = $request->base_weekend_price ? $request->base_weekend_price : $request->weekend_price;
-        $room->varient_price = $request->varient_price;
-        $room->max_capacity = $request->max_capacity;
-        $room->adult_count = $request->adult_count ?? $room->adult_count;
-        $room->child_count = $request->child_count ?? $room->child_count;
-        $room->extra_bed = $request->extra_bed;
-        $room->bed_type = $request->bed_type;
-        $room->extra_bed_price = $request->extra_bed_price;
-        $room->child_cot = $request->child_cot;
-        $room->child_cot_price = $request->child_cot_price;
+        $room->varient_price = $request->varient_price ?? 0;
+
+        $room->breakfast = $request->breakfast;
+        $room->breakfast_type = $request->breakfast_type;
+        $room->breakfast_price = $request->breakfast_price;
+
+        $room->lunch = $request->lunch;
+        $room->lunch_type = $request->lunch_type;
+        $room->lunch_price = $request->lunch_price;
+
+        $room->dinner = $request->dinner;
+        $room->dinner_type = $request->dinner_type;
+        $room->dinner_price = $request->dinner_price;
+        $room->breakfast_included = $request->breakfast_included;
+
         $room->status = $request->hotel_status;
-        $room->images = $imagePathsJson ?? $room->images;
-        $room->is_complete = 1;
+        $room->images = $imagePathsJson;
         $room->save();
 
         // Update rates
-        $existingRates = $room->rates; // Fetch existing rates for the room
-        $newRates = $request->event;
 
         // Remove rates not in the new request
 

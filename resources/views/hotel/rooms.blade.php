@@ -24,7 +24,7 @@
                <div class="card-body">
                   <form id="hotelForm" method="POST" action="{{ route('storeroom') }}" enctype="multipart/form-data">
                      @csrf
-                     <input type="hidden" class="form-control" name="id" value="{{ $hotel }}">
+                     <input type="hidden" class="form-control" name="id" value="{{ $hotel->hotel_unique_id }}">
 
                      <div class="row container">
                         <!-- Room Type -->
@@ -201,7 +201,7 @@
                         <a href="{{ route('contactdetails.edit', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
                         <button type="submit" class="btn btn-primary px-4">Save and Add More Rooms</button>
 
-                        <a href="{{ route('hotels.rates', $hotel->hotel_unique_id) }}" class="btn btn-primary px-4">Next</a>
+                        <a href="{{ route('hotels.season', $hotel->hotel_unique_id) }}" class="btn btn-primary px-4">Next</a>
                      </div>
                   </form>
                </div>
@@ -487,7 +487,6 @@
    const baseWeekdayPrice = document.getElementById('base-weekday-price');
    const baseWeekendPrice = document.getElementById('base-weekend-price');
 
-   //Function to toggle visibility of price fields
    const togglePriceField = (dropdownId, priceFieldClass) => {
       const dropdown = document.getElementById(dropdownId);
       const priceField = document.querySelector(`.${priceFieldClass}`);
@@ -945,7 +944,6 @@
             document.getElementById('base_weekday_price').style.display = "none";
             document.getElementById('base_weekend_price').style.display = "none";
 
-            // Create new divs without "base" prefix
             const container = document.querySelector('.container');
 
             const newRoomTypeDiv = document.createElement('div');

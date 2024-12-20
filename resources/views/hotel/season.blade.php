@@ -22,9 +22,10 @@
                </div>
                <x-alert />
                <div class="card-body">
-                  <form id="hotelForm" method="POST" action="{{ route('storerates') }}" enctype="multipart/form-data">
+                  <form id="hotelForm" method="POST" action="{{ route('storeseason') }}" enctype="multipart/form-data">
                      @csrf
-                     <input type="hidden" class="form-control" name="id" value="{{ $hotel->hotel_unique_id }}">
+                     <input type="hidden" class="form-control" name="hotel_id" value="{{ $hotel->hotel_unique_id }}">
+                     <input type="hidden" class="form-control" name="room_id" value="{{ $room->room_id }}">
                      <hr>
                      <div id="hotelRatesContainer">
                         <div class="hotel-rate-form">
@@ -34,22 +35,17 @@
                                  <label for="event" class="form-label"><strong>Season Name</strong><span class="text-danger">*</span></label>
                                  <input type="text" class="form-control" name="event" placeholder="Enter Event Name" required>
                               </div>
-                              
-                              
-                              <!-- Price -->
-                              <div class="col-md-3 mb-3" id="price">
-                                 <label for="price" class="form-label"><strong>Price</strong></label><span class="text-danger">*</span>
-                                 <input type="number" class="form-control" name="price" placeholder="Enter Price">
-                              </div>
+                              <input name="event_type" type="hidden" value="Season">
+                           
 
                                <!-- Weekday -->
-                              <div class="mb-3 col-md-3" id="base_weekday_price" style="display: none;">
+                              <div class="mb-3 col-md-3" id="base_weekday_price">
                                  <label for="weekday_price" class="form-label"><strong>Base Weekday Price</strong></label>
                                  <input type="number" name="weekday_price" class="form-control" placeholder="Enter Base weekday price">
                               </div>
 
                               <!-- Weekend Price -->
-                              <div class="mb-3 col-md-3" id="base_weekend_price" style="display: none;">
+                              <div class="mb-3 col-md-3" id="base_weekend_price">
                                     <label for="weekend_price" class="form-label"><strong>Base Weekend Price</strong></label>
                                     <input type="number" name="weekend_price" class="form-control" placeholder="Enter Base weekend price">
                               </div>
@@ -65,14 +61,10 @@
                                  <label for="end_date" class="form-label"><strong>End Date</strong><span class="text-danger">*</span></label>
                                  <input type="date" class="form-control" name="end_date" required>
                               </div>
-                              <div class="col-md-3 mb-3 d-flex align-items-end">
-                                 <button type="button" class="btn btn-danger remove-rate">Delete</button>
-                              </div>
                            </div>
                         </div>
                      </div>
                      
-
                      <div class="form-check form-switch">
                         <label for="hotel_status" class="form-label"><strong>Status</strong></label>
                         <span style="color: red; font-weight: bold;">*</span>
@@ -87,7 +79,7 @@
                      <div class="d-flex gap-3">
                         <a href="{{ route('hotels.room', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
                         <button type="submit" class="btn btn-primary px-4">Save and Add More Events</button>
-                        <a href="{{ route('hotels.calender', $hotel->hotel_unique_id) }}" class="btn btn-success px-4">Next</a>
+                        <a href="{{ route('hotels.rates', $hotel->hotel_unique_id) }}" class="btn btn-success px-4">Next</a>
                      </div>
                   </form>
                </div>
@@ -98,7 +90,7 @@
       <!-- Rates List -->
       <div class="card">
          <div class="card-header text-white bg-primary style="background-color: #e2b7f1;>
-            <h5 class="mb-0">Rooms of {{ $hotel->name }}</h5>
+            <h5 class="mb-0">Seasons of {{ $hotel->name }}</h5>
          </div>
          <div class="card-body">
             <div class="table-responsive">
@@ -127,8 +119,7 @@
                         <td>{{ $rate->weekend_price }}</td>
 
                         <td>
-                           <a href="{{ route('rates.edit', ['id' => $rate->rate_id, 'hotel_id' => $hotel->hotel_unique_id]) }}" class="btn btn-warning btn-sm">Edit</a>
-                           
+                           <a href="{{ route('season.edit', ['id' => $rate->rate_id, 'hotel_id' => $hotel->hotel_unique_id]) }}" class="btn btn-warning btn-sm">Edit</a> 
                         </td>
                      </tr>
                      @endforeach
