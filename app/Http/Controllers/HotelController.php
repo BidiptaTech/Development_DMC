@@ -24,7 +24,7 @@ class HotelController extends Controller
     */
     public function index(Request $request)
     {
-        $hotels = Hotel::orderBy('id','DESC')->paginate(5);
+        $hotels = Hotel::orderBy('id','DESC')->get();
         return view('hotel.hotels',compact('hotels'));
     }
 
@@ -45,8 +45,28 @@ class HotelController extends Controller
     */
     public function store(Request $request)
     {
-        $facilities = json_decode($request->facilities_data, true);
-        dd($facilities);
+        $facilities = $request->facilities ?? []; // Ensure it's an array
+        $facilityImages = $request->facility_images ?? []; // Ensure it's an array
+        $imagesData = [];
+        if (!empty($facilities) && is_array($facilities)) {
+            foreach ($facilities as $index => $facilityId) {
+                if (isset($facilityImages[$index]) && is_array($facilityImages[$index])) {
+                    $images = $facilityImages[$index]; // Get the images for the current facility
+                    $imagePaths = [];
+                    foreach ($images as $image) {
+                        if ($image->isValid()) { // Check if the image is valid
+                            $imagePath = $image->store('facility_images'); // Store images in the 'facility_images' folder
+                            $imagePaths[] = $imagePath; // Add the path to the imagePaths array
+                        }
+                    }
+                    $imagesData[] = [
+                        'facility_id' => $facilityId,
+                        'images' => $imagePaths, // Array of image paths for this facility
+                    ];
+                }
+            }
+        }
+
         $uniqueId = uniqid('', true);
         $unique_id = substr($uniqueId, -16);
 
@@ -68,8 +88,6 @@ class HotelController extends Controller
             'hotel_status' => 'required|integer',
             'main_image' => 'nullable|image',
             'images.*' => 'nullable|image',
-            'facilities' => 'required|array', // Validate that 'facilities' is an array
-            'facilities.*' => 'required|integer|exists:facilities,id', // Ensure each facility is valid
             'facility_image' => 'nullable|array', // Validate 'facility_image' as an array
             'facility_image.*' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -169,7 +187,8 @@ class HotelController extends Controller
                 // 'conference_data' => json_encode($conferenceData),
                 'cancellation_data' => json_encode($cancellationData),
                 'images' => json_encode($imagePaths),
-                'facilities' => json_encode($request->input('facilities')),
+                'facilities' => json_encode($facilities),
+                'facilities_images' => json_encode($imagesData),
                 'port_of_entry' => json_encode($portOfEntryData),
                 'port_of_exit' => json_encode($portOfExitData),
                 'others' => json_encode($portOfOtherData),
@@ -252,7 +271,7 @@ class HotelController extends Controller
             $storage_file = CommonHelper::image_path('file_storage', $image);
         }
 
-        $imagePaths = json_decode($hotel->images, true) ?: []; // Existing images, default to empty array
+        $imagePaths = []; 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $pathData = CommonHelper::image_path('file_storage', $image);
@@ -344,7 +363,7 @@ class HotelController extends Controller
             'policies' => $request->input('policies'),
             'management_comp_name' => $request->input('management_comp_name'),
             'status' => $request->input('hotel_status'),
-            'images' => json_encode($imagePaths),
+            'images' => json_encode($imagePaths) ?? $hotel->images,
             'facilities' => json_encode($request->facilities),
             'port_of_entry' => !empty($portOfEntryData) ? json_encode($portOfEntryData) : $hotel->port_of_entry,
             'port_of_exit' => json_encode($portOfExitData) ?? $hotel->port_of_exit,

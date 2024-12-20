@@ -227,19 +227,18 @@ class HotelController extends Controller
                     $bed_data[] = [
                         'bed_id' => $bed->bed_id,
                         'room_id' => $rooms->room_id,
-                        'bed_type' => $bed->bed_type,
-                        'bed_image' => json_decode($bed->image) ?? [],
-                        'king_bed_max_occupancy' => $bed->king_bed_max_occupancy,
-                        'king_bed_adult_count' => $bed->king_ed_adult_count,
-                        'king_bed_child_count' => $bed->king_bed_child_count,
-                        'king_bed_extra_bed' => $bed->king_bed_extra_bed,
-                        'king_bed_extra_bed_price' => $bed->king_bed_extra_bed_price,
-                        'king_bed_ay_cot' => $bed->king_bed_ay_cot,
-                        'king_bed_ay_cot_price' => $bed->king_bed_ay_cot_price,
+                        'bed_type' => $bed->room_type,
+                        'king_bed_max_occupancy' => $bed->max_occupancy,
+                        'king_bed_adult_count' => $bed->adult_count,
+                        'king_bed_child_count' => $bed->child_count,
+                        'king_bed_extra_bed' => $bed->extra_bed,
+                        'king_bed_extra_bed_price' => $bed->extra_bed_price,
+                        'king_bed_ay_cot' => $bed->baby_cot,
+                        'king_bed_ay_cot_price' => $bed->baby_cot_price,
                     ];
                 }
 
-                $meal_type = ['Room_only', 'Room+Bf', 'Room+bf+lunch', 'Room+bf+dinner', 'all_meal'];
+                $meal_type = ['Room_only', 'Room_with_Bf', 'Room_with_bf_&_lunch', 'Room_with_bf-&_dinner', 'All_meal'];
                     $price_date = []; 
                 foreach ($meal_type as $key => $meal) {
                     $price = $base_price;

@@ -18,8 +18,9 @@ class Room extends Model
         return $this->hasMany(Rate::class, 'room_id', 'room_id'); // A room can have multiple rates
     }
 
-    public function hotel(){
-        return $this->belongsTo(Hotel::class,'hotel_id','hotel_unique_id');
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class, 'hotel_id', 'hotel_unique_id');
     }
 
     public function beds()

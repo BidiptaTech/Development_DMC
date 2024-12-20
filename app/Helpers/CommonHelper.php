@@ -5,6 +5,7 @@ namespace App\Helpers;
 use Illuminate\Support\Facades\Http;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 class CommonHelper
 {
     /*
@@ -43,26 +44,37 @@ class CommonHelper
     */
     public static function image_path($name, $logoFile) {
         $get_filestorage = Setting::where('name', $name)->where('status', 1)->first();
-        $logoName = 'logo_' . time() . '.' . $logoFile->getClientOriginalExtension();
-        
+        $logoName = 'logo_' . time() . '_' . Str::random(6) . '.' . $logoFile->getClientOriginalExtension();
         if ($get_filestorage) {
-            if ($get_filestorage->value == 'local') {
-                $destinationPath = public_path('build/images');
-                $logoFile->move($destinationPath, $logoName);
-                $logoPath = asset('build/images/' . $logoName);
-            } elseif ($get_filestorage->value == 's3') {
-                $logoPath = Storage::disk('s3')->url(Storage::disk('s3')->putFileAs('uploads', $logoFile, $logoName));
-            } elseif ($get_filestorage->value == 'azure') {
-                $logoPath = Storage::disk('azure')->url(Storage::disk('azure')->putFileAs('uploads', $logoFile, $logoName));
+            try {
+                if ($get_filestorage->value == 'local') {
+                    $destinationPath = public_path('build/images');
+                    $logoFile->move($destinationPath, $logoName);
+                    $logoPath = asset('build/images/' . $logoName);
+                } elseif ($get_filestorage->value == 's3') {
+                    $path = Storage::disk('s3')->putFileAs('uploads', $logoFile, $logoName);
+                    $logoPath = Storage::disk('s3')->url($path);
+                } elseif ($get_filestorage->value == 'azure') {
+                    $path = Storage::disk('azure')->putFileAs('uploads', $logoFile, $logoName);
+                    $logoPath = Storage::disk('azure')->url($path);
+                } else {
+                    $logoPath = null;
+                }
+                return [
+                    'master_value' => $logoPath,
+                ];
+            } catch (\Exception $e) {
+                Log::error("Image upload failed: " . $e->getMessage());
+                return [
+                    'master_value' => null,
+                ];
             }
-            return [
-                'master_value' => $logoPath,
-            ];
         }
         return [
             'master_value' => null,
         ];
     }
+
     
     /*
     *Create Id for all table

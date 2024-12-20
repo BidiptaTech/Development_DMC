@@ -5,6 +5,23 @@
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<style>
+.facility-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;  
+}
+.facility-group .form-control {
+    width: 100%;  
+}
+.remove-facility {
+    margin-top: 10px;  /* Adds space from the input field above */
+    align-self: flex-start;  /* Ensures the button stays aligned at the left */
+}
+#add-facility {
+    margin-top: 15px;  /* Adds a little more spacing above the "Add More" button */
+}
+</style>
 <div class="page-content">
     <div class="page-container">
         <div class="row justify-content-center">
@@ -32,8 +49,6 @@
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <input name="facilitiesdata" id="data" hidden>
-
                                 <!-- Category Type -->
                                 <div class="mb-3 col-md-4">
                                     <label for="category_type" class="form-label"><strong>Category Type</strong>
@@ -258,38 +273,27 @@
                                     @enderror
                                 </div>
 
-                                <!-- Facilities -->
                                 <div class="mb-3 col-md-4">
-                                    <label for="facilities" class="form-label"><strong>Facilities</strong><span style="color: red; font-weight: bold;">*</span></label>
-                                    <div class="row">
-                                        <div class="form-label">
-                                            <select id="selectFacility" class="form-control" name="facilities[]">
-                                                <option value="0">Select facility</option>
-                                                @foreach ($facilities as $facility)
-                                                    <option value="{{$facility->id}}">{{ $facility->name }}</option>
-                                                @endforeach
-                                            </select> 
+                                    <label for="facilities" class="form-label"><strong>Facilities</strong></label>
+                                    <div id="facilities-container">
+                                        <!-- Initial Facility Group -->
+                                        <div class="facility-group mb-3 d-flex flex-column">
+                                            <div class="d-flex flex-column mb-2">
+                                                <select id="selectFacility" class="form-control" name="facilities[]">
+                                                    <option value="0">Select facility</option>
+                                                    @foreach ($facilities as $facility)
+                                                        <option value="{{$facility->id}}">{{ $facility->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="d-flex flex-column mb-2">
+                                                <input type="file" name="facility_images[0][]" multiple class="form-control">
+                                            </div>
+                                            <button type="button" class="btn btn-danger btn-sm remove-facility ms-2 mt-2">Remove</button>
                                         </div>
                                     </div>
-                                    @error('facilities')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror
+                                    <button type="button" id="add-facility" class="btn btn-sm btn-primary mt-2">Add More Facility</button>
                                 </div>
-
-                                <div class="mb-3 col-md-4" id="facilityImage" style="display: none;">
-                                    <label for="main_image" class="form-label"><strong>Supporting Image(s)</strong>            
-                                    </label>
-                                    <input type="file" class="form-control"  name="facility_image[]" multiple>
-                                </div>
-                            </div>
-                            <!-- Add more Facilities -->
-                            <div id="addedFacility"></div>
-                               
-                            
-
-                            <div class="mb-3 col-md-4">
-                                <button type="button" id="cancellation-add-more" class="btn btn-primary">Add More</button>
-                            </div>
 
                             <!-- key locations -->
                             <b>Port of Entry & Port of Exit & Others</b>
@@ -579,58 +583,7 @@
         });
     });
 </script>
-<script>
-    $(document).ready(function () {
-        $('#hotelName').on('change', function () {
-            
-            let hotelId = $(this).val(); // Get the selected hotel's ID
-            let facilitiesContainer = $('#facilities-container');
-            let noFacilitiesMsg = $('#no-facilities-msg');
 
-            // Clear previous facilities
-            facilitiesContainer.empty();
-            noFacilitiesMsg.show();
-
-            if (hotelId) {
-                // Make AJAX call to fetch facilities
-                
-                $.ajax({
-                    url: `/hotels/${hotelId}/facilities`,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data.success && data.facilities.length > 0) {
-                            noFacilitiesMsg.hide();
-                            // Append facilities checkboxes
-                            data.facilities.forEach(function (facility) {
-                                let checkbox = `
-                                    <div class="form-check form-check-inline me-3">
-                                        <input 
-                                            class="form-check-input"
-                                            type="checkbox" 
-                                            name="facilities[]" 
-                                            id="facility_${facility.id}" 
-                                            value="${facility.id}"
-                                        >
-                                        <label class="form-check-label" for="facility_${facility.id}">
-                                            ${facility.name}
-                                        </label>
-                                    </div>
-                                `;
-                                facilitiesContainer.append(checkbox);
-                            });
-                        } else {
-                            noFacilitiesMsg.text('No facilities found for this hotel.').show();
-                        }
-                    },
-                    error: function () {
-                        noFacilitiesMsg.text('Error fetching facilities. Please try again.').show();
-                    }
-                });
-            }
-        });
-    });
-</script>
 
 <script>
     $(document).ready(function() {
@@ -942,185 +895,69 @@
 <script>
     const facilityElement = document.getElementById("selectFacility");
     const facilityImageElement = document.getElementById("facilityImage");
-
-    facilityElement.addEventListener('change', function(e){
-        if(e.target.value != 0){
-            facilityImageElement.style.display = "block";
-        }
-        else{
-            facilityImageElement.style.display = "none";
-        }
-    })
-</script>
-
-<!-- Add more Facility -->
-<script>
-    const facilities = @json($facilities); // Get facilities from backend
-    const addButton = document.getElementById("cancellation-add-more");
-    const facilitiesSection = document.getElementById("addedFacility");
-
-    // Add More Button Event Listener
-    addButton.addEventListener("click", function () {
-        const facilityRow = document.createElement("div");
-        facilityRow.classList.add("row", "mb-3");
-
-        const selectCol = document.createElement("div");
-        selectCol.classList.add("col-md-4");
-
-        const imageCol = document.createElement("div");
-        imageCol.classList.add("col-md-4", "facility-image-container");
-        imageCol.style.display = "none"; // Initially hide the image input
-
-        const removeCol = document.createElement("div");
-        removeCol.classList.add("col-md-2", "text-end");
-
-        // Create the select dropdown
-        const selectFacility = document.createElement("select");
-        selectFacility.classList.add("form-control");
-        selectFacility.setAttribute("name", "facilities[]");
-
-        // Add default "Select facility" option
-        const defaultOption = document.createElement("option");
-        defaultOption.value = "0";
-        defaultOption.textContent = "Select facility";
-        selectFacility.appendChild(defaultOption);
-
-        // Add options dynamically from facilities array
-        facilities.forEach(facility => {
-            const option = document.createElement("option");
-            option.value = facility.id;
-            option.textContent = facility.name;
-            selectFacility.appendChild(option);
-        });
-
-        // Append dropdown to the column
-        selectCol.appendChild(selectFacility);
-
-        // Add event listener to the dropdown
-        selectFacility.addEventListener("change", function () {
-            handleFileInput(selectFacility, imageCol);
-        });
-
-        // Create the file input
-        const fileInput = document.createElement("input");
-        fileInput.type = "file";
-        fileInput.name = "facility_image[]";
-        fileInput.classList.add("form-control");
-        imageCol.appendChild(fileInput);
-
-        // Create the remove button
-        const removeButton = document.createElement("button");
-        removeButton.type = "button";
-        removeButton.classList.add("btn", "btn-danger", "btn-sm");
-        removeButton.textContent = "X";
-        removeButton.style.marginTop = "8px";
-
-        // Add event listener to remove the row
-        removeButton.addEventListener("click", function () {
-            facilityRow.remove();
-        });
-
-        // Append the remove button to the remove column
-        removeCol.appendChild(removeButton);
-
-        // Append all columns to the row
-        facilityRow.appendChild(selectCol);
-        facilityRow.appendChild(imageCol);
-        facilityRow.appendChild(removeCol);
-
-        // Append the row to the facilities section
-        facilitiesSection.appendChild(facilityRow);
-    });
-
-    // Function to handle file input visibility
-    function handleFileInput(selectField, imageContainer) {
-        if (selectField.value !== "0") {
-            imageContainer.style.display = "block"; // Show the file input
+    facilityElement.addEventListener('change', function(e) {
+        if (e.target.value != 0) {
+            facilityImageElement.style.display = "block";  // Show the file input if facility is selected
         } else {
-            imageContainer.style.display = "none"; // Hide the file input
-        }
-    }
-</script>
-
-
-<!-- Send data as json -->
-
-<script>
-
-    function getCSRFToken() {
-    const cookies = document.cookie.split('; ');
-    for (let cookie of cookies) {
-        const [name, value] = cookie.split('=');
-        if (name === 'XSRF-TOKEN') {
-            return decodeURIComponent(value);
-        }
-    }
-    return null; // Return null if the token is not found
-    }
-
-document.getElementById('hotelForm').addEventListener('submit', function(e) {
-    
-    
-    // Initialize an object to store the facilities and images
-    let formData = new FormData(this);  // To handle file upload
-
-    // Gather the selected facilities
-    let facilities = [];
-    let facilityElements = document.querySelectorAll('[name="facilities[]"]');
-    facilityElements.forEach(function(select) {
-        if (select.value !== "0") {
-            facilities.push(select.value);
+            facilityImageElement.style.display = "none";  // Hide if no facility is selected
         }
     });
-
-    // Gather the images for the facilities
-    let images = [];
-    let imageInput = document.querySelector('input[name="facility_image[]"]');
-    if (imageInput && imageInput.files.length > 0) {
-        for (let file of imageInput.files) {
-            images.push(file);
-        }
-    }
-
-    // Now we combine the facilities and images in the format you need
-    let facilitiesData = facilities.map(function(facility, index) {
-        return {
-            facility_id: facility,
-            image: images[index] || null // Associate images with corresponding facilities
-        };
+    document.getElementById('add-facility').addEventListener('click', () => {
+        const container = document.getElementById('facilities-container');
+        const facilityCount = container.querySelectorAll('.facility-group').length;
+        const newGroup = document.createElement('div');
+        newGroup.classList.add('facility-group', 'mb-3', 'd-flex', 'flex-column');
+        newGroup.innerHTML = `
+            <div class="d-flex flex-column mb-2">
+                <select class="form-control" name="facilities[]">
+                    <option value="0">Select facility</option>
+                    @foreach ($facilities as $facility)
+                        <option value="{{$facility->id}}">{{ $facility->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="d-flex flex-column mb-2">
+                <input type="file" name="facility_images[${facilityCount}][]" multiple class="form-control">
+            </div>
+            <button type="button" class="btn btn-danger btn-sm remove-facility ms-2 mt-2">Remove</button>
+        `;
+        container.appendChild(newGroup);
+        newGroup.querySelector('.remove-facility').addEventListener('click', (e) => {
+            e.target.closest('.facility-group').remove();  // Remove the facility group when clicked
+            disableSelectedOptions();  // Re-enable the disabled options after removal
+        });
+        disableSelectedOptions();
     });
-
-    
-
-    // Add the facilitiesData as JSON to FormData
-    formData.append('facilities_data', JSON.stringify(facilitiesData));
-
-    document.getElementById("data").value = formData;
-    
-    // let csrfToken = getCSRFToken();
-    // fetch('{{ route('hotels.store') }}', {
-        // method: 'POST',
-        // headers: {
-        //     'X-CSRF-TOKEN': csrfToken,
-        // },
-        // body: formData,
-        // })
-        // .then(response => {
-        //     if (response.ok) {
-        //         return response.json();
-        //     } else {
-        //         throw new Error('Error submitting form');
-        //     }
-        // })
-        // .then(data => {
-        //     alert('Form submitted successfully!');
-        //     console.log('Response:', data);
-        // })
-        // .catch(error => {
-        //     alert('Error submitting form!');
-        //     console.error('Error:', error);
-        // });
-});
+    document.querySelectorAll('.remove-facility').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.target.closest('.facility-group').remove();  // Remove the facility group when clicked
+            disableSelectedOptions();  // Re-enable the disabled options after removal
+        });
+    });
+    function disableSelectedOptions() {
+        const allFacilitySelects = document.querySelectorAll('select[name="facilities[]"]');
+        const selectedValues = Array.from(allFacilitySelects).map(select => select.value);
+        allFacilitySelects.forEach(function(select) {
+            const options = select.querySelectorAll('option');
+            options.forEach(function(option) {
+                option.disabled = false;
+            });
+        });
+        selectedValues.forEach(function(value) {
+            if (value != '0') {  
+                allFacilitySelects.forEach(function(select) {
+                    const options = select.querySelectorAll('option');
+                    options.forEach(function(option) {
+                        if (option.value == value) {
+                            option.disabled = true;  // Disable the selected option
+                        }
+                    });
+                });
+            }
+        });
+    }
+    disableSelectedOptions();
 </script>
+
 
 @endsection

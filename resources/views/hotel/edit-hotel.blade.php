@@ -231,19 +231,23 @@
                                     <!-- Display existing images -->
                                     <div class="mt-3">
                                         <div class="image-slider-container" style="position: relative; overflow: hidden;">
-                                            <div class="image-slider d-flex" style="transition: transform 0.5s ease;">
-                                                @if(!empty($hotel->images))
-                                                    @foreach(json_decode($hotel->images, true) as $image)
+                                        <div class="image-slider d-flex" style="transition: transform 0.5s ease;">
+                                            @if($hotel->images)
+                                                @foreach(json_decode($hotel->images, true) as $image)
+                                                    @if(is_string($image))
                                                         <div class="col-md-4 mb-3" style="flex-shrink: 0; width: 33.33%;"> <!-- 3 images per row -->
                                                             <a href="{{ $image }}" target="_blank" data-lightbox="hotel-images" data-title="Hotel Image">
                                                                 <img src="{{ $image }}" alt="Hotel Image" class="img-thumbnail" style="width: 100%; height: auto;">
                                                             </a>
                                                         </div>
-                                                    @endforeach
-                                                @else
-                                                    <p>No images uploaded yet.</p>
-                                                @endif
-                                            </div>
+                                                    @else
+                                                        <p>Invalid image data found.</p>
+                                                    @endif
+                                                @endforeach
+                                            @else
+                                                <p>No images uploaded yet.</p>
+                                            @endif
+                                        </div>
                                             <button class="slider-arrow left" onclick="moveSlide(-1)" type="button" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px 15px; font-size: 18px; cursor: pointer; border-radius: 50%;">&lt;</button>
                                             <button class="slider-arrow right" onclick="moveSlide(1)" type="button" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px 15px; font-size: 18px; cursor: pointer; border-radius: 50%;">&gt;</button>
                                         </div>
@@ -282,26 +286,39 @@
                             <div class="mb-3">
                                 <label for="facilities" class="form-label"><strong>Select Facilities</strong></label>
                                 <div id="facilities-container" class="d-flex flex-wrap">
-                                    <!-- Facilities will be appended here dynamically -->
                                     @forelse ($facilities as $facility)
-                                    <div class="form-check form-check-inline me-3">
-                                        <input 
-                                            class="form-check-input"
-                                            type="checkbox" 
-                                            name="facilities[]" 
-                                            id="facility_{{$facility->id}}" 
-                                            value="{{$facility->id}}"
-                                            @if(in_array($facility->id, old('facilities', json_decode($hotel->facilities, true) ?? [])))
-                                                checked
-                                            @endif
-                                        >
-                                        <label class="form-check-label" for="facility_{{$facility->id}}">
-                                            {{$facility->name}}
-                                        </label>
+                                    <div class="facility-group mb-3 w-100">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="form-check form-check-inline me-3">
+                                                <input 
+                                                    class="form-check-input facility-checkbox"
+                                                    type="checkbox" 
+                                                    name="facilities[]" 
+                                                    id="facility_{{$facility->id}}" 
+                                                    value="{{$facility->id}}"
+                                                    @if(in_array($facility->id, old('facilities', json_decode($hotel->facilities, true) ?? [])))
+                                                        checked
+                                                    @endif
+                                                >
+                                                <label class="form-check-label" for="facility_{{$facility->id}}">
+                                                    {{$facility->name}}
+                                                </label>
+                                            </div>
+                                            <input 
+                                                type="file" 
+                                                name="facility_images[{{$facility->id}}][]" 
+                                                multiple 
+                                                class="form-control facility-images-input"
+                                                style="display: none;" {{-- Initially hidden --}}
+                                            >
+                                            <button type="button" class="btn btn-danger btn-sm remove-facility ms-2">Remove</button>
+                                        </div>
                                     </div>
                                     @empty
+                                    <p>No facilities available.</p>
                                     @endforelse
                                 </div>
+                                <button type="button" id="add-facility" class="btn btn-sm btn-primary mt-2">Add More Facility</button>
                             </div>
 
 
@@ -1100,5 +1117,74 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Show file input when a checkbox is checked
+        document.querySelectorAll('.facility-checkbox').forEach((checkbox) => {
+            checkbox.addEventListener('change', function () {
+                const inputFile = this.closest('.facility-group').querySelector('.facility-images-input');
+                if (this.checked) {
+                    inputFile.style.display = 'block'; // Show file input
+                } else {
+                    inputFile.style.display = 'none'; // Hide file input
+                }
+            });
+        });
+
+        // Remove facility group
+        document.querySelectorAll('.remove-facility').forEach((button) => {
+            button.addEventListener('click', function () {
+                this.closest('.facility-group').remove();
+            });
+        });
+
+        // Dynamically add new facility group
+        document.getElementById('add-facility').addEventListener('click', () => {
+            const container = document.getElementById('facilities-container');
+            const newGroup = document.createElement('div');
+            newGroup.classList.add('facility-group', 'mb-3', 'w-100');
+
+            newGroup.innerHTML = `
+                <div class="d-flex align-items-center mb-2">
+                    <div class="form-check form-check-inline me-3">
+                        <input 
+                            class="form-check-input facility-checkbox"
+                            type="checkbox" 
+                            name="facilities[]" 
+                            value="0"
+                        >
+                        <label class="form-check-label">
+                            New Facility
+                        </label>
+                    </div>
+                    <input 
+                        type="file" 
+                        name="facility_images[new][]" 
+                        multiple 
+                        class="form-control facility-images-input"
+                        style="display: none;"
+                    >
+                    <button type="button" class="btn btn-danger btn-sm remove-facility ms-2">Remove</button>
+                </div>
+            `;
+
+            container.appendChild(newGroup);
+
+            // Re-attach event listeners to new elements
+            const newCheckbox = newGroup.querySelector('.facility-checkbox');
+            const newRemoveButton = newGroup.querySelector('.remove-facility');
+
+            newCheckbox.addEventListener('change', function () {
+                const inputFile = this.closest('.facility-group').querySelector('.facility-images-input');
+                inputFile.style.display = this.checked ? 'block' : 'none';
+            });
+
+            newRemoveButton.addEventListener('click', function () {
+                this.closest('.facility-group').remove();
+            });
+        });
+    });
 </script>
 @endsection
