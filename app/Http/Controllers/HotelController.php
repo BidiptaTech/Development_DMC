@@ -196,7 +196,7 @@ class HotelController extends Controller
                 'is_complete' => 1,
             ]);
 
-            return redirect()->route('hotels.contact', ['hotel' => $hotel->id])
+            return redirect()->route('hotels.contact', ['hotel' => $hotel->hotel_unique_id])
                 ->with('success', 'Hotel created successfully');
     
     }
@@ -372,7 +372,7 @@ class HotelController extends Controller
         ]);
 
         if ($hotel->is_complete == 1) {
-            return redirect()->route('hotels.contact', ['hotel' => $hotel->id])->with('success', 'Hotel updated successfully');
+            return redirect()->route('hotels.contact', ['hotel' => $hotel->hotel_unique_id])->with('success', 'Hotel updated successfully');
         } else {
             return redirect()->back()->withInput()->with('error', 'Something went wrong, please try again');
         }
@@ -385,7 +385,7 @@ class HotelController extends Controller
     */
     public function destroy($id)
     {
-        $delete =Hotel::where('id', $id)->delete();
+        $delete =Hotel::where('hotel_unique_id', $id)->delete();
         $delete =Room::where('hotel_id', $id)->delete();
         return redirect()->route('hotels.index')
         ->with('success','Hotel deleted successfully');
@@ -396,7 +396,7 @@ class HotelController extends Controller
     * Date 15-11-2024
     */
     public function hotelcontacts($hotelId){
-        $hotel = Hotel::findOrFail($hotelId);
+        $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
         return view('hotel.contactdetails', compact('hotel'));
     }
 
@@ -405,7 +405,7 @@ class HotelController extends Controller
     * Date 15-11-2024
     */
     public function editcontacts($hotelId){
-        $hotel = Hotel::findOrFail($hotelId);
+        $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
         return view('hotel.contactdetails', compact('hotel'));
     }
 
@@ -414,7 +414,7 @@ class HotelController extends Controller
     * Date 15-11-2024
     */
     public function updatecontacts(Request $request){
-        $hotel = Hotel::findOrFail($request->id);
+        $hotel = Hotel::where('hotel_unique_id', $request->id)->first();
         try {
             $hotel->update([
                 'hotel_reservation_cont_no' => $request->hotel_reservation_cont_no,
@@ -436,7 +436,7 @@ class HotelController extends Controller
                 'whatsapp' => $request->whatsapp,
             ]);
 
-            return redirect()->route('hotels.room', ['hotel' => $hotel->id])->with('success', 'Hotel Contacts created successfully');
+            return redirect()->route('hotels.room', ['hotel' => $hotel->hotel_unique_id])->with('success', 'Hotel Contacts created successfully');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Something went wrong. Please try again.');
         }
@@ -447,7 +447,7 @@ class HotelController extends Controller
     * Date 15-11-2024
     */
     public function hotelrooms($hotelId){
-        $hotel = Hotel::findOrFail($hotelId);
+        $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
         $roomtypes = RoomType::where('status', 1)->get();
         $rooms = Room::where('hotel_id', $hotelId)->get();
         $beds = Bed::where('is_active', 1)->get();
@@ -455,8 +455,7 @@ class HotelController extends Controller
     }
 
     public function hotelrates($hotelId){
-        
-        $hotel = Hotel::findOrFail($hotelId);
+        $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
         $rooms = Room::where('hotel_id', $hotelId)->get();
         $rates = Rate::all();
         return view('hotel.rates', compact('hotel','rooms','rates'));
@@ -640,7 +639,7 @@ class HotelController extends Controller
     */
     public function editrate($id, $hotelId){
         $rate = Rate::where('rate_id', $id)->first();
-        $hotel = Hotel::where('id', $hotelId)->first();
+        $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
         
         return view('hotel.edit-rate', compact('rate','hotel'));
     }
@@ -649,11 +648,11 @@ class HotelController extends Controller
      
         $rate_id = $request->rate_id;
         
-        $hotel = Hotel::where('id', $request->hotel_id)->first();
+        $hotel = Hotel::where('hotel_unique_id', $request->hotel_id)->first();
 
         $rate = Rate::where('rate_id', $rate_id)->first();
         $rate->event = $request->event;
-        $rate->event_type = $request->event_type;  // Correct assignment of 'event_type'
+        $rate->event_type = $request->event_type;
         $rate->price = $request->price;
         $rate->weekday_price = $request->weekday_price ? $request->weekday_price : 0.00;
         $rate->weekend_price = $request->weekend_price ? $request->weekend_price : 0.00;
@@ -674,8 +673,10 @@ class HotelController extends Controller
     * Edit Room Details .
     * Date 18-11-2024
     */
+
     public function editroom(Request $request, $id){
-        $room = Room::with('rates')->findOrFail($id);
+        
+        $room = Room::with('rates')->where('room_id', $id)->first();
         $beds = Bed::where('is_active', 1)->get();
         return view('hotel.editroom', compact('room','beds'));
     }
@@ -733,6 +734,8 @@ class HotelController extends Controller
         $newRates = $request->event;
 
         // Remove rates not in the new request
+
+        /* 
         foreach ($existingRates as $existingRate) {
             if (!in_array($existingRate->event, $newRates)) {
                 $existingRate->delete();
@@ -776,6 +779,8 @@ class HotelController extends Controller
             }
         }
 
+        */
+
         return redirect()->route('hotels.room', ['hotel' => $room->hotel_id])
             ->with('success', 'Room details updated successfully!');
     }
@@ -811,7 +816,6 @@ class HotelController extends Controller
             return redirect()->back()->with('error', 'Hotel not found!');
         }
 
-        $hotelId = $hotel->hotel_unique_id;
         $year = $year ?? now()->year;
         $weekend_days = json_decode($hotel->weekend_days) ?? []; // Weekend days
         $room = $hotel->rooms->first();
@@ -820,7 +824,7 @@ class HotelController extends Controller
         $weekend_base_price = $room->weekend_price ?? 0;
 
         // Get all rates, ordered by priority
-        $rates = Rate::where('hotel_id', $hotelId)
+        $rates = Rate::where('hotel_id', $id)
             ->orderByRaw("
                 CASE 
                     WHEN event_type = 'Blackout Date' THEN 1
