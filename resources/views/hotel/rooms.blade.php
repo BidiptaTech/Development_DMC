@@ -24,7 +24,7 @@
                <div class="card-body">
                   <form id="hotelForm" method="POST" action="{{ route('storeroom') }}" enctype="multipart/form-data">
                      @csrf
-                     <input type="hidden" class="form-control" name="id" value="{{ $hotel->id }}">
+                     <input type="hidden" class="form-control" name="id" value="{{ $hotel->hotel_unique_id }}">
 
                      <div class="row container">
                         <!-- Room Type -->

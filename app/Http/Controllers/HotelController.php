@@ -447,7 +447,7 @@ class HotelController extends Controller
     * Date 15-11-2024
     */
     public function hotelrooms($hotelId){
-        $hotel = Hotel::findOrFail($hotelId);
+        $hotel = Hotel::where();
         $roomtypes = RoomType::where('status', 1)->get();
         $rooms = Room::where('hotel_id', $hotelId)->get();
         $beds = Bed::where('is_active', 1)->get();
