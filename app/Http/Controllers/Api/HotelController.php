@@ -9,6 +9,7 @@ use App\Models\Facility;
 use App\Models\User;
 use App\Models\Room;
 use App\Models\Rate;
+use App\Models\Bed;
 use App\Models\Country;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -168,7 +169,6 @@ class HotelController extends Controller
         $hotel = Hotel::with('category', 'rooms.beds')->where('status', 1)->where('hotel_unique_id', $id)
             ->orderBy('id', 'desc')
             ->first();
-
         if (!$hotel) {
             return response()->json(['message' => 'No hotels found'], 404);
         }
@@ -211,19 +211,14 @@ class HotelController extends Controller
             $price = in_array($today, $weekend_days) ? $room->weekend_price : $room->weekday_price;
 
             if ($rate) {
-                switch ($rate->event_type) {
-                    case "Blackout Date":
-                        $price = $rate->price; // Override price completely
-                        break 2; // Exit room loop on blackout date
-                    case "Fair Date":
-                        $price += $rate->price;
-                        break;
-                    case "Season":
-                        $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
-                        break;
+                if($rate->event_type == "Blackout Date"){
+                    $price = $rate->price;
+                }elseif($rate->event_type == "Fair Date"){
+                    $price += $rate->price;
+                }elseif($rate->event_type == "Season"){
+                    $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
                 }
             }
-
             
             $users = User::where('userId', $agent_id)->first();
             if ($users) {
@@ -239,9 +234,9 @@ class HotelController extends Controller
             }
             }
             $base_price = min($base_price, $price);
-
+            $beds = Bed::where('room_id', $room->room_id)->get();
             // Process beds
-            foreach ($room->beds as $bed) {
+            foreach ($beds as $bed) {
                 $bed_data[] = [
                     'bed_id' => $bed->bed_id,
                     'room_id' => $room->room_id,
@@ -257,26 +252,35 @@ class HotelController extends Controller
             }
 
             // Meal Type Pricing
-            $meal_types = ['Room_only', 'Room_with_Bf', 'Room_with_bf_&_lunch', 'Room_with_bf-&_dinner', 'All_meal'];
+            $meal_types = [
+                ['id' => 1, 'name' => 'Room_only', 'conditions' => true],
+                ['id' => 2, 'name' => 'Room_with_Bf', 'conditions' => $room->breakfast],
+                ['id' => 3, 'name' => 'Room_with_bf_&_lunch', 'conditions' => $room->breakfast && $room->lunch],
+                ['id' => 4, 'name' => 'Room_with_bf-&_dinner', 'conditions' => $room->breakfast && $room->dinner],
+                ['id' => 5, 'name' => 'All_meal', 'conditions' => $room->breakfast && $room->lunch && $room->dinner],
+            ];
+
             $price_date = [];
 
-            foreach ($meal_types as $key => $meal) {
-                $meal_price = $price;
-                if ($key == 1 && $room->breakfast) {
-                    $meal_price += $room->breakfast_price;
-                } elseif ($key == 2 && $room->breakfast && $room->lunch) {
-                    $meal_price += $room->breakfast_price + $room->lunch_price;
-                } elseif ($key == 3 && $room->breakfast && $room->dinner) {
-                    $meal_price += $room->breakfast_price + $room->dinner_price;
-                } elseif ($key == 4 && $room->breakfast && $room->lunch && $room->dinner) {
-                    $meal_price += $room->breakfast_price + $room->lunch_price + $room->dinner_price;
-                }
+            foreach ($meal_types as $meal) {
+                if ($meal['conditions']) {
+                    $meal_price = $price; // Start with base price
+                    if ($meal['id'] === 2) {
+                        $meal_price += $room->breakfast_price;
+                    } elseif ($meal['id'] === 3) {
+                        $meal_price += $room->breakfast_price + $room->lunch_price;
+                    } elseif ($meal['id'] === 4) {
+                        $meal_price += $room->breakfast_price + $room->dinner_price;
+                    } elseif ($meal['id'] === 5) {
+                        $meal_price += $room->breakfast_price + $room->lunch_price + $room->dinner_price;
+                    }
 
-                $price_date[] = [
-                    'id' => $key + 1,
-                    'name' => $meal,
-                    'price' => $meal_price,
-                ];
+                    $price_date[] = [
+                        'id' => $meal['id'],
+                        'name' => $meal['name'],
+                        'price' => $meal_price,
+                    ];
+                }
             }
 
             $room_data[] = [

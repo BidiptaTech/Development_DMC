@@ -24,13 +24,14 @@
                <div class="card-body">
                   <form id="hotelForm" method="POST" action="{{ route('storeroom') }}" enctype="multipart/form-data">
                      @csrf
+                     <input name="room_id" type="text" hidden value="{{$room->room_id}}">
                      
 
                      <div class="row container">
                         <!-- Room Type -->
                         <div class="col-md-3 mb-3" id="base_room_type" style="display: none;">
                            <label for="room_type" class="form-label"><strong>Room Type</strong><span class="text-danger">*</span></label>
-                           <input value={{$room->room_type}} name="room_type" class="form-control" placeholder="Enter Room Type"></input>
+                           <input value="{{$room->room_type}}" name="room_type" class="form-control" placeholder="Enter Room Type"></input>
                            @error('room_type')
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
@@ -39,7 +40,7 @@
                         <!-- Number of Rooms -->
                         <div class="col-md-3 mb-3">
                            <label for="no_of_room" class="form-label"><strong>No of Rooms</strong><span class="text-danger">*</span></label>
-                           <input value={{$room->no_of_room}} type="number" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms">
+                           <input value="{{$room->no_of_room}}" type="number" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms">
                            @error('base_no_of_room')
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
@@ -48,12 +49,12 @@
                         <!-- Weekday -->
                         <div class="mb-3 col-md-3" id="base_weekday_price" style="display: none;">
                            <label for="weekday_price" class="form-label"><strong>Weekday Price</strong></label>
-                           <input value={{$room->weekday_price}} type="number" name="base_weekday_price" class="form-control" placeholder="Enter Base weekday price">
+                           <input value="{{$room->weekday_price}}" type="number" name="base_weekday_price" class="form-control" placeholder="Enter Base weekday price">
                        </div>
                        <!-- Weekend Price -->
                        <div class="mb-3 col-md-3" id="base_weekend_price" style="display: none;">
                            <label for="weekend_price" class="form-label"><strong>Weekend Price</strong></label>
-                           <input value={{$room->weekend_price}} type="number" name="base_weekend_price" class="form-control" placeholder="Enter Base weekend price">
+                           <input value="{{$room->weekend_price}}" type="number" name="base_weekend_price" class="form-control" placeholder="Enter Base weekend price">
                        </div>
 
                        <!-- dimension -->
@@ -67,84 +68,71 @@
                            <label for="breakfast" class="form-label"><strong>Breakfast</strong><span style="color: red; font-weight: bold;">*</span></label>
                            <select name="breakfast" id="breakfast" class="form-control" required>
                                <option value="">Select an option</option>
-                               <option value="1">Available</option>
-                               <option value="0">Not Available</option>
+                               <option {{ $room->breakfast === 1 ? 'selected' : '' }} value="1">Available</option>
+                               <option {{ $room->breakfast === 0 ? 'selected' : '' }} value="0">Not Available</option>
                            </select>
                        </div>
-
-                       <div class="row" id="breakfast-options" style="display: none;">
-                           <div class="mb-3 col-md-3">
-                               <label for="breakfast_type" class="form-label"><strong>Breakfast Type</strong></label>
-                               <select name="breakfast_type" id="breakfast_type" class="form-control">
-                                   <option value="">Select a type</option>
-                                   <option value="0">Buffet</option>
-                                   <option value="1">Set Buffet</option>
-                               </select>
-                           </div>
-                           <div class="mb-3 col-md-3">
-                               <label for="breakfast_price" class="form-label"><strong>Breakfast Price</strong></label>
-                               <input type="number" name="breakfast_price" id="breakfast_price" class="form-control" placeholder="Enter price">
-                           </div>
-                       </div>
+                       <!-- Breakfast Type-->
+                        <div class="mb-3 col-md-3" id="breakfast_type_option" style="display:none">
+                            <label for="breakfast_type" class="form-label"><strong>Breakfast Type</strong></label>
+                            <select name="breakfast_type" id="breakfast_type" class="form-control">
+                                <option value="">Select a type</option>
+                                <option {{ $room->breakfast_type === 0 ? 'selected' : '' }} value="0">Buffet</option>
+                                <option {{ $room->breakfast_type === 1 ? 'selected' : '' }} value="1">Set Buffet</option>
+                            </select>
+                        </div>
+                        <!-- Breakfast Price-->
+                        <div class="mb-3 col-md-3" id="breakfast_price_option" style="display:none">
+                            <label for="breakfast_price" class="form-label"><strong>Breakfast Price</strong></label>
+                            <input value="{{$room->breakfast_price}}" type="number" name="breakfast_price" id="breakfast_price" class="form-control" placeholder="Enter price">
+                        </div>
 
                        <!-- Lunch -->
                        <div class="mb-3 col-md-3">
                            <label for="lunch" class="form-label"><strong>Lunch</strong><span style="color: red; font-weight: bold;">*</span></label>
                            <select name="lunch" id="lunch" class="form-control" required>
                                <option value="">Select an option</option>
-                               <option value="1">Available</option>
-                               <option value="0">Not Available</option>
+                               <option {{ $room->lunch === 1 ? 'selected' : '' }} value="1">Available</option>
+                               <option {{ $room->lunch === 0 ? 'selected' : '' }} value="0">Not Available</option>
                            </select>
                        </div>
 
-                       <div class="row" id="lunch-options" style="display: none;">
-                           <div class="mb-3 col-md-3">
-                               <label for="lunch_type" class="form-label"><strong>Lunch Type</strong></label>
-                               <select name="lunch_type" id="lunch_type" class="form-control">
-                                   <option value="">Select a type</option>
-                                   <option value="0">Buffet</option>
-                                   <option value="1">Set Buffet</option>
-                               </select>
-                           </div>
-                           <div class="mb-3 col-md-3">
-                               <label for="lunch_price" class="form-label"><strong>Lunch Price</strong></label>
-                               <input type="number" name="lunch_price" id="lunch_price" class="form-control" placeholder="Enter price">
-                           </div>
-                       </div>
+                        <div class="mb-3 col-md-3" id="lunch_type_option" style="display:none">
+                            <label for="lunch_type" class="form-label"><strong>Lunch Type</strong></label>
+                            <select name="lunch_type" id="lunch_type" class="form-control">
+                                <option value="">Select a type</option>
+                                <option {{ $room->lunch_type === 0 ? 'selected' : '' }} value="0">Buffet</option>
+                                <option {{ $room->lunch_type === 1 ? 'selected' : '' }} value="1">Set Buffet</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-md-3" id="lunch_price_option" style="display:none">
+                            <label for="lunch_price" class="form-label"><strong>Lunch Price</strong></label>
+                            <input value="{{$room->lunch_price}}" type="number" name="lunch_price" id="lunch_price" class="form-control" placeholder="Enter price">
+                        </div>
+                       
 
                        <!-- Dinner -->
                        <div class="mb-3 col-md-3">
                            <label for="dinner" class="form-label"><strong>Dinner</strong><span style="color: red; font-weight: bold;">*</span></label>
                            <select name="dinner" id="dinner" class="form-control" required>
                                <option value="">Select an option</option>
-                               <option value="1">Available</option>
-                               <option value="0">Not Available</option>
+                               <option {{ $room->dinner === 1 ? 'selected' : '' }} value="1">Available</option>
+                               <option {{ $room->dinner === 0 ? 'selected' : '' }} value="0">Not Available</option>
                            </select>
                        </div>
 
-                       <div class="row" id="dinner-options" style="display: none;">
-                           <div class="mb-3 col-md-3">
-                               <label for="dinner_type" class="form-label"><strong>Dinner Type</strong></label>
-                               <select name="dinner_type" id="dinner_type" class="form-control">
-                                   <option value="">Select a type</option>
-                                   <option value="0">Buffet</option>
-                                   <option value="1">Set Buffet</option>
-                               </select>
-                           </div>
-                           <div class="mb-3 col-md-3">
-                               <label for="dinner_price" class="form-label"><strong>Dinner Price</strong></label>
-                               <input type="number" name="dinner_price" id="dinner_price" class="form-control" placeholder="Enter price">
-                           </div>
-                       </div>
-
-                       <div class="mb-3 col-md-4">
-                            <label for="images" class="form-label"><strong>Additional Images</strong></label>
-                            <div id="drop-area" class="form-control" style="padding: 20px; border: 2px dashed #007bff; text-align: center;">
-                                Drag & Drop your files here or click to upload.
-                                <input type="file" id="images" name="images[]" multiple style="display: none;">
-                            </div>
-                            <div id="preview-container" class="mt-3 d-flex flex-wrap gap-2" style="max-width: 100%; overflow-x: auto; white-space: nowrap;">
-                            </div>
+                       
+                        <div class="mb-3 col-md-3" id="dinner_type_option" style="display:none">
+                            <label for="dinner_type" class="form-label"><strong>Dinner Type</strong></label>
+                            <select name="dinner_type" id="dinner_type" class="form-control">
+                                <option value="">Select a type</option>
+                                <option {{ $room->dinner_type === 0 ? 'selected' : '' }} value="0">Buffet</option>
+                                <option {{ $room->dinner_type === 1 ? 'selected' : '' }} value="1">Set Buffet</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-md-3" id="dinner_price_option" style="display:none">
+                            <label for="dinner_price" class="form-label"><strong>Dinner Price</strong></label>
+                            <input value="{{$room->dinner_price}}" type="number" name="dinner_price" id="dinner_price" class="form-control" placeholder="Enter price">
                         </div>
 
                         <div class="form-check form-switch">
@@ -180,6 +168,19 @@
                        <div name="twin_bed" class="insert_twin_bed_fields bed-fields" id="twin-bed-fields"></div>
                      </div>
 
+                     <img src="https:\/\/nawajstorage.s3.eu-north-1.amazonaws.com\/uploads\/logo_1734529306.png" alt="">
+                    
+                     <!-- Image drop -->
+                     <div class="col-md-4">
+                        <label for="images" class="form-label"><strong>Additional Images</strong></label>
+                        <div id="drop-area" class="form-control" style="padding: 20px; border: 2px dashed #007bff; text-align: center;">
+                           Drag & Drop your files here or click to upload.
+                           <input type="file" id="images" name="images[]" multiple style="display: none;">
+                        </div>
+                     </div>
+                     <div id="preview-container" class="mb-3 mt-3 d-flex flex-wrap gap-2" style="max-width: 100%; overflow-x: auto; white-space: nowrap;">
+
+                     </div>
                      <div class="form-check form-switch">
                         <label for="hotel_status" class="form-label"><strong>Status</strong></label>
                         <span style="color: red; font-weight: bold;">*</span>
@@ -192,7 +193,7 @@
 
                      <!-- Submit Buttons -->
                      <div class="d-flex gap-3">
-                        <a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-secondary px-4">Previous</a>
+                        <a href="{{ route('rooms.edit', $room->room_id) }}" class="btn btn-secondary px-4">Previous</a>
                         <button type="submit" class="btn btn-primary px-4">Save and Add More Rooms</button>
 
                      </div>
@@ -334,81 +335,6 @@
    });
 </script>
 
-<!-- Food availabity -->
-<script>
-   // Function to append options for a given meal
-   function toggleOptions(meal, optionsId) {
-       const select = document.getElementById(meal);
-       const optionsContainer = document.getElementById(optionsId);
-
-       if(select){
-         select.addEventListener('change', function () {
-           if (this.value === '1') {
-               // Show options if "Available" is selected
-               if (optionsContainer.children.length === 0) {
-                   // Append the options dynamically using insertAdjacentHTML
-                   const optionContent = `
-                       <div class="mb-3 col-md-3">
-                           <label for="${meal}_type" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Type</strong></label>
-                           <select name="${meal}_type" id="${meal}_type" class="form-control">
-                               <option value="">Select a type</option>
-                               <option value="0">Buffet</option>
-                               <option value="1">Set Buffet</option>
-                           </select>
-                       </div>
-                       <div class="mb-3 col-md-3">
-                           <label for="${meal}_price" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Price</strong></label>
-                           <input type="number" name="${meal}_price" id="${meal}_price" class="form-control" placeholder="Enter price">
-                       </div>
-                   `;
-                   optionsContainer.insertAdjacentHTML('beforeend', optionContent); // Append the content
-               }
-               optionsContainer.style.display = 'contents'; // Show options
-           } else {
-               // Hide options if "Not Available" is selected
-               optionsContainer.style.display = 'none';
-               optionsContainer.innerHTML = ''; // Clear the options
-           }
-       });
-       }
-
-       select.addEventListener('change', function () {
-           if (this.value === '1') {
-               // Show options if "Available" is selected
-               if (optionsContainer.children.length === 0) {
-                   // Append the options dynamically using insertAdjacentHTML
-                   const optionContent = `
-                       <div class="mb-3 col-md-3">
-                           <label for="${meal}_type" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Type</strong></label>
-                           <select name="${meal}_type" id="${meal}_type" class="form-control">
-                               <option value="">Select a type</option>
-                               <option value="0">Buffet</option>
-                               <option value="1">Set Buffet</option>
-                           </select>
-                       </div>
-                       <div class="mb-3 col-md-3">
-                           <label for="${meal}_price" class="form-label"><strong>${meal.charAt(0).toUpperCase() + meal.slice(1)} Price</strong></label>
-                           <input type="number" name="${meal}_price" id="${meal}_price" class="form-control" placeholder="Enter price">
-                       </div>
-                   `;
-                   optionsContainer.insertAdjacentHTML('beforeend', optionContent); // Append the content
-               }
-               optionsContainer.style.display = 'contents'; // Show options
-           } else {
-               // Hide options if "Not Available" is selected
-               optionsContainer.style.display = 'none';
-               optionsContainer.innerHTML = ''; // Clear the options
-           }
-       });
-   }
-
-   // Initialize for breakfast, lunch, and dinner
-   toggleOptions('breakfast', 'breakfast-options');
-   toggleOptions('lunch', 'lunch-options');
-   toggleOptions('dinner', 'dinner-options');
-   toggleOptions('booking_available', '12_hours_booking_price');
-</script>
-
 <!-- Add checkbox contents -->
 
 <script>
@@ -514,7 +440,6 @@
            const fieldsContainerId = `${container}-fields`;
            console.log("bed = ", fieldsContainerId);
            if (e.target.checked) {
-            
                addFields(bedType, fieldsContainerId);
            } else {
                document.getElementById(fieldsContainerId).innerHTML = ''; // Clear fields if unchecked
@@ -736,23 +661,25 @@
         }
     });
 </script>
+
+<!-- Drag And Drop Image -->
 <script>
     const dropArea = document.getElementById('drop-area');
     const fileInput = document.getElementById('images');
     const previewContainer = document.getElementById('preview-container');
     let fileCounter = 0; // Track total uploaded files
     const MAX_VISIBLE_IMAGES = 3; // Show up to 3 images
+    const room = @json($room);
 
+    console.log("Roomdata = ", room.images);
+    
     // Simulated saved images (replace with actual data from the backend)
-    const savedImages = [
-        'https://example.com/image1.jpg',
-        'https://example.com/image2.jpg',
-        'https://example.com/image3.jpg'
-    ];
+    const savedImages = room.images;
+    console.log("Roomdata = ", savedImages);
 
     // Initialize saved images
     window.addEventListener('DOMContentLoaded', () => {
-        savedImages.forEach(imageUrl => {
+        room.images.forEach(imageUrl => {
             addImagePreview(imageUrl, true);
         });
         updateMoreBadge();
@@ -892,6 +819,41 @@
         });
         return moreBadge;
     }
+</script>
+
+<!-- Set the values of meals -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Assume room data is passed from the Laravel backend
+        const roomData = @json($room);
+        // Helper function to toggle visibility of options
+        function toggleMealOptions(meal, isAvailable) {
+            const mealType = document.getElementById(`${meal}_type_option`);
+            const mealPrice = document.getElementById(`${meal}_price_option`);
+            mealType.style.display = isAvailable ? "block" : "none";
+            mealPrice.style.display = isAvailable ? "block" : "none";
+        }
+
+        // Initialize the meal options
+        function initializeMeal(meal, isAvailable) {
+            const mealSelect = document.getElementById(meal);
+            mealSelect.value = isAvailable ? "1" : "0"; // Set the initial value
+            mealSelect.addEventListener("change", function () {
+                toggleMealOptions(meal, this.value === "1");
+            });
+
+            // Set initial state based on current value
+            toggleMealOptions(meal, isAvailable);
+        }
+
+        //Meals to initialize with room data
+        const meals = ["breakfast", "lunch", "dinner"];
+        meals.forEach(meal => {
+            console.log("Rooms data = ",  roomData[meal]);
+            const isAvailable = roomData[meal] == 1; // Check availability from room data
+            initializeMeal(meal, isAvailable);
+        });
+    });
 </script>
 
 

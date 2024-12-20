@@ -137,24 +137,7 @@
                            </div>
                        </div>
 
-                       <div class="mb-3 col-md-4">
-                           <label for="images" class="form-label"><strong>Additional Images</strong></label>
-                           <div id="drop-area" class="form-control" style="padding: 20px; border: 2px dashed #007bff; text-align: center;">
-                              Drag & Drop your files here or click to upload.
-                              <input type="file" id="images" name="images[]" multiple style="display: none;">
-                           </div>
-                           <div id="preview-container" class="mt-3 d-flex flex-wrap gap-2" style="max-width: 100%; overflow-x: auto; white-space: nowrap;"></div>
-                        </div>
-
-                        <div class="form-check form-switch">
-                           <label for="breakfast_included" class="form-label"><strong>Breakfast included</strong></label>
-                           <span style="color: red; font-weight: bold;">*</span>
-                           <input class="mb-4 form-check-input" name="breakfast_included" type="checkbox" id="breakfast_included" value="1">
-                           <label class="form-check-label"></label>
-                           @error('brakfast_included')
-                              <div class="text-danger mt-1">{{ $message }}</div>
-                           @enderror
-                        </div>
+                       
 
                         <!-- Bed types -->
                         <div>
@@ -190,12 +173,35 @@
                         @enderror
                      </div>
 
+                     <!-- Image drop -->
+                     <div class="mt-3 mb-3 col-md-4">
+                        <label for="images" class="form-label"><strong>Additional Images</strong></label>
+                        <div id="drop-area" class="form-control" style="padding: 20px; border: 2px dashed #007bff; text-align: center;">
+                           Drag & Drop your files here or click to upload.
+                           <input type="file" id="images" name="images[]" multiple style="display: none;">
+                        </div>
+                        
+                     </div>
+                     <div id="preview-container" class="mb-3 mt-3 d-flex flex-wrap gap-2" style="max-width: 100%; overflow-x: auto; white-space: nowrap;">
+
+                     </div>
+
+                        <div class="form-check form-switch">
+                           <label for="breakfast_included" class="form-label"><strong>Breakfast included</strong></label>
+                           <span style="color: red; font-weight: bold;">*</span>
+                           <input class="mb-4 form-check-input" name="breakfast_included" type="checkbox" id="breakfast_included" value="1">
+                           <label class="form-check-label"></label>
+                           @error('brakfast_included')
+                              <div class="text-danger mt-1">{{ $message }}</div>
+                           @enderror
+                        </div>
+
                      <!-- Submit Buttons -->
                      <div class="d-flex gap-3">
-                        <a href="{{ route('contactdetails.edit', $hotel->id) }}" class="btn btn-secondary px-4">Previous</a>
+                        <a href="{{ route('contactdetails.edit', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
                         <button type="submit" class="btn btn-primary px-4">Save and Add More Rooms</button>
 
-                        <a href="{{ route('hotels.rates', $hotel->id) }}" class="btn btn-primary px-4">Next</a>
+                        <a href="{{ route('hotels.rates', $hotel->hotel_unique_id) }}" class="btn btn-primary px-4">Next</a>
                      </div>
                   </form>
                </div>
@@ -241,8 +247,8 @@
                         
 
                         <td>
-                           <a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                           <form method="POST" action="{{ route('rooms.destroy', $room->id) }}" class="d-inline-block">
+                           <a href="{{ route('rooms.edit', $room->room_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                           <form method="POST" action="{{ route('rooms.destroy', $room->room_id) }}" class="d-inline-block">
                               @csrf
                               @method('DELETE')
                               <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -477,17 +483,9 @@
       let king_rooms_no = 0;
       let queen_rooms_no = 0;
       let twin_rooms_no = 0;
-
-
-
-      
    
    const baseWeekdayPrice = document.getElementById('base-weekday-price');
    const baseWeekendPrice = document.getElementById('base-weekend-price');
-
-      
-   
-   
 
    //Function to toggle visibility of price fields
    const togglePriceField = (dropdownId, priceFieldClass) => {
@@ -498,7 +496,6 @@
          priceField.style.display = dropdown.value === "1" ? "block" : "none";
       }
    };
-
 
    document.addEventListener('DOMContentLoaded', () => {
 
@@ -851,7 +848,7 @@
 
        //handle dynamically created
 
-    $('#add_more_checkboxes').on('input', '.varient-price', function (event) {
+    $('#add_more_checkboxes').on('input', '.variant-price', function (event) {
         const varientPriceInput = event.target; // Get the input element
         const varientPriceValue = parseFloat(varientPriceInput.value) || 0; // Parse the value or set to 0
 
@@ -1012,6 +1009,7 @@
         }
     });
 </script>
+
 <script>
     const dropArea = document.getElementById('drop-area');
     const fileInput = document.getElementById('images');
