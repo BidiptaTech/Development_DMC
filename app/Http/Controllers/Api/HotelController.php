@@ -9,6 +9,7 @@ use App\Models\Facility;
 use App\Models\User;
 use App\Models\Room;
 use App\Models\Rate;
+use App\Models\Bed;
 use App\Models\Country;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -161,152 +162,165 @@ class HotelController extends Controller
     */
     public function details(Request $request)
     {
+        $agent_id = $request->header('agent_id');
         $id = $request->query('id');
+
+        // Fetch the hotel with its relationships
         $hotel = Hotel::with('category', 'rooms.beds')->where('status', 1)->where('hotel_unique_id', $id)
             ->orderBy('id', 'desc')
             ->first();
+        if (!$hotel) {
+            return response()->json(['message' => 'No hotels found'], 404);
+        }
 
-        if ($hotel) {
-            // Country and Tax Calculation
-            $country = $hotel->country;
-            $check_country = Country::whereRaw('LOWER(name) = ?', [strtolower($country)])->first();
+        // Country Tax Calculation
+        $country_tax = 0;
+        if (!empty($hotel->country)) {
+            $check_country = Country::whereRaw('LOWER(name) = ?', [strtolower($hotel->country)])->first();
             $country_tax = $check_country->tax_percentage ?? 0;
+        }
 
-            // Hotel Images
-            $site_image = [];
-            if (!empty($hotel->images)) {
-                $images = json_decode($hotel->images, true);
-                $site_image = is_array($images) ? $images : [];
-            }
+        // Hotel Images
+        $site_image = json_decode($hotel->images, true) ?? [];
 
-            // Facilities
-            $facility_ids = json_decode($hotel->facilities, true) ?? [];
-            $facility_names = [];
-            if (is_array($facility_ids)) {
-                $facility_names = Facility::whereIn('facilityId', $facility_ids)->pluck('name')->toArray();
-            }
+        // Facilities
+        $facility_ids = json_decode($hotel->facilities, true) ?? [];
+        $facility_names = Facility::whereIn('facilityId', $facility_ids)->pluck('name')->toArray();
 
-            // Fetch all applicable rates for optimization
-            $currentDate = Carbon::today();
-            $rate = Rate::whereDate('start_date', '<=', $currentDate)
-                ->whereDate('end_date', '>=', $currentDate)
-                ->orderByRaw("CASE
+        // Fetch applicable rates
+        $currentDate = Carbon::today();
+        $rate = Rate::whereDate('start_date', '<=', $currentDate)
+            ->whereDate('end_date', '>=', $currentDate)
+            ->orderByRaw("
+                CASE
                     WHEN event_type = 'Blackout Date' THEN 1
                     WHEN event_type = 'Fair Date' THEN 2
                     WHEN event_type = 'Season' THEN 3
-                    ELSE 4 END")
-                ->first();
+                    ELSE 4 
+                END
+            ")->first();
 
-            // Initialize base price to a high value for comparison
-            $base_price = PHP_INT_MAX;
-            $room_data = [];
-            $price_date = [];
-            $weekend_days = json_decode($hotel->weekend_days) ?? [];
-            $today = Carbon::now()->format('l');
+        $base_price = PHP_INT_MAX;
+        $room_data = [];
+        $weekend_days = json_decode($hotel->weekend_days, true) ?? [];
+        $today = Carbon::now()->format('l');
 
-            foreach ($hotel->rooms as $rooms) {
-                $bed_data = [];
-                // Weekday or Weekend price calculation
-                $price = in_array($today, $weekend_days) ? $rooms->weekend_price : $rooms->weekday_price;
-                if($rate){
-                    if ($rate->event_type == "Blackout Date") {
-                        $price = $rate->price; // Override price completely
-                        break; // Blackout dates take precedence
-                    } elseif ($rate->event_type == "Fair Date") {
-                        $price = $price + (int)$rate->price;
-                    } elseif ($rate->event_type == "Season") {
-                        $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
-                    }
+        // Iterate through rooms
+        foreach ($hotel->rooms as $room) {
+            $bed_data = [];
+            $price = in_array($today, $weekend_days) ? $room->weekend_price : $room->weekday_price;
+
+            if ($rate) {
+                if($rate->event_type == "Blackout Date"){
+                    $price = $rate->price;
+                }elseif($rate->event_type == "Fair Date"){
+                    $price += $rate->price;
+                }elseif($rate->event_type == "Season"){
+                    $price = in_array($today, $weekend_days) ? $rate->weekend_price : $rate->weekday_price;
                 }
+            }
+            
+            $users = User::where('userId', $agent_id)->first();
+            if ($users) {
+                $price += ($users->markup_type == 0)
+                    ? $users->markup_price
+                    : ($price * $users->markup_price / 100);
 
-                // Update base price for the hotel
-                $base_price = min($base_price, $price);
-
-                // Process beds for the room
-                foreach ($rooms->beds as $bed) {
-                    $bed_data[] = [
-                        'bed_id' => $bed->bed_id,
-                        'room_id' => $rooms->room_id,
-                        'bed_type' => $bed->room_type,
-                        'king_bed_max_occupancy' => $bed->max_occupancy,
-                        'king_bed_adult_count' => $bed->adult_count,
-                        'king_bed_child_count' => $bed->child_count,
-                        'king_bed_extra_bed' => $bed->extra_bed,
-                        'king_bed_extra_bed_price' => $bed->extra_bed_price,
-                        'king_bed_ay_cot' => $bed->baby_cot,
-                        'king_bed_ay_cot_price' => $bed->baby_cot_price,
-                    ];
-                }
-
-                $meal_type = ['Room_only', 'Room_with_Bf', 'Room_with_bf_&_lunch', 'Room_with_bf-&_dinner', 'All_meal'];
-                    $price_date = []; 
-                foreach ($meal_type as $key => $meal) {
-                    $price = $base_price;
-                    if ($key == 1 && $rooms->breakfast) { 
-                        $price += $rooms->breakfast_price;
-                    } elseif ($key == 2 && $rooms->breakfast && $rooms->lunch) { 
-                        $price += $rooms->breakfast_price + $rooms->lunch_price;
-                    } elseif ($key == 3 && $rooms->breakfast && $rooms->dinner) { 
-                        $price += $rooms->breakfast_price + $rooms->dinner_price;
-                    } elseif ($key == 4 && $rooms->breakfast && $rooms->lunch && $rooms->dinner) { 
-                        $price += $rooms->breakfast_price + $rooms->lunch_price + $rooms->dinner_price;
-                    }
-                    if (
-                        ($key == 0) || 
-                        ($key == 1 && $rooms->breakfast) || 
-                        ($key == 2 && $rooms->breakfast && $rooms->lunch) ||
-                        ($key == 3 && $rooms->breakfast && $rooms->dinner) ||
-                        ($key == 4 && $rooms->breakfast && $rooms->lunch && $rooms->dinner)
-                    ) {
-                        $price_date[] = [
-                            'id' => $key + 1, 
-                            'name' => $meal,
-                            'price' => $price,
-                        ];
-                    }
-                }
-
-                $room_data[] = [
-                    'room_id' => $rooms->room_id,
-                    'room_type' => $rooms->room_type,
-                    'room_image' => json_decode($rooms->images) ?? [],
-                    'number_of_room' => $rooms->no_of_room,
-                    'variant_price' => $rooms->variant_price ?? 0,
-                    'price' => $price_date,
-                    'bed_details' => $bed_data,
+            $dmc = User::where('userId', $users->dmcId)->first();
+            if ($dmc) {
+                $price += ($dmc->markup_type == 0)
+                    ? $dmc->markup_price
+                    : ($price * $dmc->markup_price / 100);
+            }
+            }
+            $base_price = min($base_price, $price);
+            $beds = Bed::where('room_id', $room->room_id)->get();
+            // Process beds
+            foreach ($beds as $bed) {
+                $bed_data[] = [
+                    'bed_id' => $bed->bed_id,
+                    'room_id' => $room->room_id,
+                    'bed_type' => $bed->room_type,
+                    'king_bed_max_occupancy' => $bed->max_occupancy,
+                    'king_bed_adult_count' => $bed->adult_count,
+                    'king_bed_child_count' => $bed->child_count,
+                    'king_bed_extra_bed' => $bed->extra_bed,
+                    'king_bed_extra_bed_price' => $bed->extra_bed_price,
+                    'king_bed_ay_cot' => $bed->baby_cot,
+                    'king_bed_ay_cot_price' => $bed->baby_cot_price,
                 ];
             }
-            if ($base_price === PHP_INT_MAX) {
-                $base_price = 0;
-            }
-            $hotel_list = [
-                'id' => $hotel->hotel_unique_id,
-                'hotel_name' => $hotel->name,
-                'category' => $hotel->category->name ?? 'N/A',
-                'location' => $hotel->address ?? '',
-                'price' => $base_price,
-                'tax_amount' => ($base_price * $country_tax / 100),
-                'total_base_amount' => $base_price + ($base_price * $country_tax / 100),
-                'event_name' => $rate->event ?? '',
-                'event_type' => $rate->event_type ??'',
-                'image' => $hotel->main_image ?? '',
-                'site_image' => $site_image,
-                'free_cancellation' => $hotel->cancellation_type ?? 'No cancellation policy',
-                'cancellation_charge' => json_decode($hotel->cancellation_data) ?? [],
-                'entry_port' => json_decode($hotel->port_of_entry) ?? [],
-                'exit_port' => json_decode($hotel->port_of_exit) ?? [],
-                'other_port' => json_decode($hotel->other) ?? [],
-                'facilities' => $facility_names,
-                'status' => $hotel->status,
-                'room_data' => $room_data,
+
+            // Meal Type Pricing
+            $meal_types = [
+                ['id' => 1, 'name' => 'Room_only', 'conditions' => true],
+                ['id' => 2, 'name' => 'Room_with_Bf', 'conditions' => $room->breakfast],
+                ['id' => 3, 'name' => 'Room_with_bf_&_lunch', 'conditions' => $room->breakfast && $room->lunch],
+                ['id' => 4, 'name' => 'Room_with_bf-&_dinner', 'conditions' => $room->breakfast && $room->dinner],
+                ['id' => 5, 'name' => 'All_meal', 'conditions' => $room->breakfast && $room->lunch && $room->dinner],
             ];
 
-            return response()->json($hotel_list);
-        } else {
-            return response()->json([
-                'message' => 'No hotels found'
-            ], 404);
+            $price_date = [];
+
+            foreach ($meal_types as $meal) {
+                if ($meal['conditions']) {
+                    $meal_price = $price; // Start with base price
+                    if ($meal['id'] === 2) {
+                        $meal_price += $room->breakfast_price;
+                    } elseif ($meal['id'] === 3) {
+                        $meal_price += $room->breakfast_price + $room->lunch_price;
+                    } elseif ($meal['id'] === 4) {
+                        $meal_price += $room->breakfast_price + $room->dinner_price;
+                    } elseif ($meal['id'] === 5) {
+                        $meal_price += $room->breakfast_price + $room->lunch_price + $room->dinner_price;
+                    }
+
+                    $price_date[] = [
+                        'id' => $meal['id'],
+                        'name' => $meal['name'],
+                        'price' => $meal_price,
+                    ];
+                }
+            }
+
+            $room_data[] = [
+                'room_id' => $room->room_id,
+                'room_type' => $room->room_type,
+                'room_image' => json_decode($room->images, true) ?? [],
+                'number_of_room' => $room->no_of_room,
+                'variant_price' => $room->variant_price ?? 0,
+                'price' => $price_date,
+                'bed_details' => $bed_data,
+            ];
         }
+
+        if ($base_price === PHP_INT_MAX) {
+            $base_price = 0;
+        }
+
+        $hotel_list = [
+            'id' => $hotel->hotel_unique_id,
+            'hotel_name' => $hotel->name,
+            'category' => $hotel->category->name ?? 'N/A',
+            'location' => $hotel->address ?? '',
+            'price' => $base_price,
+            'tax_amount' => ($base_price * $country_tax / 100),
+            'total_base_amount' => $base_price + ($base_price * $country_tax / 100),
+            'event_name' => $rate->event ?? '',
+            'event_type' => $rate->event_type ?? '',
+            'image' => $hotel->main_image ?? '',
+            'site_image' => $site_image,
+            'free_cancellation' => $hotel->cancellation_type ?? 'No cancellation policy',
+            'cancellation_charge' => json_decode($hotel->cancellation_data, true) ?? [],
+            'entry_port' => json_decode($hotel->port_of_entry, true) ?? [],
+            'exit_port' => json_decode($hotel->port_of_exit, true) ?? [],
+            'other_port' => json_decode($hotel->other, true) ?? [],
+            'facilities' => $facility_names,
+            'status' => $hotel->status,
+            'room_data' => $room_data,
+        ];
+
+        return response()->json($hotel_list);
     }
 
 
