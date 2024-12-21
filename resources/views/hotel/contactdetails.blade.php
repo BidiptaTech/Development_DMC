@@ -17,6 +17,7 @@
             <div class="col-lg-12 col-md-10 col-sm-12">
                 <div class="card">
 
+                
                     <!-- tab view -->
                     <ul class="nav nav-pills mb-4 mt-4 d-flex justify-content-center" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">

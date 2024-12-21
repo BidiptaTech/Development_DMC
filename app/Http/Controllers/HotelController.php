@@ -604,6 +604,7 @@ class HotelController extends Controller
             return redirect()->back()->with('error', 'An error occurred while saving the room details.');
         }
     }
+
     /**
      * store rates
      * 
