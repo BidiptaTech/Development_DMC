@@ -11,15 +11,7 @@
 @endsection
 
 @section('content')
-<<<<<<< HEAD
 <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet">
-<div class="page-content">
-   <div class="page-container">
-      <!-- Add Pricing Details -->
-      <div class="row justify-content-center">
-         <div class="col-lg-11 col-md-10 col-sm-12">
-            <div class="card">
-=======
 <div class="page-content mt-1"> <!-- Added margin-top -->
     <div class="page-container">
         <div class="row justify-content-center">
@@ -67,7 +59,6 @@
                     </ul>
                     <!-- end of ta view-->
 
->>>>>>> 69a928e0c4ff383de06c5f574f6c8013a3379d9b
                <div class="card-header text-white" style="background-color: #8e44ad;">
                   <div class="d-flex justify-content-between align-items-center">
                      <h5 class="mb-0">Add Seasons</h5>
