@@ -12,6 +12,7 @@
             <div class="col-lg-12 col-md-10 col-sm-12">
                 <div class="card">
 
+                  @if(count($rooms) > 0)
                     <!-- tab view -->
                     <ul class="nav nav-pills mb-4 mt-4 d-flex justify-content-center" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -52,7 +53,7 @@
                         </li>
                     </ul>
                     <!-- end of ta view-->
-
+                  @endif
 
                <div class="card-header text-white" style="background-color: #8e44ad;">
                   <div class="d-flex justify-content-between align-items-center">

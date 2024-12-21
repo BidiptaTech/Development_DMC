@@ -605,8 +605,6 @@ class HotelController extends Controller
         }
     }
 
-
-
     /**
      * store rates
      * 
