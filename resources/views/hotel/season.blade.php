@@ -1,11 +1,17 @@
 @extends('layouts.layout')
 @section('title', 'Hotels')
+
+@section('script')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@endsection
 @section('css')
+
 <link href="{{ URL::asset('build/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 @endsection
 
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet">
 <div class="page-content">
    <div class="page-container">
       <!-- Add Pricing Details -->
@@ -34,33 +40,45 @@
                               <div class="col-md-3 mb-3">
                                  <label for="event" class="form-label"><strong>Season Name</strong><span class="text-danger">*</span></label>
                                  <input type="text" class="form-control" name="event" placeholder="Enter Event Name" required>
+                                 @error('hotel_owner_company_name')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                 @enderror
                               </div>
                               <input name="event_type" type="hidden" value="Season">
                            
 
                                <!-- Weekday -->
                               <div class="mb-3 col-md-3" id="base_weekday_price">
-                                 <label for="weekday_price" class="form-label"><strong>Base Weekday Price</strong></label>
+                                 <label for="weekday_price" class="form-label"><strong>Base Weekday Price</strong><span class="text-danger">*</span></label>
                                  <input type="number" name="weekday_price" class="form-control" placeholder="Enter Base weekday price">
+                                 @error('hotel_owner_company_name')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                 @enderror
                               </div>
 
                               <!-- Weekend Price -->
                               <div class="mb-3 col-md-3" id="base_weekend_price">
-                                    <label for="weekend_price" class="form-label"><strong>Base Weekend Price</strong></label>
+                                    <label for="weekend_price" class="form-label"><strong>Base Weekend Price</strong><span class="text-danger">*</span></label>
                                     <input type="number" name="weekend_price" class="form-control" placeholder="Enter Base weekend price">
+                                    @error('hotel_owner_company_name')
+                                       <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                               </div>
 
-                              <!-- Start Date -->
-                              <div class="col-md-3 mb-3">
-                                 <label for="start_date" class="form-label"><strong>Start Date</strong><span class="text-danger">*</span></label>
-                                 <input type="date" class="form-control" name="start_date" required>
-                              </div>
-
-                              <!-- End Date -->
-                              <div class="col-md-3 mb-3">
-                                 <label for="end_date" class="form-label"><strong>End Date</strong><span class="text-danger">*</span></label>
-                                 <input type="date" class="form-control" name="end_date" required>
-                              </div>
+                              <!-- Start Date, End date DateRange -->
+                                 <div class="mb-3 col-md-4">
+                                    <label for="date_range" class="form-label"><strong>Season Date Range</strong><span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="text" id="date_range" name="date_range" class="form-control"
+                                            placeholder="Select date range">
+                                          @error('hotel_owner_company_name')
+                                             <div class="text-danger mt-1">{{ $message }}</div>
+                                          @enderror
+                                          <div class="input-group-append">
+                                             <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                          </div>
+                                    </div>
+                                 </div>
                            </div>
                         </div>
                      </div>
@@ -130,11 +148,12 @@
 </div>
 @endsection
 @section('scripts') 
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <!-- DataTable Scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script src="{{ URL::asset('build/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ URL::asset('build/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 <script>
     $(document).ready(function() {
@@ -151,6 +170,25 @@
         document.getElementById('deleteForm').action = action;
     }
 </script>
+
+   <!-- Date Range -->
+   <script>
+      $(document).ready(function () {
+         $('#date_range').daterangepicker({
+               opens: 'right', // Opens to the right of the input
+               autoApply: true, // Automatically apply the selected range
+               locale: {
+                  format: 'MM/DD/YYYY', // Format of the dates
+                  separator: ' - ', // Separator between start and end dates
+                  applyLabel: "Apply",
+                  cancelLabel: "Clear"
+               }
+         });
+         $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
+               $(this).val('');
+         });
+      });
+   </script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
