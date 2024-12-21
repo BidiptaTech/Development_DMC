@@ -7,11 +7,13 @@
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-<div class="page-content">
+
+<div class="page-content mt-5"> <!-- Added margin-top -->
     <div class="page-container">
         <div class="row justify-content-center">
             <div class="col-lg-12 col-md-10 col-sm-12">
                 <div class="card">
+                    @include('hotel.tapview')
                     <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white;">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Edit Hotel</h5>

@@ -26,13 +26,13 @@ class TourController extends Controller
         
         $checkInTime = Carbon::createFromFormat('d/m/Y', $request->check_in);
         $checkOutTime = Carbon::createFromFormat('d/m/Y', $request->check_out);
-        
+        $agent_id = $request->header('agent_id');
         $tour = new Tour();
         $tour->destination = $request->destination;  
         $tour->adult = $request->adult;  
         $tour->child = $request->child;
         $tour->infant = $request->infant;
-        $tour->agent_id = $request->agent_id;
+        $tour->agent_id = $agent_id;
         $tour->check_in_time = $checkInTime;  
         $tour->check_out_time = $checkOutTime; 
         $tour->save(); 
