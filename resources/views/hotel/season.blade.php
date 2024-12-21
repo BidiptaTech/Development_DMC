@@ -101,7 +101,6 @@
                         <th>End Date</th>
                         <th>Event Name</th>
                         <th>Event Type</th>
-                        <th>Price/Surcharge</th>
                         <th>Weekday Price</th>
                         <th>Weekend Price</th>
                         <th>Action</th>
@@ -114,7 +113,6 @@
                         <td>{{ $rate->end_date }}</td>
                         <td>{{ $rate->event }}</td>
                         <td>{{ $rate->event_type }}</td>
-                        <td>{{ $rate->price }}</td>
                         <td>{{ $rate->weekday_price }}</td>
                         <td>{{ $rate->weekend_price }}</td>
 

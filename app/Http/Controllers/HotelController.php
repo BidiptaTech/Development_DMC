@@ -458,14 +458,14 @@ class HotelController extends Controller
 
     public function hotelrates($hotelId){
         $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
-        $rates = Rate::all();
+        $rates = Rate::where('event_type', '!=', 'Season')->get();
         return view('hotel.rates', compact('hotel','rates'));
     }
 
     public function hotelseason($hotelId){
         $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
         $room = Room::where('hotel_id', $hotelId)->get()->first();
-        $rates = Rate::all();
+        $rates = Rate::where('event_type', "Season")->get();
         return view('hotel.season', compact('hotel','room','rates'));
     }
 
@@ -541,6 +541,7 @@ class HotelController extends Controller
         $room->breakfast = $request->breakfast;
         $room->breakfast_type = $request->breakfast_type;
         $room->breakfast_price = $request->breakfast_price;
+        $room->dimension = $request->dimension;
 
         $room->lunch = $request->lunch;
         $room->lunch_type = $request->lunch_type;
@@ -556,7 +557,6 @@ class HotelController extends Controller
         $room->images = $imagePathsJson;
         $room->save();
         
-
         if($request->no_of_rooms){
             $lastBed = Bed::withTrashed()->orderBy('bed_id', 'desc')->first();
             $bed_max_id = $lastBed->bed_id ?? 0;
@@ -613,6 +613,16 @@ class HotelController extends Controller
      */
     public function storerates(Request $request){
 
+         // Validate request data
+        $request->validate([
+            'event' => 'required|string',
+            'hotel_id' => 'required',
+            'event_type' => 'required|string',
+            'price' => 'required|numeric',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
         // Generate rate ID
         $lastRate = Rate::withTrashed()->orderBy('created_at', 'desc')->first();
         $rate_max_id = $lastRoom->rate_id ?? 0;
@@ -647,13 +657,40 @@ class HotelController extends Controller
 
     public function storeseason(Request $request){
 
+         // Validate request data
+        $request->validate([
+            'event' => 'required|string',
+            'hotel_id' => 'required',
+            'event_type' => 'required|string',
+            'weekday_price' => 'required|numeric',
+            'weekend_price' => 'required|numeric',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
         $lastRate = Rate::withTrashed()->orderBy('rate_id', 'desc')->first();
-        // Generate rate ID
         $lastRate = Rate::withTrashed()->orderBy('created_at', 'desc')->first();
         $rate_max_id = $lastRoom->rate_id ?? 0;
         $rateId = CommonHelper::createId($rate_max_id);
         while (Rate::where('rate_id', $rateId)->exists()) {
             $rateId = CommonHelper::createId($rateId);
+        }
+
+        // Check for overlapping dates
+        $overlappingRates = Rate::where('event_type', 'Season')
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                    ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
+                    ->orWhere(function ($query) use ($request) {
+                        $query->where('start_date', '<=', $request->start_date)
+                            ->where('end_date', '>=', $request->end_date);
+                    });
+            })
+            ->exists();
+
+        if ($overlappingRates) {
+            return redirect()->back()
+                ->with('error', 'The date range overlaps with an existing season.');
         }
 
         $rate = Rate::create([

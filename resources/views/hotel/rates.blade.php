@@ -95,7 +95,7 @@
 
                      <!-- Submit Buttons -->
                      <div class="d-flex gap-3">
-                        <a href="{{ route('hotels.room', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
+                        <a href="{{ route('hotels.season', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
                         <button type="submit" class="btn btn-primary px-4">Save and Add More Events</button>
                         <a href="{{ route('hotels.calender', $hotel->hotel_unique_id) }}" class="btn btn-success px-4">Next</a>
                      </div>
@@ -120,8 +120,6 @@
                         <th>Event Name</th>
                         <th>Event Type</th>
                         <th>Price/Surcharge</th>
-                        <th>Weekday Price</th>
-                        <th>Weekend Price</th>
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -133,8 +131,6 @@
                         <td>{{ $rate->event }}</td>
                         <td>{{ $rate->event_type }}</td>
                         <td>{{ $rate->price }}</td>
-                        <td>{{ $rate->weekday_price }}</td>
-                        <td>{{ $rate->weekend_price }}</td>
 
                         <td>
                            <a href="{{ route('rates.edit', ['id' => $rate->rate_id, 'hotel_id' => $hotel->hotel_unique_id]) }}" class="btn btn-warning btn-sm">Edit</a>
