@@ -38,7 +38,7 @@
 
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" href="{{ route('hotels.contact'), $id }}" 
+                            <a class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" href="{{ route('hotels.create') }}" 
                                 role="tab" aria-controls="pills-contact" aria-selected="false">
                                 Contact Details
                             </a>
