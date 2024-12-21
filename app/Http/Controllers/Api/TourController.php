@@ -32,6 +32,7 @@ class TourController extends Controller
         $tour->adult = $request->adult;  
         $tour->child = $request->child;
         $tour->infant = $request->infant;
+        $tour->agent_id = $request->agent_id;
         $tour->check_in_time = $checkInTime;  
         $tour->check_out_time = $checkOutTime; 
         $tour->save(); 

@@ -28,7 +28,7 @@ class LoginControllerApi extends Controller
             ], 429);
         }
 
-        $user = User::where('email', $email)->first();
+        $user = User::where('email', $email)->where('user_type', 3)->first();
 
         // Verify user and password
         if (!$user || !Hash::check($password, $user->password)) {
@@ -46,7 +46,7 @@ class LoginControllerApi extends Controller
             'success' => true,
             'message' => 'Login successful',
             'user' => [
-                'id' => $user->id,
+                'agent_id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'token' => $token,
