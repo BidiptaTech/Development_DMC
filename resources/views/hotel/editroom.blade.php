@@ -60,7 +60,7 @@
                        <!-- dimension -->
                        <div class="mb-3 col-md-3" id="dimension">
                            <label for="weekend_price" class="form-label"><strong>Dimension</strong></label>
-                           <input value="{{$room->features}}" type="text" name="dimension" class="form-control" placeholder="length x breadth">
+                           <input value="{{$room->dimension}}" type="text" name="dimension" class="form-control" placeholder="length x breadth">
                        </div>
 
                         <!-- Breakfast -->

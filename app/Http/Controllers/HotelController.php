@@ -650,7 +650,6 @@ class HotelController extends Controller
         }
     }
 
-
     /** store season details */
 
     public function storeseason(Request $request){
@@ -658,13 +657,11 @@ class HotelController extends Controller
          // Validate request data
         $request->validate([
             'event' => 'required|string',
-            'hotel_id' => 'required',
             'event_type' => 'required|string',
             'weekday_price' => 'required|numeric',
             'weekend_price' => 'required|numeric',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
+        
 
         $lastRate = Rate::withTrashed()->orderBy('rate_id', 'desc')->first();
         $lastRate = Rate::withTrashed()->orderBy('created_at', 'desc')->first();
@@ -674,14 +671,21 @@ class HotelController extends Controller
             $rateId = CommonHelper::createId($rateId);
         }
 
+        list($firstDate, $lastDate) = explode(' - ', $request->date_range);
+        // Convert the string dates to the format 'Y-m-d' for database compatibility
+
+        $firstDate = Carbon::createFromFormat('m/d/Y', $firstDate);
+        $lastDate = Carbon::createFromFormat('m/d/Y', $lastDate);
+
         // Check for overlapping dates
-        $overlappingRates = Rate::where('event_type', 'Season')
-            ->where(function ($query) use ($request) {
-                $query->whereBetween('start_date', [$request->start_date, $request->end_date])
-                    ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
-                    ->orWhere(function ($query) use ($request) {
-                        $query->where('start_date', '<=', $request->start_date)
-                            ->where('end_date', '>=', $request->end_date);
+        $overlappingRates = Rate::where('hotel_id', $request->hotel_id)
+            ->where('event_type', 'Season')
+            ->where(function ($query) use ($firstDate, $lastDate) {
+                $query->whereBetween('start_date', [$firstDate, $lastDate])
+                    ->orWhereBetween('end_date', [$firstDate, $lastDate])
+                    ->orWhere(function ($query) use ($firstDate, $lastDate) {
+                        $query->where('start_date', '<=', $firstDate)
+                            ->where('end_date', '>=', $lastDate);
                     });
             })
             ->exists();
@@ -699,8 +703,8 @@ class HotelController extends Controller
             'price' => 0,
             'weekday_price' => $request->weekday_price,
             'weekend_price' => $request->weekend_price,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
+            'start_date' => $firstDate,
+            'end_date' => $lastDate,
         ]);
 
         if ($rate->save()) {

@@ -68,9 +68,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/updatecontacts', [HotelController::class, 'updatecontacts'])->name('hotels.createcontacts');
         Route::get('/hotels/{hotel}/room', [HotelController::class, 'hotelrooms'])->name('hotels.room');
 
-        Route::get('/hotels/{hotel}/rates', [HotelController::class, 'hotelrates'])->name('hotels.rates');
-        Route::post('storerates', [HotelController::class, 'storerates'])->name('storerates');
-        Route::get('editrate/{id}/{hotel_id}', [HotelController::class, 'editrate'])->name('rates.edit');
+        Route::get('/hotels/{hotel}/events', [HotelController::class, 'hotelrates'])->name('hotels.rates');
+        Route::post('storeEvents', [HotelController::class, 'storerates'])->name('storerates');
+        Route::get('editevents/{id}/{hotel_id}', [HotelController::class, 'editrate'])->name('rates.edit');
         Route::post('updaterates', [HotelController::class, 'updaterates'])->name('rates.update');
 
         Route::get('/hotels/{hotel}/season', [HotelController::class, 'hotelseason'])->name('hotels.season');
