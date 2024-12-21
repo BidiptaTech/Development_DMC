@@ -22,10 +22,8 @@
                </div>
                <x-alert />
                <div class="card-body">
-                  <form id="hotelForm" method="POST" action="{{ route('rates.update') }}" enctype="multipart/form-data">
+                  <form id="hotelForm" method="POST" action="{{ route('season.update') }}" enctype="multipart/form-data">
                      @csrf
-                     
-
                      <input value="{{$rate->rate_id}}" type="text" class="form-control" name="rate_id" hidden>
                      <input value="{{$hotel->hotel_unique_id}}" type="text" class="form-control" name="hotel_id" hidden>
 
@@ -39,22 +37,7 @@
                                  <input value="{{$rate->event}}" type="text" class="form-control" name="event" placeholder="Enter Event Name" required>
                               </div>
                               <!-- Event Type -->
-                              <div class="col-md-3 mb-3">
-                                 <label for="event_type" class="form-label"><strong>Event Type</strong><span class="text-danger">*</span></label>
-                                <select class="form-control" name="event_type" required>
-                                    <option value="">Select Event Type</option>
-                                    <option value="Fair Date" {{ $rate->event_type == "Fair Date" ? 'selected' : '' }}>Fair Date</option>
-                                    <option value="Blackout Date" {{ $rate->event_type == "Blackout Date" ? 'selected' : '' }}>Blackout Date</option>
-                                    <option value="Season" {{ $rate->event_type == "Season" ? 'selected' : '' }}>Season</option>
-                                </select>
-                              </div>
-                              
-                              <!-- Price -->
-                              <div class="col-md-3 mb-3" id="price">
-                                 <label for="price" class="form-label"><strong>Price</strong></label><span class="text-danger">*</span>
-                                 <input value="{{$rate->price}}" type="number" class="form-control" name="price" placeholder="Enter Price" required>
-                              </div>
-
+                              <input name="event_type" type="hidden" value="{{}}">
                                <!-- Weekday -->
                               <div class="mb-3 col-md-3" id="base_weekday_price" style="display: none;">
                                  <label for="weekday_price" class="form-label"><strong>Base Weekday Price</strong></label>
@@ -84,8 +67,6 @@
                            </div>
                         </div>
                      </div>
-                     
-
                      <div class="form-check form-switch">
                         <label for="hotel_status" class="form-label"><strong>Status</strong></label>
                         <span style="color: red; font-weight: bold;">*</span>
@@ -99,16 +80,13 @@
                      <!-- Submit Buttons -->
                      <div class="d-flex gap-3">
                         <a href="{{ route('hotels.rates', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
-                        <button type="submit" class="btn btn-primary px-4">Update Rates</button>
-                        
+                        <button type="submit" class="btn btn-primary px-4">Update Rates</button> 
                      </div>
                   </form>
                </div>
             </div>
          </div>
       </div>
-
-      
    </div>
 </div>
 @endsection

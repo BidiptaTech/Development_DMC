@@ -22,7 +22,7 @@
                </div>
                <x-alert />
                <div class="card-body">
-                  <form id="hotelForm" method="POST" action="{{ route('storeroom') }}" enctype="multipart/form-data">
+                  <form id="hotelForm" method="POST" action="{{ route('room.update') }}" enctype="multipart/form-data">
                      @csrf
                      <input name="room_id" type="text" hidden value="{{$room->room_id}}">
                      
@@ -40,7 +40,7 @@
                         <!-- Number of Rooms -->
                         <div class="col-md-3 mb-3">
                            <label for="no_of_room" class="form-label"><strong>No of Rooms</strong><span class="text-danger">*</span></label>
-                           <input value="{{$room->no_of_room}}" type="number" class="form-control" name="no_of_room" placeholder="Enter Number of Rooms">
+                           <input value="{{$room->no_of_room}}" type="number" class="form-control" name="total_no_of_room" placeholder="Enter Number of Rooms">
                            @error('base_no_of_room')
                            <div class="text-danger mt-1">{{ $message }}</div>
                            @enderror
@@ -60,7 +60,7 @@
                        <!-- dimension -->
                        <div class="mb-3 col-md-3" id="dimension">
                            <label for="weekend_price" class="form-label"><strong>Dimension</strong></label>
-                           <input type="text" name="dimension" class="form-control" placeholder="length x breadth">
+                           <input value="{{$room->features}}" type="text" name="dimension" class="form-control" placeholder="length x breadth">
                        </div>
 
                         <!-- Breakfast -->
@@ -193,9 +193,8 @@
 
                      <!-- Submit Buttons -->
                      <div class="d-flex gap-3">
-                        <a href="{{ route('rooms.edit', $room->room_id) }}" class="btn btn-secondary px-4">Previous</a>
-                        <button type="submit" class="btn btn-primary px-4">Save and Add More Rooms</button>
-
+                        <a href="{{ route('hotels.room', $room->room_id) }}" class="btn btn-secondary px-4">Previous</a>
+                        <button type="submit" class="btn btn-primary px-4">Update</button>
                      </div>
                   </form>
                </div>
@@ -353,7 +352,155 @@
    };
 
 
+
    document.addEventListener('DOMContentLoaded', () => {
+
+
+    const bedData = @json($beds);
+    
+
+for(let i=0; i<bedData.length; i++){
+    const bed = bedData[i];
+    const bed_type = bed.room_type;
+    console.log("beds data = ", bed);
+
+    if (bed_type === "King_bed") {
+        const kingCheckBox = document.getElementById('king-bed'); // Replace 'king_bed' with the actual ID of your checkbox
+
+        if (kingCheckBox) {
+            setTimeout(() => {
+                kingCheckBox.click();
+                // Fill the relevant fields after clicking
+                document.getElementById('king_bed-no-rooms').value = bed.no_of_rooms;
+                document.getElementById('king_bed-occupancy').value = bed.max_occupancy;
+                const selectElement = document.getElementById('king_bed-adult'); // Replace with your select element ID
+                if (selectElement) {
+                    // Create a new option element
+                    const newOption = document.createElement('option');
+                    newOption.value = bed.adult_count; // Set the value
+                    newOption.text = bed.adult_count;  // Set the visible text
+                    newOption.selected = true; // Make it selected
+                    // Add the new option to the dropdown
+                    selectElement.appendChild(newOption);
+                }
+                //document.getElementById('king_bed-adult').value = bed.adult_count;
+
+                const selectElement1 = document.getElementById('king_bed-child');
+                if (selectElement1) {
+                    // Create a new option element
+                    const newOption = document.createElement('option');
+                    newOption.value = bed.child_count; // Set the value
+                    newOption.text = bed.child_count;  // Set the visible text
+                    newOption.selected = true; // Make it selected
+                    // Add the new option to the dropdown
+                    selectElement1.appendChild(newOption);
+                }
+
+                document.getElementById('king_bed-extra-bed').value = bed.extra_bed ? '1' : '0';
+                if (bed.extra_bed) {
+                    document.getElementById('king_bed-extra-bed-price').value = bed.extra_bed_price;
+                }
+                document.getElementById('king_bed-baby-cot').value = bed.baby_cot ? '1' : '0';
+                if (bed.baby_cot) {
+                    document.getElementById('king_bed-baby-cot-price').value = bed.baby_cot_price;
+                }
+
+                // Trigger onchange event on select elements
+                document.getElementById('king_bed-extra-bed').dispatchEvent(new Event('change'));
+                document.getElementById('king_bed-baby-cot').dispatchEvent(new Event('change'));
+            }, 500);
+        }
+    }
+
+    if(bed_type == "Queen_bed"){
+        const queenCheckBox = document.getElementById('queen-bed');
+        if (queenCheckBox) {
+            setTimeout(() => {
+                queenCheckBox.click();
+                // Fill the relevant fields after clicking
+                document.getElementById('queen_bed-no-rooms').value = bed.no_of_rooms;
+                document.getElementById('queen_bed-occupancy').value = bed.max_occupancy;
+                const selectElementAdult = document.getElementById('queen_bed-adult'); // Replace with your select element ID
+                if (selectElementAdult) {
+                    // Create a new option element
+                    const newOption = document.createElement('option');
+                    newOption.value = bed.adult_count; // Set the value
+                    newOption.text = bed.adult_count;  // Set the visible text
+                    newOption.selected = true; // Make it selected
+                    // Add the new option to the dropdown
+                    selectElementAdult.appendChild(newOption);
+                }
+                const selectElementChild = document.getElementById('queen_bed-child'); // Replace with your select element ID
+                if (selectElementChild) {
+                    // Create a new option element
+                    const newOption = document.createElement('option');
+                    newOption.value = bed.child_count; // Set the value
+                    newOption.text = bed.child_count;  // Set the visible text
+                    newOption.selected = true; // Make it selected
+                    // Add the new option to the dropdown
+                    selectElementChild.appendChild(newOption);
+                }
+                document.getElementById('queen_bed-extra-bed').value = bed.extra_bed ? '1' : '0';
+                if (bed.extra_bed) {
+                    document.getElementById('queen_bed-extra-bed-price').value = bed.extra_bed_price;
+                }
+                document.getElementById('queen_bed-baby-cot').value = bed.baby_cot ? '1' : '0';
+                if (bed.baby_cot) {
+                    document.getElementById('queen_bed-baby-cot-price').value = bed.baby_cot_price;
+                }
+
+                // Trigger onchange event on select elements
+                document.getElementById('queen_bed-extra-bed').dispatchEvent(new Event('change'));
+                document.getElementById('queen_bed-baby-cot').dispatchEvent(new Event('change'));
+            }, 500);
+        }
+    }
+
+    if(bed_type == "Twin_bed"){
+        const twinCheckBox = document.getElementById('twin-bed');
+        if (twinCheckBox) {
+            setTimeout(() => {
+                twinCheckBox.click();
+                // Fill the relevant fields after clicking
+                document.getElementById('twin-bed-no-rooms').value = bed.no_of_rooms;
+                document.getElementById('twin-bed-occupancy').value = bed.max_occupancy;
+                const selectElementAdult = document.getElementById('twin-bed-adult'); // Replace with your select element ID
+                if (selectElementAdult) {
+                    // Create a new option element
+                    const newOption = document.createElement('option');
+                    newOption.value = bed.adult_count; // Set the value
+                    newOption.text = bed.adult_count;  // Set the visible text
+                    newOption.selected = true; // Make it selected
+                    // Add the new option to the dropdown
+                    selectElementAdult.appendChild(newOption);
+                }
+                const selectElementChild = document.getElementById('twin-bed-child'); // Replace with your select element ID
+                if (selectElementChild) {
+                    // Create a new option element
+                    const newOption = document.createElement('option');
+                    newOption.value = bed.child_count; // Set the value
+                    newOption.text = bed.child_count;  // Set the visible text
+                    newOption.selected = true; // Make it selected
+                    // Add the new option to the dropdown
+                    selectElementChild.appendChild(newOption);
+                }
+                document.getElementById('twin-bed-extra-bed').value = bed.extra_bed ? '1' : '0';
+                if (bed.extra_bed) {
+                    document.getElementById('twin-bed-extra-bed-price').value = bed.extra_bed_price;
+                }
+                document.getElementById('twin-bed-baby-cot').value = bed.baby_cot ? '1' : '0';
+                if (bed.baby_cot) {
+                    document.getElementById('twin-bed-baby-cot-price').value = bed.baby_cot_price;
+                }
+
+                // Trigger onchange event on select elements
+                document.getElementById('twin-bed-extra-bed').dispatchEvent(new Event('change'));
+                document.getElementById('twin-bed-baby-cot').dispatchEvent(new Event('change'));
+            }, 500);
+        }
+    }
+}
+    
        
       let track = 0;
       let counter = 0;
@@ -369,15 +516,15 @@
                    
                    <div class="mb-3 col-md-3">
                        <label for="${bedType}-no-rooms" class="form-label"><strong>No. of Rooms</strong></label>
-                       <input type="number" name="${bedType}_no_Of_rooms" id="${bedType}-no-rooms${counter}" class="form-control" placeholder="Enter number of rooms">
+                       <input type="number" name="${bedType}_no_Of_rooms" id="${bedType}-no-rooms" class="form-control" placeholder="Enter number of rooms">
                    </div>
                     <div class="mb-3 col-md-3">
                         <label for="${bedType}-max-occupancy" class="form-label"><strong>Maximum Occupancy</strong></label>
-                        <input type="number" name="${bedType}_max_occupancy" id="${bedType}-occupancy${counter}" class="form-control" placeholder="Enter maximum occupancy">
+                        <input type="number" name="${bedType}_max_occupancy" id="${bedType}-occupancy" class="form-control" placeholder="Enter maximum occupancy">
                     </div>
                     <div class="col-md-3 mb-3">
                            <label for="adult" class="form-label"><strong>Adults</strong><span class="text-danger">*</span></label>
-                           <select id="${bedType}-adult${counter}" class="form-control" name="${bedType}_adult_count" disabled>
+                           <select id="${bedType}-adult" class="form-control" name="${bedType}_adult_count" disabled>
                               <option value="">Select Adults</option>
                            </select>
                            @error('${bedType}_adult_count')
@@ -386,7 +533,7 @@
                         </div>
                         <div class="col-md-3 mb-3">
                            <label for="child" class="form-label"><strong>Children</strong><span class="text-danger">*</span></label>
-                           <select id="${bedType}-child${counter}" class="form-control" name="${bedType}_child_count" disabled>
+                           <select id="${bedType}-child" class="form-control" name="${bedType}_child_count" disabled>
                               <option value="">Select Children</option>
                            </select>
                            @error('${bedType}_child_count')
@@ -396,39 +543,39 @@
 
                         <div class="col-md-3 mb-3">
                            <label for="${bedType}-extra-bed" class="form-label"><strong>Extra Bed</strong><span class="text-danger">*</span></label>
-                           <select name="${bedType}_extra_bed" id="${bedType}-extra-bed${counter}" class="form-control"
-                              onchange="togglePriceField('${bedType}-extra-bed${counter}', '${bedType}-extra-bed-price${counter}')">
+                           <select name="${bedType}_extra_bed" id="${bedType}-extra-bed" class="form-control"
+                              onchange="togglePriceField('${bedType}-extra-bed', '${bedType}-extra-bed-price')">
                               <option value="">Select One</option>
                               <option value="1">Yes</option>
                               <option value="0">No</option>
                            </select>
                         </div>
-                        <div class="col-md-3 mb-3 ${bedType}-extra-bed-price${counter}" style="display: none;">
+                        <div class="col-md-3 mb-3 ${bedType}-extra-bed-price" style="display: none;">
                             <label for="${bedType}-extra-bed-price" class="form-label"><strong>Extra Bed Price</strong><span class="text-danger">*</span></label>
-                            <input type="number" name="${bedType}_extra_bed_price" id="${bedType}-extra-bed-price${counter}" class="form-control" placeholder="Enter Price">
+                            <input type="number" name="${bedType}_extra_bed_price" id="${bedType}-extra-bed-price" class="form-control" placeholder="Enter Price">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="${bedType}-baby-cot" class="form-label"><strong>Baby Cot</strong><span class="text-danger">*</span></label>
-                            <select name="${bedType}_baby_cot" id="${bedType}-baby-cot${counter}" class="form-control"
-                              onchange="togglePriceField('${bedType}-baby-cot${counter}', '${bedType}-baby-cot-price${counter}')">
+                            <select name="${bedType}_baby_cot" id="${bedType}-baby-cot" class="form-control"
+                              onchange="togglePriceField('${bedType}-baby-cot', '${bedType}-baby-cot-price')">
                                  <option value="">Select One</option>
                                  <option value="1">Yes</option>
                                  <option value="0">No</option>
                               </select>
                         </div>
-                        <div class="col-md-3 mb-3 ${bedType}-baby-cot-price${counter}" style="display: none;">
+                        <div class="col-md-3 mb-3 ${bedType}-baby-cot-price" style="display: none;">
                             <label for="${bedType}-baby-cot-price" class="form-label"><strong>Baby Cot Price</strong><span class="text-danger">*</span></label>
-                            <input type="number" name="${bedType}_baby_cot_price" id="${bedType}-baby-cot-price${counter}" class="form-control" placeholder="Enter Price">
+                            <input type="number" name="${bedType}_baby_cot_price" id="${bedType}-baby-cot-price" class="form-control" placeholder="Enter Price">
                         </div>
                         <hr>
                      </div>`;
 
                 // Attach event listeners for Extra Bed and Baby Cot
-                  const extraBedSelect = document.getElementById(`${bedType}-extra-bed${counter}`);
-                  const extraBedPriceField = document.querySelector(`.${bedType}-extra-bed-price${counter}`);
-                  const babyCotSelect = document.getElementById(`${bedType}-baby-cot${counter}`);
-                  const babyCotPriceField = document.querySelector(`.${bedType}-baby-cot-price${counter}`);
-               attachOccupancyListeners(`${bedType}-occupancy${counter}`, `${bedType}-adult${counter}`, `${bedType}-child${counter}`);
+                  const extraBedSelect = document.getElementById(`${bedType}-extra-bed`);
+                  const extraBedPriceField = document.querySelector(`.${bedType}-extra-bed-price`);
+                  const babyCotSelect = document.getElementById(`${bedType}-baby-cot`);
+                  const babyCotPriceField = document.querySelector(`.${bedType}-baby-cot-price`);
+               attachOccupancyListeners(`${bedType}-occupancy`, `${bedType}-adult`, `${bedType}-child`);
                track++;
          };
 
@@ -566,6 +713,8 @@
             babyCotPriceField.style.display = babyCotSelect.value === "1" ? "block" : "none";
          });
       }
+
+
                
    });
 
@@ -663,7 +812,7 @@
 </script>
 
 <!-- Drag And Drop Image -->
-<script>
+<!-- <script>
     const dropArea = document.getElementById('drop-area');
     const fileInput = document.getElementById('images');
     const previewContainer = document.getElementById('preview-container');
@@ -819,19 +968,35 @@
         });
         return moreBadge;
     }
-</script>
+</script> -->
 
 <!-- Set the values of meals -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Assume room data is passed from the Laravel backend
         const roomData = @json($room);
+
         // Helper function to toggle visibility of options
         function toggleMealOptions(meal, isAvailable) {
+            
             const mealType = document.getElementById(`${meal}_type_option`);
             const mealPrice = document.getElementById(`${meal}_price_option`);
+            
+
             mealType.style.display = isAvailable ? "block" : "none";
             mealPrice.style.display = isAvailable ? "block" : "none";
+
+            if (isAvailable) {
+                const mealTypeSelect = document.getElementById(`${meal}_type`);
+                
+                if (roomData[`${meal}_type`] === "1") {
+                    mealTypeSelect.value = "1";
+                } else if (roomData[`${meal}_type`] === "0") {
+                    mealTypeSelect.value = "0";
+                } else {
+                    mealTypeSelect.value = "";
+                }
+            }
         }
 
         // Initialize the meal options
@@ -855,6 +1020,44 @@
         });
     });
 </script>
+
+<!-- <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const backendData = @json($beds);
+    console.log("backend bed data = ", backendData);
+
+    // Populate bed types based on backend data
+    Object.keys(backendData).forEach(bedType => {
+        const data = backendData[bedType];
+        const checkbox = document.getElementById(`${bedType}`);
+        const containerId = `${bedType}-fields`;
+
+        if (data.checked) {
+            checkbox.checked = true;
+            addFields(bedType, containerId);
+
+            // Populate generated fields
+            document.getElementById(`${bedType}-no-rooms`).value = data.no_of_rooms || '';
+            document.getElementById(`${bedType}-occupancy`).value = data.max_occupancy || '';
+            document.getElementById(`${bedType}-adult`).value = data.adult_count || '';
+            document.getElementById(`${bedType}-child`).value = data.child_count || '';
+            document.getElementById(`${bedType}-extra-bed`).value = data.extra_bed || '';
+            if (data.extra_bed) {
+                document.querySelector(`.${bedType}-extra-bed-price`).style.display = 'block';
+                document.getElementById(`${bedType}-extra-bed-price`).value = data.extra_bed_price || '';
+            }
+            document.getElementById(`${bedType}-baby-cot`).value = data.baby_cot || '';
+            if (data.baby_cot) {
+                document.querySelector(`.${bedType}-baby-cot-price`).style.display = 'block';
+                document.getElementById(`${bedType}-baby-cot-price`).value = data.baby_cot_price || '';
+            }
+        }
+    });
+});
+
+</script> -->
+
+
 
 
 @endsection

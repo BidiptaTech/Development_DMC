@@ -14,7 +14,7 @@
             <div class="card">
                <div class="card-header text-white" style="background-color: #8e44ad;">
                   <div class="d-flex justify-content-between align-items-center">
-                     <h5 class="mb-0">Add Pricing Details</h5>
+                     <h5 class="mb-0">Add Events</h5>
                      <a href="javascript:history.back()" class="btn btn-sm btn-outline-light">
                         <i class="mdi mdi-arrow-left"></i> Back
                      </a>
@@ -24,8 +24,8 @@
                <div class="card-body">
                   <form id="hotelForm" method="POST" action="{{ route('storerates') }}" enctype="multipart/form-data">
                      @csrf
-                     <input type="hidden" class="form-control" name="id" value="{{ $hotel->hotel_unique_id }}">
-
+                     <input type="hidden" class="form-control" name="hotel_id" value="{{ $hotel->hotel_unique_id }}">
+                     
                     
                      <hr>
                      <div id="hotelRatesContainer">
@@ -43,13 +43,12 @@
                                     <option value="">Select Event Type</option>
                                     <option value="Fair Date">Fair Date</option>
                                     <option value="Blackout Date">Blackout Date</option>
-                                    <option value="Season">Season</option>
                                  </select>
                               </div>
-                              
+                     
                               <!-- Price -->
                               <div class="col-md-3 mb-3" id="price">
-                                 <label for="price" class="form-label"><strong>Price</strong></label><span class="text-danger">*</span>
+                                 <label for="price" class="form-label"><strong>Price/Surcharge</strong></label><span class="text-danger">*</span>
                                  <input type="number" class="form-control" name="price" placeholder="Enter Price">
                               </div>
 
@@ -96,7 +95,7 @@
 
                      <!-- Submit Buttons -->
                      <div class="d-flex gap-3">
-                        <a href="{{ route('hotels.room', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
+                        <a href="{{ route('hotels.season', $hotel->hotel_unique_id) }}" class="btn btn-secondary px-4">Previous</a>
                         <button type="submit" class="btn btn-primary px-4">Save and Add More Events</button>
                         <a href="{{ route('hotels.calender', $hotel->hotel_unique_id) }}" class="btn btn-success px-4">Next</a>
                      </div>
@@ -109,7 +108,7 @@
       <!-- Rates List -->
       <div class="card">
          <div class="card-header text-white bg-primary style="background-color: #e2b7f1;>
-            <h5 class="mb-0">Rooms of {{ $hotel->name }}</h5>
+            <h5 class="mb-0">Events of {{ $hotel->name }}</h5>
          </div>
          <div class="card-body">
             <div class="table-responsive">
@@ -121,8 +120,6 @@
                         <th>Event Name</th>
                         <th>Event Type</th>
                         <th>Price/Surcharge</th>
-                        <th>Weekday Price</th>
-                        <th>Weekend Price</th>
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -134,8 +131,6 @@
                         <td>{{ $rate->event }}</td>
                         <td>{{ $rate->event_type }}</td>
                         <td>{{ $rate->price }}</td>
-                        <td>{{ $rate->weekday_price }}</td>
-                        <td>{{ $rate->weekend_price }}</td>
 
                         <td>
                            <a href="{{ route('rates.edit', ['id' => $rate->rate_id, 'hotel_id' => $hotel->hotel_unique_id]) }}" class="btn btn-warning btn-sm">Edit</a>
