@@ -7,11 +7,54 @@
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-<div class="page-content">
+
+<div class="page-content mt-5"> <!-- Added margin-top -->
     <div class="page-container">
         <div class="row justify-content-center">
             <div class="col-lg-12 col-md-10 col-sm-12">
                 <div class="card">
+
+                    <!-- tab view -->
+                    <ul class="nav nav-pills mb-4 mt-4 d-flex justify-content-center" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link {{ Request::routeIs('hotels.edit') ? 'active' : '' }}" 
+                            id="pills-hotel-tab" href="{{ route('hotels.edit', $hotel->hotel_unique_id) }}" role="tab">
+                                Hotel Details
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link {{ Request::routeIs('hotels.contact') ? 'active' : '' }}" 
+                            id="pills-contact-tab" href="{{ route('hotels.contact', $hotel->hotel_unique_id) }}" role="tab">
+                                Contact Details
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link {{ Request::routeIs('hotels.room') ? 'active' : '' }}" 
+                            id="pills-room-tab" href="{{ route('hotels.room', $hotel->hotel_unique_id) }}" role="tab">
+                                Room Details
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link {{ Request::routeIs('hotels.season') ? 'active' : '' }}" 
+                            id="pills-season-tab" href="{{ route('hotels.season', $hotel->hotel_unique_id) }}" role="tab">
+                                Season Details
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link {{ Request::routeIs('hotels.rates') ? 'active' : '' }}" 
+                            id="pills-event-tab" href="{{ route('hotels.rates',$hotel->hotel_unique_id) }}" role="tab">
+                                Event Details
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link {{ Request::routeIs('hotels.calender') ? 'active' : '' }}" 
+                            id="pills-calendar-tab" href="{{ route('hotels.calender',$hotel->hotel_unique_id) }}" role="tab">
+                                Calendar
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- end of ta view-->
+
                     <div class="card-header px-4 py-3" style="background-color: #e0bbf7; color: white;">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Edit Hotel</h5>
@@ -633,7 +676,7 @@
 
                             <!-- Submit and Reset Buttons -->
                             <div class="d-flex align-items-center gap-3">
-                                <button type="submit" class="btn btn-primary px-4">Update and Next</button>
+                                <button type="submit" class="btn btn-primary px-4">Save</button>
                             </div>
                         </form>
                     </div>

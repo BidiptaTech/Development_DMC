@@ -458,14 +458,14 @@ class HotelController extends Controller
 
     public function hotelrates($hotelId){
         $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
-        $rates = Rate::where('event_type', '!=', 'Season')->get();
+        $rates = Rate::where('event_type', '!=', 'Season')->where('hotel_id', $hotelId)->get();
         return view('hotel.rates', compact('hotel','rates'));
     }
 
     public function hotelseason($hotelId){
         $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
         $room = Room::where('hotel_id', $hotelId)->get()->first();
-        $rates = Rate::where('event_type', "Season")->get();
+        $rates = Rate::where('event_type', "Season")->where('hotel_id', $hotelId)->get();
         return view('hotel.season', compact('hotel','room','rates'));
     }
 
@@ -746,7 +746,7 @@ class HotelController extends Controller
         $rate_id = $request->rate_id;
         
         $hotel = Hotel::where('hotel_unique_id', $request->hotel_id)->first();
-        $rate = Rate::where('rate_id', $rate_id)->first();
+        $rate = Rate::where('rate_id', $rate_id)->where('hotel_id', $request->hotel_id)->first();
         $rate->event = $request->event;
         $rate->event_type = $request->event_type;
         $rate->price = $request->price;
@@ -773,7 +773,7 @@ class HotelController extends Controller
 
         $rate_id = $request->rate_id;
         $hotel = Hotel::where('hotel_unique_id', $request->hotel_id)->first();
-        $rate = Rate::where('rate_id', $rate_id)->first();
+        $rate = Rate::where('rate_id', $rate_id)->where('hotel_id', $request->hotel_id)->first();
         $rate->event = $request->event;
         $rate->event_type = $request->event_type;
         $rate->price = 0;
@@ -963,7 +963,6 @@ class HotelController extends Controller
             ")
             ->orderBy('start_date')
             ->get();
-
         $rate_dates = [];
         $base_prices = [];
 
