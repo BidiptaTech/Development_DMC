@@ -38,7 +38,6 @@ Route::group(['middleware' => ['auth']], function () {
         Artisan::call('route:clear');
         return '<center><h1>All Cleared</h1></center>';
     });
-    
     Route::get('/admin/dashboard', [UserController::class, 'adminlogin'])->name('admin.dashboard');
     Route::get('transaction', [UserController::class, 'transaction'])->name('transaction');
     Route::get('/admin/login-as/{userId}', [UserController::class, 'loginAsUser'])->name('admin.loginAsUser');
@@ -74,6 +73,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('editrate/{id}/{hotel_id}', [HotelController::class, 'editrate'])->name('rates.edit');
         Route::post('updaterates', [HotelController::class, 'updaterates'])->name('rates.update');
 
+        Route::get('/hotels/{hotel}/season', [HotelController::class, 'hotelseason'])->name('hotels.season');
+        Route::post('storeseason', [HotelController::class, 'storeseason'])->name('storeseason');
+        Route::get('editseason/{id}/{hotel_id}', [HotelController::class, 'editseason'])->name('season.edit');
+        Route::post('updateseason', [HotelController::class, 'updateseason'])->name('season.update');
+        
         Route::get('/editcontacts/{hotel}', [HotelController::class, 'editcontacts'])->name('contactdetails.edit');
         Route::post('storeroom', [HotelController::class, 'storeroom'])->name('storeroom');
         Route::get('editroom/{id}', [HotelController::class, 'editroom'])->name('rooms.edit');
