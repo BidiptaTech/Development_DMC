@@ -458,14 +458,14 @@ class HotelController extends Controller
 
     public function hotelrates($hotelId){
         $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
-        $rates = Rate::where('event_type', '!=', 'Season')->get();
+        $rates = Rate::where('event_type', '!=', 'Season')->where('hotel_id', $hotelId)->get();
         return view('hotel.rates', compact('hotel','rates'));
     }
 
     public function hotelseason($hotelId){
         $hotel = Hotel::where('hotel_unique_id', $hotelId)->first();
         $room = Room::where('hotel_id', $hotelId)->get()->first();
-        $rates = Rate::where('event_type', "Season")->get();
+        $rates = Rate::where('event_type', "Season")->where('hotel_id', $hotelId)->get();
         return view('hotel.season', compact('hotel','room','rates'));
     }
 
@@ -962,7 +962,6 @@ class HotelController extends Controller
             ")
             ->orderBy('start_date')
             ->get();
-
         $rate_dates = [];
         $base_prices = [];
 
